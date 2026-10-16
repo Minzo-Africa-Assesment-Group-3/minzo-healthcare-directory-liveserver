@@ -89,10 +89,10 @@ export function registerApplicationRoutes(
       ),
       system: systemHandlers,
       businessRegistrationDocuments:
-      createBusinessRegistrationDocumentsHandlers(
-        dependencies.businessRegistrationDocuments,
-        authentication,
-      ),
+        createBusinessRegistrationDocumentsHandlers(
+          dependencies.businessRegistrationDocuments,
+          authentication,
+        ),
       counties: createCountiesHandlers(dependencies.counties),
       cities: createCitiesHandlers(dependencies.cities),
       reviewModeration:
