@@ -28,11 +28,17 @@ Health returns `{"status":"ok"}`. It checks HTTP availability; the server also v
 - `src/infrastructure`: logging, database, email, storage, and API documentation adapters.
 - `src/shared`: reusable errors, authentication primitives, pagination, and middleware.
 
-The active API contains the health endpoint and the two public registration endpoints:
+The active API contains the health endpoint and the implemented public authentication endpoints:
 
 - `GET /api/v1/health`
 - `POST /api/v1/auth/register/user`
 - `POST /api/v1/auth/register/business`
+- `POST /api/v1/auth/login`
+- `POST /api/v1/auth/login/verify-otp`
+- `POST /api/v1/auth/refresh`
+- `POST /api/v1/auth/logout`
+- `POST /api/v1/auth/verify-email`
+- `POST /api/v1/auth/resend-verification`
 
 The business-management slices under `src/features/businesses` remain work in progress and are not registered by the server. Their integration tests mount the routes through `src/test/create-business-test-app.ts`.
 

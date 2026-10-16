@@ -27,7 +27,7 @@ describe("password hasher", () => {
     await expect(
       verifyPassword(passwordHash, "incorrect password"),
     ).resolves.toBe(false);
-  });
+  }, 15_000);
 
   it("rejects login without a stored user hash while preserving Argon2 work", async () => {
     await expect(

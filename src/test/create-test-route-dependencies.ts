@@ -1,6 +1,8 @@
 import type { DatabaseClient } from "../infrastructure/database/index.js";
 import type { ObjectStorage } from "../infrastructure/storage/index.js";
 import { createAccessTokenService } from "../shared/authentication/access-token.js";
+import { createLoginOtpService } from "../shared/authentication/login-otp.js";
+import { createRefreshTokenCookieService } from "../shared/authentication/refresh-token-cookie.js";
 import { createRateLimitMiddlewares } from "../shared/middleware/rate-limit.middleware.js";
 
 const unexpectedStorageCall = async (): Promise<never> => {
@@ -31,6 +33,10 @@ export function createTestRouteDependencies() {
     secret: "0".repeat(64),
     ttlSeconds: 600,
   });
+  const loginOtp = createLoginOtpService({
+    secret: "1".repeat(64),
+    ttlSeconds: 300,
+  });
   return {
     authentication: {
       userAccessToken,
@@ -39,11 +45,20 @@ export function createTestRouteDependencies() {
     },
     authPublic: {
       accessToken: userAccessToken,
+      accessTokenTtlSeconds: 900,
       database: {} as DatabaseClient,
       authEmail: {
         async sendVerificationEmail() {},
         async sendLoginOtp() {},
       },
+      loginOtp,
+      maxOtpAttempts: 5,
+      refreshTokenCookie: createRefreshTokenCookieService({
+        name: "refresh_token",
+        path: "/api/v1/auth",
+        secure: false,
+      }),
+      refreshTokenTtlSeconds: 2_592_000,
       verificationTokenTtlSeconds: 86_400,
     },
     rateLimiters: createRateLimitMiddlewares(120, 60_000),

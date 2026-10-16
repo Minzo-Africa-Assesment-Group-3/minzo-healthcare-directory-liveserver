@@ -12,12 +12,18 @@ describe("API foundation", () => {
     routes: createTestRouteDependencies(),
   });
 
-  it("documents only health and the two registration endpoints", async () => {
+  it("documents only health and the implemented authentication endpoints", async () => {
     const response = await request(app).get("/openapi.json").expect(200);
     const document = response.body as { paths: Record<string, unknown> };
     expect(Object.keys(document.paths).sort()).toEqual([
+      "/api/v1/auth/login",
+      "/api/v1/auth/login/verify-otp",
+      "/api/v1/auth/logout",
+      "/api/v1/auth/refresh",
       "/api/v1/auth/register/business",
       "/api/v1/auth/register/user",
+      "/api/v1/auth/resend-verification",
+      "/api/v1/auth/verify-email",
       "/api/v1/health",
     ]);
   });
@@ -29,9 +35,19 @@ describe("API foundation", () => {
     expect(response.headers["x-request-id"]).toBeDefined();
   });
 
-  it("does not expose business management or login endpoints", async () => {
+  it("does not expose unimplemented business management endpoints", async () => {
     await request(app).get("/api/v1/businesses").expect(404);
-    await request(app).post("/api/v1/auth/login").expect(404);
+  });
+
+  it("validates login requests", async () => {
+    const response = await request(app)
+      .post("/api/v1/auth/login")
+      .send({})
+      .expect(400);
+    expect(response.body).toMatchObject({
+      code: "request_validation_failed",
+      status: 400,
+    });
   });
 
   it.each(["user", "business"])("registers %s signup with request validation", async (kind) => {
