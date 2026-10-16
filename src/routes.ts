@@ -17,6 +17,8 @@ import {
 } from "./features/system/routes.js";
 import { sendProblemDetails } from "./shared/errors/problem-details.js";
 import type { RateLimitMiddlewares } from "./shared/middleware/rate-limit.middleware.js";
+import { createBusinessRegistrationDocumentsHandlers, businessRegistrationDocumentsContract, type BusinessRegistrationDocumentsRouteDependencies } from "./features/business-registration-documents/routes.js";
+import { createAuthenticationMiddlewares, type AuthenticationMiddlewareDependencies } from "./shared/authentication/authentication.middleware.js";
 
 const contract = initContract();
 const server = initServer();
@@ -24,11 +26,14 @@ const server = initServer();
 export const applicationContract = contract.router({
   authPublic: authPublicContract,
   system: systemContract,
+  businessRegistrationDocuments: businessRegistrationDocumentsContract,
 });
 
 export interface ApplicationRouteDependencies {
   authPublic: AuthPublicRouteDependencies;
   rateLimiters: RateLimitMiddlewares;
+  businessRegistrationDocuments: BusinessRegistrationDocumentsRouteDependencies;
+  authentication: AuthenticationMiddlewareDependencies;
 }
 
 function getValidationIssues(error: RequestValidationError) {
@@ -44,6 +49,9 @@ export function registerApplicationRoutes(
   app: Express,
   dependencies: ApplicationRouteDependencies,
 ): void {
+  const authentication = createAuthenticationMiddlewares(
+    dependencies.authentication,
+  );
   const applicationRouter = server.router(
     applicationContract,
     {
@@ -52,6 +60,11 @@ export function registerApplicationRoutes(
         dependencies.rateLimiters.authPublic,
       ),
       system: systemHandlers,
+      businessRegistrationDocuments:
+      createBusinessRegistrationDocumentsHandlers(
+        dependencies.businessRegistrationDocuments,
+        authentication,
+      ),
     },
   );
 
