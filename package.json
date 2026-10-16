@@ -2,23 +2,19 @@
   "name": "minzo-health-dir-live",
   "version": "1.0.0",
   "type": "module",
-  "main": "index.js",
+  "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "typecheck": "tsc --noEmit",
-    "build": "npm run db:generate && tsc -p tsconfig.json",
+    "build": "npm run db:generate && tsc -p tsconfig.build.json",
     "start": "node dist/server.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "vitest run src",
     "test:watch": "vitest src",
-    "admin:provision": "tsx src/scripts/provision-admin.ts",
-    "storage:setup": "tsx src/scripts/setup-supabase-storage.ts",
-    "data:validate:liberia-healthcare": "tsx src/scripts/validate-liberia-healthcare-seed.ts",
     "db:generate": "prisma generate",
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
-    "db:seed": "prisma db seed",
     "db:studio": "prisma studio"
   },
   "keywords": [],
@@ -65,5 +61,6 @@
     "typescript-eslint": "8.71.1",
     "vite": "7.3.7",
     "vitest": "^5.0.3"
-  }
+  },
+  "private": true
 }

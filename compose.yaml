@@ -1,0 +1,19 @@
+services:
+  database:
+    image: postgis/postgis:17-3.5
+    platform: linux/amd64
+    environment:
+      POSTGRES_DB: ${MINZO_DB_NAME:-minzo_interview}
+      POSTGRES_USER: ${MINZO_DB_USER:-minzo_app}
+      POSTGRES_PASSWORD: ${MINZO_DB_PASSWORD:?Set MINZO_DB_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:${MINZO_DB_PORT:-5434}:5432"
+    volumes:
+      - minzo_live_database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  minzo_live_database:

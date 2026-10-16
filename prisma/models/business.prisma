@@ -1,0 +1,532 @@
+enum BusinessStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum BusinessVerificationStatus {
+  UNVERIFIED
+  VERIFIED
+}
+
+enum BusinessClaimStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum BusinessClaimDocumentStatus {
+  PENDING_UPLOAD
+  UPLOADED
+  ATTACHED
+  REJECTED
+}
+
+enum BusinessRegistrationDocumentStatus {
+  PENDING_UPLOAD
+  ATTACHED
+  REJECTED
+}
+
+enum BusinessMediaBatchStatus {
+  UPLOADING
+  PENDING_REVIEW
+  REVIEWED
+  CANCELLED
+}
+
+enum BusinessMediaStatus {
+  PENDING_UPLOAD
+  UPLOADED
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  DELETED
+}
+
+enum BusinessLocationStatus {
+  DRAFT
+  ACTIVE
+  INACTIVE
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum BusinessMembershipRole {
+  OWNER
+  MANAGER
+}
+
+enum BusinessRecordSource {
+  SELF_REGISTERED
+  IMPORTED
+  ADMIN_CREATED
+}
+
+enum BusinessStaffProfession {
+  GENERAL_PRACTITIONER
+  DENTIST
+  NURSE
+  PHARMACIST
+  PEDIATRICIAN
+  OPHTHALMOLOGIST
+  OTHER
+}
+
+enum BusinessStaffVerificationStatus {
+  UNVERIFIED
+  VERIFIED
+}
+
+enum ReviewStatus {
+  PUBLISHED
+  HIDDEN
+  DELETED
+}
+
+enum ReviewModerationStatus {
+  UNREVIEWED
+  APPROVED
+  FLAGGED
+  REJECTED
+}
+
+enum ReviewModerationActorType {
+  ADMIN
+  AUTOMATION
+}
+
+enum ReviewModerationDecision {
+  APPROVED
+  FLAGGED
+  REJECTED
+}
+
+enum BusinessContactMessageStatus {
+  UNREAD
+  READ
+}
+
+enum ImportBatchStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum ImportedEntityType {
+  BUSINESS_LOCATION
+  BUSINESS_STAFF_MEMBER
+}
+
+model Business {
+  id                               String                     @id @default(uuid()) @db.Uuid
+  displayName                      String                     @map("display_name") @db.VarChar(200)
+  legalName                        String?                    @map("legal_name") @db.VarChar(200)
+  slug                             String                     @unique @db.VarChar(220)
+  registrationNumber               String?                    @unique @map("registration_number") @db.VarChar(100)
+  source                           BusinessRecordSource       @default(SELF_REGISTERED)
+  status                           BusinessStatus             @default(DRAFT)
+  verificationStatus               BusinessVerificationStatus @default(UNVERIFIED) @map("verification_status")
+  verifiedAt                       DateTime?                  @map("verified_at") @db.Timestamptz(6)
+  verifiedByAdminId                String?                    @map("verified_by_admin_id") @db.Uuid
+  reviewedByAdminId                String?                    @map("reviewed_by_admin_id") @db.Uuid
+  reviewedAt                       DateTime?                  @map("reviewed_at") @db.Timestamptz(6)
+  reviewNote                       String?                    @map("review_note") @db.VarChar(1000)
+  registrationDocumentKey          String?                    @unique @map("registration_document_key") @db.VarChar(500)
+  registrationDocumentOriginalName String?                    @map("registration_document_original_name") @db.VarChar(255)
+  registrationDocumentMimeType     String?                    @map("registration_document_mime_type") @db.VarChar(100)
+  registrationDocumentSizeBytes    Int?                       @map("registration_document_size_bytes")
+  registrationDocumentUploadedAt   DateTime?                  @map("registration_document_uploaded_at") @db.Timestamptz(6)
+  submittedAt                      DateTime?                  @map("submitted_at") @db.Timestamptz(6)
+  approvedAt                       DateTime?                  @map("approved_at") @db.Timestamptz(6)
+  rejectedAt                       DateTime?                  @map("rejected_at") @db.Timestamptz(6)
+  createdAt                        DateTime                   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                        DateTime                   @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  memberships           BusinessMembership[]
+  locations             BusinessLocation[]
+  claims                BusinessClaim[]
+  registrationDocuments BusinessRegistrationDocument[]
+  mediaBatches          BusinessMediaBatch[]
+  media                 BusinessMedia[]
+  reviews               Review[]
+  contactMessages       BusinessContactMessage[]
+  verifiedBy            AdminUser?                     @relation("BusinessVerifier", fields: [verifiedByAdminId], references: [id], onDelete: SetNull)
+  reviewedBy            AdminUser?                     @relation("BusinessReviewer", fields: [reviewedByAdminId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([status, displayName, id], map: "businesses_status_display_name_id_idx")
+  @@index([verificationStatus])
+  @@index([verifiedByAdminId])
+  @@index([reviewedByAdminId])
+  @@map("businesses")
+}
+
+model BusinessLocation {
+  id           String                                 @id @default(uuid()) @db.Uuid
+  businessId   String                                 @map("business_id") @db.Uuid
+  name         String                                 @db.VarChar(200)
+  slug         String                                 @db.VarChar(220)
+  facilityType String?                                @map("facility_type") @db.VarChar(100)
+  contactEmail String?                                @map("contact_email") @db.VarChar(320)
+  contactPhone String?                                @map("contact_phone") @db.VarChar(30)
+  websiteUrl   String?                                @map("website_url") @db.VarChar(500)
+  description  String?                                @db.Text
+  addressLine  String?                                @map("address_line") @db.VarChar(255)
+  county       String?                                @db.VarChar(100)
+  cityOrTown   String?                                @map("city_or_town") @db.VarChar(100)
+  latitude     Decimal?                               @db.Decimal(9, 6)
+  longitude    Decimal?                               @db.Decimal(9, 6)
+  location     Unsupported("geography(Point, 4326)")? @default(dbgenerated())
+  timezone     String                                 @default("Africa/Monrovia") @db.VarChar(100)
+  status       BusinessLocationStatus                 @default(DRAFT)
+  isPrimary    Boolean                                @default(false) @map("is_primary")
+  createdAt    DateTime                               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime                               @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  business       Business                        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  openingPeriods BusinessLocationOpeningPeriod[]
+  staffMembers   BusinessStaffMember[]
+  services       BusinessLocationService[]
+
+  @@unique([businessId, slug])
+  @@index([businessId, status])
+  @@index([county, cityOrTown])
+  @@map("business_locations")
+}
+
+model BusinessLocationOpeningPeriod {
+  id                 String    @id @default(uuid()) @db.Uuid
+  businessLocationId String    @map("business_location_id") @db.Uuid
+  dayOfWeek          DayOfWeek @map("day_of_week")
+  opensAtMinutes     Int       @map("opens_at_minutes")
+  closesAtMinutes    Int       @map("closes_at_minutes")
+  closesNextDay      Boolean   @default(false) @map("closes_next_day")
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  businessLocation BusinessLocation @relation(fields: [businessLocationId], references: [id], onDelete: Cascade)
+
+  @@unique([businessLocationId, dayOfWeek, opensAtMinutes], map: "opening_periods_location_day_open_key")
+  @@index([businessLocationId, dayOfWeek], map: "opening_periods_location_day_idx")
+  @@map("business_location_opening_periods")
+}
+
+model BusinessMembership {
+  userId     String                 @map("user_id") @db.Uuid
+  businessId String                 @map("business_id") @db.Uuid
+  role       BusinessMembershipRole
+  createdAt  DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@id([userId, businessId])
+  @@index([businessId])
+  @@map("business_memberships")
+}
+
+model BusinessClaim {
+  id                           String                 @id @default(uuid()) @db.Uuid
+  businessId                   String                 @map("business_id") @db.Uuid
+  claimantUserId               String                 @map("claimant_user_id") @db.Uuid
+  requestedRole                BusinessMembershipRole @map("requested_role")
+  status                       BusinessClaimStatus    @default(PENDING)
+  claimantNote                 String?                @map("claimant_note") @db.Text
+  evidenceDocumentKey          String                 @map("evidence_document_key") @db.VarChar(500)
+  evidenceDocumentOriginalName String                 @map("evidence_document_original_name") @db.VarChar(255)
+  evidenceDocumentMimeType     String                 @map("evidence_document_mime_type") @db.VarChar(100)
+  evidenceDocumentSizeBytes    Int                    @map("evidence_document_size_bytes")
+  evidenceDocumentId           String?                @unique @map("evidence_document_id") @db.Uuid
+  reviewedByAdminId            String?                @map("reviewed_by_admin_id") @db.Uuid
+  reviewedAt                   DateTime?              @map("reviewed_at") @db.Timestamptz(6)
+  reviewNote                   String?                @map("review_note") @db.Text
+  createdAt                    DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                    DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  business         Business               @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  claimantUser     User                   @relation(fields: [claimantUserId], references: [id], onDelete: Cascade)
+  reviewedByAdmin  AdminUser?             @relation("BusinessClaimReviewer", fields: [reviewedByAdminId], references: [id], onDelete: SetNull)
+  evidenceDocument BusinessClaimDocument? @relation(fields: [evidenceDocumentId], references: [id], onDelete: Restrict)
+
+  @@index([businessId, status])
+  @@index([claimantUserId, status])
+  @@index([status, createdAt])
+  @@index([reviewedByAdminId])
+  @@map("business_claims")
+}
+
+model BusinessClaimDocument {
+  id                String                      @id @default(uuid()) @db.Uuid
+  ownerUserId       String                      @map("owner_user_id") @db.Uuid
+  bucket            String                      @db.VarChar(63)
+  objectKey         String                      @unique @map("object_key") @db.VarChar(500)
+  originalFileName  String                      @map("original_file_name") @db.VarChar(255)
+  declaredMimeType  String                      @map("declared_mime_type") @db.VarChar(100)
+  declaredSizeBytes Int                         @map("declared_size_bytes")
+  verifiedMimeType  String?                     @map("verified_mime_type") @db.VarChar(100)
+  verifiedSizeBytes Int?                        @map("verified_size_bytes")
+  status            BusinessClaimDocumentStatus @default(PENDING_UPLOAD)
+  uploadExpiresAt   DateTime                    @map("upload_expires_at") @db.Timestamptz(6)
+  uploadedAt        DateTime?                   @map("uploaded_at") @db.Timestamptz(6)
+  attachedAt        DateTime?                   @map("attached_at") @db.Timestamptz(6)
+  rejectionReason   String?                     @map("rejection_reason") @db.VarChar(255)
+  createdAt         DateTime                    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime                    @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  ownerUser User           @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  claim     BusinessClaim?
+
+  @@index([ownerUserId, status])
+  @@index([status, uploadExpiresAt])
+  @@map("business_claim_documents")
+}
+
+model BusinessRegistrationDocument {
+  id                String                             @id @default(uuid()) @db.Uuid
+  businessId        String                             @map("business_id") @db.Uuid
+  ownerUserId       String                             @map("owner_user_id") @db.Uuid
+  bucket            String                             @db.VarChar(63)
+  objectKey         String                             @unique @map("object_key") @db.VarChar(500)
+  originalFileName  String                             @map("original_file_name") @db.VarChar(255)
+  declaredMimeType  String                             @map("declared_mime_type") @db.VarChar(100)
+  declaredSizeBytes Int                                @map("declared_size_bytes")
+  verifiedMimeType  String?                            @map("verified_mime_type") @db.VarChar(100)
+  verifiedSizeBytes Int?                               @map("verified_size_bytes")
+  status            BusinessRegistrationDocumentStatus @default(PENDING_UPLOAD)
+  uploadExpiresAt   DateTime                           @map("upload_expires_at") @db.Timestamptz(6)
+  uploadedAt        DateTime?                          @map("uploaded_at") @db.Timestamptz(6)
+  attachedAt        DateTime?                          @map("attached_at") @db.Timestamptz(6)
+  rejectionReason   String?                            @map("rejection_reason") @db.VarChar(255)
+  createdAt         DateTime                           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime                           @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  business  Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  ownerUser User     @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+
+  @@index([businessId, status])
+  @@index([ownerUserId, status])
+  @@index([status, uploadExpiresAt])
+  @@map("business_registration_documents")
+}
+
+model BusinessMediaBatch {
+  id               String                   @id @default(uuid()) @db.Uuid
+  businessId       String                   @map("business_id") @db.Uuid
+  uploadedByUserId String                   @map("uploaded_by_user_id") @db.Uuid
+  status           BusinessMediaBatchStatus @default(UPLOADING)
+  submittedAt      DateTime?                @map("submitted_at") @db.Timestamptz(6)
+  reviewedAt       DateTime?                @map("reviewed_at") @db.Timestamptz(6)
+  createdAt        DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  business       Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  uploadedByUser User            @relation(fields: [uploadedByUserId], references: [id], onDelete: Cascade)
+  items          BusinessMedia[]
+
+  @@index([businessId, status])
+  @@index([uploadedByUserId, status])
+  @@index([status, createdAt])
+  @@map("business_media_batches")
+}
+
+model BusinessMedia {
+  id                String              @id @default(uuid()) @db.Uuid
+  batchId           String              @map("batch_id") @db.Uuid
+  businessId        String              @map("business_id") @db.Uuid
+  reviewedByAdminId String?             @map("reviewed_by_admin_id") @db.Uuid
+  bucket            String              @db.VarChar(63)
+  objectKey         String              @unique @map("object_key") @db.VarChar(500)
+  originalFileName  String              @map("original_file_name") @db.VarChar(255)
+  declaredMimeType  String              @map("declared_mime_type") @db.VarChar(100)
+  declaredSizeBytes Int                 @map("declared_size_bytes")
+  verifiedMimeType  String?             @map("verified_mime_type") @db.VarChar(100)
+  verifiedSizeBytes Int?                @map("verified_size_bytes")
+  altText           String?             @map("alt_text") @db.VarChar(255)
+  status            BusinessMediaStatus @default(PENDING_UPLOAD)
+  sortOrder         Int                 @default(0) @map("sort_order")
+  isCover           Boolean             @default(false) @map("is_cover")
+  uploadExpiresAt   DateTime            @map("upload_expires_at") @db.Timestamptz(6)
+  uploadedAt        DateTime?           @map("uploaded_at") @db.Timestamptz(6)
+  reviewedAt        DateTime?           @map("reviewed_at") @db.Timestamptz(6)
+  rejectionReason   String?             @map("rejection_reason") @db.VarChar(500)
+  deletedAt         DateTime?           @map("deleted_at") @db.Timestamptz(6)
+  createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  batch           BusinessMediaBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  business        Business           @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  reviewedByAdmin AdminUser?         @relation("BusinessMediaReviewer", fields: [reviewedByAdminId], references: [id], onDelete: SetNull)
+
+  @@index([batchId, status])
+  @@index([businessId, status, sortOrder])
+  @@index([reviewedByAdminId])
+  @@index([status, uploadExpiresAt])
+  @@map("business_media")
+}
+
+model BusinessStaffMember {
+  id                 String                          @id @default(uuid()) @db.Uuid
+  businessLocationId String                          @map("business_location_id") @db.Uuid
+  userId             String?                         @map("user_id") @db.Uuid
+  displayName        String                          @map("display_name") @db.VarChar(100)
+  profession         BusinessStaffProfession
+  professionalTitle  String?                         @map("professional_title") @db.VarChar(100)
+  phone              String?                         @db.VarChar(30)
+  email              String?                         @db.VarChar(320)
+  yearsExperience    Int?                            @map("years_experience")
+  isPublic           Boolean                         @default(true) @map("is_public")
+  verificationStatus BusinessStaffVerificationStatus @default(UNVERIFIED) @map("verification_status")
+  source             BusinessRecordSource            @default(SELF_REGISTERED)
+  createdAt          DateTime                        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime                        @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  businessLocation BusinessLocation @relation(fields: [businessLocationId], references: [id], onDelete: Cascade)
+  user             User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([businessLocationId, profession])
+  @@index([userId])
+  @@map("business_staff_members")
+}
+
+model Service {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(150)
+  slug      String   @unique @db.VarChar(170)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  businessLocations BusinessLocationService[]
+
+  @@index([name, id], map: "services_name_id_idx")
+  @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "services_name_search_trgm_idx")
+  @@map("services")
+}
+
+model BusinessLocationService {
+  businessLocationId String   @map("business_location_id") @db.Uuid
+  serviceId          String   @map("service_id") @db.Uuid
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  businessLocation BusinessLocation @relation(fields: [businessLocationId], references: [id], onDelete: Cascade)
+  service          Service          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@id([businessLocationId, serviceId])
+  @@index([businessLocationId])
+  @@index([serviceId])
+  @@map("business_location_services")
+}
+
+model Review {
+  id               String                 @id @default(uuid()) @db.Uuid
+  businessId       String                 @map("business_id") @db.Uuid
+  userId           String                 @map("user_id") @db.Uuid
+  stars            Int                    @db.SmallInt
+  text             String                 @db.Text
+  isAnonymous      Boolean                @default(false) @map("is_anonymous")
+  status           ReviewStatus           @default(PUBLISHED)
+  moderationStatus ReviewModerationStatus @default(UNREVIEWED) @map("moderation_status")
+  submittedAt      DateTime               @default(now()) @map("submitted_at") @db.Timestamptz(6)
+  deletedAt        DateTime?              @map("deleted_at") @db.Timestamptz(6)
+  createdAt        DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  business          Business                 @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  author            User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moderationActions ReviewModerationAction[]
+
+  @@unique([businessId, userId])
+  @@index([businessId, status, submittedAt])
+  @@index([userId, status])
+  @@index([moderationStatus, submittedAt])
+  @@map("reviews")
+}
+
+model ReviewModerationAction {
+  id             String                    @id @default(uuid()) @db.Uuid
+  reviewId       String                    @map("review_id") @db.Uuid
+  actorType      ReviewModerationActorType @map("actor_type")
+  decision       ReviewModerationDecision
+  adminUserId    String?                   @map("admin_user_id") @db.Uuid
+  actorReference String?                   @map("actor_reference") @db.VarChar(200)
+  reason         String?                   @db.VarChar(1000)
+  createdAt      DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  review    Review     @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  adminUser AdminUser? @relation("ReviewModerationAdmin", fields: [adminUserId], references: [id], onDelete: Restrict)
+
+  @@index([reviewId, createdAt])
+  @@index([adminUserId])
+  @@map("review_moderation_actions")
+}
+
+model BusinessContactMessage {
+  id           String                       @id @default(uuid()) @db.Uuid
+  businessId   String                       @map("business_id") @db.Uuid
+  senderUserId String?                      @map("sender_user_id") @db.Uuid
+  senderName   String                       @map("sender_name") @db.VarChar(100)
+  senderEmail  String?                      @map("sender_email") @db.VarChar(320)
+  senderPhone  String?                      @map("sender_phone") @db.VarChar(30)
+  body         String                       @db.Text
+  status       BusinessContactMessageStatus @default(UNREAD)
+  readAt       DateTime?                    @map("read_at") @db.Timestamptz(6)
+  readByUserId String?                      @map("read_by_user_id") @db.Uuid
+  createdAt    DateTime                     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime                     @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  sender   User?    @relation("BusinessContactMessageSender", fields: [senderUserId], references: [id], onDelete: SetNull)
+  readBy   User?    @relation("BusinessContactMessageReader", fields: [readByUserId], references: [id], onDelete: SetNull)
+
+  @@index([businessId, status, createdAt])
+  @@index([senderUserId, createdAt])
+  @@index([readByUserId])
+  @@map("business_contact_messages")
+}
+
+model ImportBatch {
+  id             String            @id @default(uuid()) @db.Uuid
+  source         String            @db.VarChar(100)
+  sourceFileName String            @map("source_file_name") @db.VarChar(255)
+  status         ImportBatchStatus @default(PENDING)
+  startedAt      DateTime          @default(now()) @map("started_at") @db.Timestamptz(6)
+  completedAt    DateTime?         @map("completed_at") @db.Timestamptz(6)
+  createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  records ImportedRecord[]
+
+  @@index([source, startedAt])
+  @@map("import_batches")
+}
+
+model ImportedRecord {
+  id            String             @id @default(uuid()) @db.Uuid
+  importBatchId String             @map("import_batch_id") @db.Uuid
+  source        String             @db.VarChar(100)
+  sourceKey     String             @map("source_key") @db.VarChar(255)
+  sourceSheet   String             @map("source_sheet") @db.VarChar(100)
+  sourceRow     Int                @map("source_row")
+  payloadHash   String             @map("payload_hash") @db.VarChar(64)
+  entityType    ImportedEntityType @map("entity_type")
+  entityId      String             @map("entity_id") @db.Uuid
+  importedAt    DateTime           @default(now()) @map("imported_at") @db.Timestamptz(6)
+
+  importBatch ImportBatch @relation(fields: [importBatchId], references: [id], onDelete: Cascade)
+
+  @@unique([source, sourceKey])
+  @@unique([importBatchId, sourceSheet, sourceRow])
+  @@index([entityType, entityId])
+  @@map("imported_records")
+}
