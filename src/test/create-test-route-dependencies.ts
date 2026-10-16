@@ -61,12 +61,19 @@ export function createTestRouteDependencies() {
       refreshTokenTtlSeconds: 2_592_000,
       verificationTokenTtlSeconds: 86_400,
     },
+    authAdmin: {
+      accessToken: adminAccessToken,
+    },
     businessRegistrationDocuments: {
       businessRegistrationsBucket: "business-registration-documents",
       database: {} as DatabaseClient,
       objectStorage,
     },
+    cities: { database: {} as DatabaseClient },
+    counties: { database: {} as DatabaseClient },
     rateLimiters: createRateLimitMiddlewares(120, 60_000),
+    reviewModeration: { database: {} as DatabaseClient },
+    reviews: { database: {} as DatabaseClient },
     businesses: { database: {} as DatabaseClient, objectStorage },
   };
 }

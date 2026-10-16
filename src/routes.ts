@@ -19,6 +19,26 @@ import { sendProblemDetails } from "./shared/errors/problem-details.js";
 import type { RateLimitMiddlewares } from "./shared/middleware/rate-limit.middleware.js";
 import { createBusinessRegistrationDocumentsHandlers, businessRegistrationDocumentsContract, type BusinessRegistrationDocumentsRouteDependencies } from "./features/business-registration-documents/routes.js";
 import { createAuthenticationMiddlewares, type AuthenticationMiddlewareDependencies } from "./shared/authentication/authentication.middleware.js";
+import {
+  citiesContract,
+  createCitiesHandlers,
+  type CitiesRouteDependencies,
+} from "./features/cities/routes.js";
+import {
+  countiesContract,
+  createCountiesHandlers,
+  type CountiesRouteDependencies,
+} from "./features/counties/routes.js";
+import {
+  createCustomerFeedbackModerationHandlers,
+  customerFeedbackModerationContract,
+  type CustomerFeedbackModerationRouteDependencies,
+} from "./features/customer-feedback-moderation/routes.js";
+import {
+  createReviewsHandlers,
+  reviewsContract,
+  type ReviewsRouteDependencies,
+} from "./features/reviews copy/routes.js";
 
 const contract = initContract();
 const server = initServer();
@@ -27,6 +47,10 @@ export const applicationContract = contract.router({
   authPublic: authPublicContract,
   system: systemContract,
   businessRegistrationDocuments: businessRegistrationDocumentsContract,
+  cities: citiesContract,
+  counties: countiesContract,
+  reviewModeration: customerFeedbackModerationContract,
+  reviews: reviewsContract,
 });
 
 export interface ApplicationRouteDependencies {
@@ -34,6 +58,10 @@ export interface ApplicationRouteDependencies {
   rateLimiters: RateLimitMiddlewares;
   businessRegistrationDocuments: BusinessRegistrationDocumentsRouteDependencies;
   authentication: AuthenticationMiddlewareDependencies;
+  cities: CitiesRouteDependencies;
+  counties: CountiesRouteDependencies;
+  reviewModeration: CustomerFeedbackModerationRouteDependencies;
+  reviews: ReviewsRouteDependencies;
 }
 
 function getValidationIssues(error: RequestValidationError) {
@@ -64,6 +92,18 @@ export function registerApplicationRoutes(
       createBusinessRegistrationDocumentsHandlers(
         dependencies.businessRegistrationDocuments,
         authentication,
+      ),
+      counties: createCountiesHandlers(dependencies.counties),
+      cities: createCitiesHandlers(dependencies.cities),
+      reviewModeration:
+        createCustomerFeedbackModerationHandlers(
+          dependencies.reviewModeration,
+          authentication,
+        ),
+      reviews: createReviewsHandlers(
+        dependencies.reviews,
+        authentication,
+        dependencies.rateLimiters.reviews,
       ),
     },
   );

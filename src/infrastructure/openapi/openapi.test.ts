@@ -12,10 +12,12 @@ describe("API foundation", () => {
     routes: createTestRouteDependencies(),
   });
 
-  it("documents only health and the implemented authentication endpoints", async () => {
+  it("documents the implemented API endpoints", async () => {
     const response = await request(app).get("/openapi.json").expect(200);
     const document = response.body as { paths: Record<string, unknown> };
     expect(Object.keys(document.paths).sort()).toEqual([
+      "/api/v1/admin/customer-reviews",
+      "/api/v1/admin/customer-reviews/{reviewId}/moderation",
       "/api/v1/auth/login",
       "/api/v1/auth/login/verify-otp",
       "/api/v1/auth/logout",
@@ -25,8 +27,14 @@ describe("API foundation", () => {
       "/api/v1/auth/resend-verification",
       "/api/v1/auth/verify-email",
       "/api/v1/business-registration-documents/{documentId}/complete",
+      "/api/v1/businesses/{businessId}/customer-reviews",
+      "/api/v1/businesses/{businessId}/rating",
       "/api/v1/businesses/{businessId}/registration-document/upload-url",
+      "/api/v1/businesses/{businessId}/reviews",
+      "/api/v1/cities",
+      "/api/v1/counties",
       "/api/v1/health",
+      "/api/v1/reviews/{reviewId}",
     ]);
   });
 

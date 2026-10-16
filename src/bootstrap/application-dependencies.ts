@@ -65,7 +65,11 @@ export function createApplicationDependencies(
         database,
         objectStorage,
       },
+      cities: { database },
+      counties: { database },
       rateLimiters,
+      reviewModeration: { database },
+      reviews: { database },
     },
     trustProxyHops: env.TRUST_PROXY_HOPS,
   };
