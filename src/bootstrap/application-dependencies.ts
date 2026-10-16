@@ -4,7 +4,9 @@ import {
   type DatabaseClient,
 } from "../infrastructure/database/index.js";
 import { createResendEmailSender } from "../infrastructure/email/index.js";
+import { createSupabaseObjectStorage } from "../infrastructure/storage/index.js";
 import type { ApplicationRouteDependencies } from "../routes.js";
+import { createAccessTokenService } from "../shared/authentication/index.js";
 import { createCorsMiddleware } from "../shared/middleware/cors.middleware.js";
 import { createRateLimitMiddlewares } from "../shared/middleware/rate-limit.middleware.js";
 import { createAuthPublicDependencies } from "./auth-public-dependencies.js";
@@ -34,12 +36,37 @@ export function createApplicationDependencies(
     emailSender,
     env,
   });
+  const adminAccessToken = createAccessTokenService({
+    audience: env.ADMIN_JWT_AUDIENCE,
+    issuer: env.JWT_ISSUER,
+    realm: "admin",
+    secret: env.ADMIN_JWT_ACCESS_SECRET,
+    ttlSeconds: env.ADMIN_JWT_ACCESS_TOKEN_TTL_SECONDS,
+  });
+  const objectStorage = createSupabaseObjectStorage({
+    secretKey: env.SUPABASE_SECRET_KEY,
+    url: env.SUPABASE_URL,
+  });
 
   return {
     apiRateLimiter: rateLimiters.api,
     corsMiddleware: createCorsMiddleware(env.CORS_ALLOWED_ORIGINS),
     database,
-    routes: { authPublic, rateLimiters },
+    routes: {
+      authentication: {
+        adminAccessToken,
+        database,
+        userAccessToken: authPublic.accessToken,
+      },
+      authPublic,
+      businessRegistrationDocuments: {
+        businessRegistrationsBucket:
+          env.SUPABASE_BUSINESS_REGISTRATIONS_BUCKET,
+        database,
+        objectStorage,
+      },
+      rateLimiters,
+    },
     trustProxyHops: env.TRUST_PROXY_HOPS,
   };
 }

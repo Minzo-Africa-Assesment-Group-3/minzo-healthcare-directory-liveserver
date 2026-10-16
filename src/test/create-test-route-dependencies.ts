@@ -61,6 +61,11 @@ export function createTestRouteDependencies() {
       refreshTokenTtlSeconds: 2_592_000,
       verificationTokenTtlSeconds: 86_400,
     },
+    businessRegistrationDocuments: {
+      businessRegistrationsBucket: "business-registration-documents",
+      database: {} as DatabaseClient,
+      objectStorage,
+    },
     rateLimiters: createRateLimitMiddlewares(120, 60_000),
     businesses: { database: {} as DatabaseClient, objectStorage },
   };

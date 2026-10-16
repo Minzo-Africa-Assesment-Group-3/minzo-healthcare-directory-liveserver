@@ -24,6 +24,8 @@ describe("API foundation", () => {
       "/api/v1/auth/register/user",
       "/api/v1/auth/resend-verification",
       "/api/v1/auth/verify-email",
+      "/api/v1/business-registration-documents/{documentId}/complete",
+      "/api/v1/businesses/{businessId}/registration-document/upload-url",
       "/api/v1/health",
     ]);
   });

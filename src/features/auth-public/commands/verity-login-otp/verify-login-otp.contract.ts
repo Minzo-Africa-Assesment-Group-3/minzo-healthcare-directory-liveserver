@@ -13,7 +13,7 @@ export const verifyLoginOtpContract = contract.mutation({
   description: "Consumes a login challenge, returns an access token, and sets a refresh-token cookie.",
   body: z.object({
     challengeId: z.string().uuid(),
-    otp: z.string().regex(/^\d{6}$/),
+    otp: z.string().regex(/^\d{4}$/),
   }),
   responses: {
     200: z.object({

@@ -43,7 +43,7 @@ export function createLoginOtpService(options: {
   return Object.freeze({
     generate(now: Date = new Date()): GeneratedLoginOtp {
       const challengeId = randomUUID();
-      const otp = randomInt(0, 1_000_000).toString().padStart(6, "0");
+      const otp = randomInt(0, 10_000).toString().padStart(4, "0");
 
       return {
         challengeId,
@@ -58,7 +58,7 @@ export function createLoginOtpService(options: {
       otp: string,
       expectedDigest: string,
     ): boolean {
-      if (!/^\d{6}$/.test(otp) || !/^[a-fA-F0-9]{64}$/.test(expectedDigest)) {
+      if (!/^\d{4}$/.test(otp) || !/^[a-fA-F0-9]{64}$/.test(expectedDigest)) {
         return false;
       }
 

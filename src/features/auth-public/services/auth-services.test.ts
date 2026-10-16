@@ -126,7 +126,7 @@ describe("email-verification-token service", () => {
 });
 
 describe("login-otp service", () => {
-  it("generates and verifies a six-digit challenge-bound OTP", () => {
+  it("generates and verifies a four-digit challenge-bound OTP", () => {
     const service = createLoginOtpService({
       secret: "c".repeat(64),
       ttlSeconds: 300,
@@ -134,7 +134,7 @@ describe("login-otp service", () => {
     const now = new Date("2026-10-13T00:00:00.000Z");
     const challenge = service.generate(now);
 
-    expect(challenge.otp).toMatch(/^\d{6}$/);
+    expect(challenge.otp).toMatch(/^\d{4}$/);
     expect(challenge.otpDigest).toMatch(/^[a-f0-9]{64}$/);
     expect(challenge.expiresAt).toEqual(
       new Date("2026-10-13T00:05:00.000Z"),
