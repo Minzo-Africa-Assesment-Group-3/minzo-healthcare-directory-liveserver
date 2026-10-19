@@ -7,19 +7,22 @@ export function createSearchCountiesHandler(dependencies: {
   database: DatabaseClient;
 }): AppRouteQueryImplementation<typeof searchCountiesContract> {
   return async ({ query }) => {
+    const limit = query.limit ?? (query.search ? 10 : undefined);
     const counties = await dependencies.database.county.findMany({
       where: {
         isActive: true,
-        name: {
-          contains: query.search,
-          mode: "insensitive",
-        },
+        ...(query.search ? {
+          name: {
+            contains: query.search,
+            mode: "insensitive" as const,
+          },
+        } : {}),
       },
       orderBy: [
         { name: "asc" },
         { id: "asc" },
       ],
-      take: query.limit,
+      ...(limit !== undefined ? { take: limit } : {}),
       select: {
         id: true,
         name: true,

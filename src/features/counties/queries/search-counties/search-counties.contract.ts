@@ -15,13 +15,18 @@ export const searchCountiesContract = contract.query({
   method: "GET",
   path: "/api/v1/counties",
   query: z.object({
-    search: z.string().trim().min(2).max(100),
-    limit: z.coerce.number().int().min(1).max(20).default(10),
+    search: z.preprocess(
+      (value) => typeof value === "string" && value.trim() === "" ? undefined : value,
+      z.string().trim().min(2).max(100).optional(),
+    ),
+    limit: z.coerce.number().int().min(1).max(20).optional(),
   }),
   strictStatusCodes: true,
-  summary: "Search the county catalogue",
+  summary: "List or search the county catalogue",
   description:
-    "Returns a small, alphabetically ordered list of active Liberian counties for autocomplete fields.",
+    "Returns all active Liberian counties alphabetically when search is omitted or blank. " +
+    "A non-empty search must contain at least two characters and defaults to 10 matching results. " +
+    "An explicit limit (1-20) applies to either mode.",
   responses: {
     200: z.object({
       data: z.array(countySuggestionSchema),
