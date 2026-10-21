@@ -65,6 +65,10 @@ export function createApplicationDependencies(
         database,
         objectStorage,
       },
+      businesses: {
+        database,
+        objectStorage,
+      },
       cities: { database },
       counties: { database },
       rateLimiters,

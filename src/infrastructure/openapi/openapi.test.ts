@@ -27,10 +27,13 @@ describe("API foundation", () => {
       "/api/v1/auth/resend-verification",
       "/api/v1/auth/verify-email",
       "/api/v1/business-registration-documents/{documentId}/complete",
+      "/api/v1/businesses",
       "/api/v1/businesses/{businessId}/customer-reviews",
+      "/api/v1/businesses/{businessId}/locations/{locationId}/services",
       "/api/v1/businesses/{businessId}/rating",
       "/api/v1/businesses/{businessId}/registration-document/upload-url",
       "/api/v1/businesses/{businessId}/reviews",
+      "/api/v1/businesses/{slug}",
       "/api/v1/cities",
       "/api/v1/counties",
       "/api/v1/health",
@@ -45,8 +48,8 @@ describe("API foundation", () => {
     expect(response.headers["x-request-id"]).toBeDefined();
   });
 
-  it("does not expose unimplemented business management endpoints", async () => {
-    await request(app).get("/api/v1/businesses").expect(404);
+  it("does not expose unimplemented nested business management endpoints", async () => {
+    await request(app).get("/api/v1/businesses/example/locations").expect(404);
   });
 
   it("validates login requests", async () => {
