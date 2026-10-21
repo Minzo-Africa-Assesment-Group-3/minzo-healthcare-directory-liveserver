@@ -21,7 +21,6 @@ interface AppDependencies {
 }
 
 export function createApp({
-  apiRateLimiter,
   corsMiddleware,
   logger,
   routes,
@@ -37,7 +36,8 @@ export function createApp({
 
   app.use(createHttpLogger(logger));
   app.use(corsMiddleware);
-  app.use("/api", apiRateLimiter);
+  // todo: add rate limiter - later
+  // app.use("/api", apiRateLimiter);
   app.use(express.json({ limit: "1mb" }));
   app.use(cookieParser());
 
