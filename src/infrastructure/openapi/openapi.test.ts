@@ -50,6 +50,26 @@ describe("API foundation", () => {
     ]);
   });
 
+  it("documents Bearer authentication for protected endpoints", async () => {
+    const response = await request(app).get("/openapi.json").expect(200);
+    const document = response.body as {
+      components: { securitySchemes: Record<string, unknown> };
+      paths: Record<string, Record<string, { security?: unknown }>>;
+    };
+
+    expect(document.components.securitySchemes.userBearerAuth).toMatchObject({
+      scheme: "bearer",
+      type: "http",
+    });
+    expect(document.components.securitySchemes.adminBearerAuth).toMatchObject({
+      scheme: "bearer",
+      type: "http",
+    });
+    expect(document.paths["/api/v1/me"]?.get?.security).toEqual([
+      { userBearerAuth: [] },
+    ]);
+  });
+
   it("serves health without caching and correlates the request", async () => {
     const response = await request(app).get("/api/v1/health").expect(200);
     expect(response.body).toEqual({ status: "ok" });

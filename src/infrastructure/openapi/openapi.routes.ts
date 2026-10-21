@@ -4,6 +4,27 @@ import swaggerUi from "swagger-ui-express";
 
 import { applicationContract } from "../../routes.js";
 
+function getOperationSecurity(metadata: unknown) {
+  if (
+    typeof metadata !== "object" ||
+    metadata === null ||
+    !("authentication" in metadata)
+  ) {
+    return undefined;
+  }
+
+  switch (metadata.authentication) {
+    case "admin-access-token":
+      return [{ adminBearerAuth: [] }];
+    case "optional-user-access-token":
+      return [{}, { userBearerAuth: [] }];
+    case "user-access-token":
+      return [{ userBearerAuth: [] }];
+    default:
+      return undefined;
+  }
+}
+
 const openApiDocument = generateOpenApi(
   applicationContract,
   {
@@ -23,11 +44,31 @@ const openApiDocument = generateOpenApi(
         description: "Application health and system endpoints.",
       },
     ],
+    components: {
+      securitySchemes: {
+        adminBearerAuth: {
+          bearerFormat: "JWT",
+          description: "Paste an administrator access token. Swagger adds the Bearer prefix.",
+          scheme: "bearer",
+          type: "http",
+        },
+        userBearerAuth: {
+          bearerFormat: "JWT",
+          description: "Paste a user access token. Swagger adds the Bearer prefix.",
+          scheme: "bearer",
+          type: "http",
+        },
+      },
+    },
   },
   {
     setOperationId: "concatenated-path",
     operationMapper: (operation, appRoute) => {
       const metadata = appRoute.metadata;
+      const security = getOperationSecurity(metadata);
+      const mappedOperation = security
+        ? { ...operation, security }
+        : { ...operation };
 
       if (
         typeof metadata === "object" &&
@@ -36,14 +77,14 @@ const openApiDocument = generateOpenApi(
         Array.isArray(metadata.openApiTags)
       ) {
         return {
-          ...operation,
+          ...mappedOperation,
           tags: metadata.openApiTags.filter(
             (tag): tag is string => typeof tag === "string",
           ),
         };
       }
 
-      return operation;
+      return mappedOperation;
     },
   },
 );
