@@ -39,6 +39,7 @@ import {
   reviewsContract,
   type ReviewsRouteDependencies,
 } from "./features/reviews copy/routes.js";
+import { businessesContract, createBusinessesHandlers,type BusinessesRouteDependencies } from "./features/businesses/routes.js";
 
 const contract = initContract();
 const server = initServer();
@@ -51,6 +52,7 @@ export const applicationContract = contract.router({
   counties: countiesContract,
   reviewModeration: customerFeedbackModerationContract,
   reviews: reviewsContract,
+  businesses: businessesContract,
 });
 
 export interface ApplicationRouteDependencies {
@@ -62,6 +64,7 @@ export interface ApplicationRouteDependencies {
   counties: CountiesRouteDependencies;
   reviewModeration: CustomerFeedbackModerationRouteDependencies;
   reviews: ReviewsRouteDependencies;
+  businesses: BusinessesRouteDependencies;
 }
 
 function getValidationIssues(error: RequestValidationError) {
@@ -104,6 +107,10 @@ export function registerApplicationRoutes(
         dependencies.reviews,
         authentication,
         dependencies.rateLimiters.reviews,
+      ),
+      businesses: createBusinessesHandlers(
+        dependencies.businesses,
+        authentication,
       ),
     },
   );
