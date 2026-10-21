@@ -76,6 +76,7 @@ export function createApplicationDependencies(
       },
       cities: { database },
       counties: { database },
+      currentUser: { database },
       rateLimiters,
       reviewModeration: { database },
       reviews: { database },

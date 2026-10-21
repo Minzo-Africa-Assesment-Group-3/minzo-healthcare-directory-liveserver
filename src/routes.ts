@@ -41,6 +41,7 @@ import {
 } from "./features/reviews copy/routes.js";
 import { businessesContract, createBusinessesHandlers, type BusinessesRouteDependencies } from "./features/businesses/routes.js";
 import { businessClaimsContract, createBusinessClaimsHandlers, type BusinessClaimsRouteDependencies } from "./features/business-claims/routes.js";
+import { createCurrentUserHandlers, currentUserContract, type CurrentUserRouteDependencies } from "./features/current-user/routes.js";
 
 const contract = initContract();
 const server = initServer();
@@ -54,7 +55,8 @@ export const applicationContract = contract.router({
   reviewModeration: customerFeedbackModerationContract,
   reviews: reviewsContract,
   businesses: businessesContract,
-  businessClaims: businessClaimsContract
+  businessClaims: businessClaimsContract,
+  currentUser: currentUserContract,
 });
 
 export interface ApplicationRouteDependencies {
@@ -68,6 +70,7 @@ export interface ApplicationRouteDependencies {
   reviews: ReviewsRouteDependencies;
   businesses: BusinessesRouteDependencies;
   businessClaims: BusinessClaimsRouteDependencies;
+  currentUser: CurrentUserRouteDependencies;
 }
 
 function getValidationIssues(error: RequestValidationError) {
@@ -119,6 +122,10 @@ export function registerApplicationRoutes(
         dependencies.businessClaims,
         authentication,
       ),
+      currentUser: createCurrentUserHandlers(
+        dependencies.currentUser,
+        authentication,
+      )
     },
   );
 

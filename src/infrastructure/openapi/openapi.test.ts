@@ -44,6 +44,8 @@ describe("API foundation", () => {
       "/api/v1/cities",
       "/api/v1/counties",
       "/api/v1/health",
+      "/api/v1/me",
+      "/api/v1/me/reviews",
       "/api/v1/reviews/{reviewId}",
     ]);
   });

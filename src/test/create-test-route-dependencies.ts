@@ -76,6 +76,7 @@ export function createTestRouteDependencies() {
     },
     cities: { database: {} as DatabaseClient },
     counties: { database: {} as DatabaseClient },
+    currentUser: { database: {} as DatabaseClient },
     rateLimiters: createRateLimitMiddlewares(120, 60_000),
     reviewModeration: { database: {} as DatabaseClient },
     reviews: { database: {} as DatabaseClient },
