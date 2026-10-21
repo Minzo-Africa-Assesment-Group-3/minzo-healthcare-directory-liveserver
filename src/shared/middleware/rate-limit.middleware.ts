@@ -91,73 +91,73 @@ export function createRateLimitMiddlewares(
     authAdmin: {
       login: createRateLimiter({
         identifier: "auth-admin-login",
-        limit: 5,
+        limit: 25,
         windowMs: 15 * 60_000,
       }),
       logout: createRateLimiter({
         identifier: "auth-admin-logout",
-        limit: 30,
+        limit: 100,
         windowMs: 15 * 60_000,
       }),
       refreshSession: createRateLimiter({
         identifier: "auth-admin-refresh",
-        limit: 30,
+        limit: 100,
         windowMs: 15 * 60_000,
       }),
       verifyLoginOtp: createRateLimiter({
         identifier: "auth-admin-verify-otp",
-        limit: 10,
+        limit: 30,
         windowMs: 15 * 60_000,
       }),
     },
     authPublic: {
       login: createRateLimiter({
         identifier: "auth-public-login",
-        limit: 5,
+        limit: 25,
         windowMs: 15 * 60_000,
       }),
       logout: createRateLimiter({
         identifier: "auth-public-logout",
-        limit: 30,
+        limit: 100,
         windowMs: 15 * 60_000,
       }),
       refreshToken: createRateLimiter({
         identifier: "auth-public-refresh",
-        limit: 30,
+        limit: 100,
         windowMs: 15 * 60_000,
       }),
       register: createRateLimiter({
         identifier: "auth-public-register",
-        limit: 5,
+        limit: 25,
         windowMs: 60 * 60_000,
       }),
       resendVerification: createRateLimiter({
         identifier: "auth-public-resend-verification",
-        limit: 3,
+        limit: 15,
         windowMs: 60 * 60_000,
       }),
       verifyEmail: createRateLimiter({
         identifier: "auth-public-verify-email",
-        limit: 10,
+        limit: 50,
         windowMs: 60 * 60_000,
       }),
       verifyLoginOtp: createRateLimiter({
         identifier: "auth-public-verify-otp",
-        limit: 10,
+        limit: 30,
         windowMs: 15 * 60_000,
       }),
     },
     contactMessages: {
       send: createRateLimiter({
         identifier: "business-contact-message-send",
-        limit: 5,
+        limit: 25,
         windowMs: 15 * 60_000,
       }),
     },
     reviews: {
       write: createRateLimiter({
         identifier: "review-write",
-        limit: 20,
+        limit: 100,
         windowMs: 60 * 60_000,
       }),
     },
