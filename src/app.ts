@@ -36,8 +36,7 @@ export function createApp({
 
   app.use(createHttpLogger(logger));
   app.use(corsMiddleware);
-  // todo: add rate limiter - later
-  // app.use("/api", apiRateLimiter);
+
   app.use(express.json({ limit: "1mb" }));
   app.use(cookieParser());
 
