@@ -41,7 +41,7 @@ export function createAuthEmailService(
     async sendVerificationEmail(
       input: SendVerificationEmailInput,
     ): Promise<void> {
-      const verificationUrl = new URL("/verify-email", frontendUrl);
+      const verificationUrl = new URL("/register/verify-email", frontendUrl);
       verificationUrl.searchParams.set("token", input.token);
 
       const safeName = escapeHtml(input.displayName);
