@@ -65,6 +65,11 @@ export function createApplicationDependencies(
         database,
         objectStorage,
       },
+      businessClaims: {
+        businessClaimsBucket: env.SUPABASE_BUSINESS_CLAIMS_BUCKET,
+        database,
+        objectStorage,
+      },
       businesses: {
         database,
         objectStorage,

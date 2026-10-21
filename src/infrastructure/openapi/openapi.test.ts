@@ -16,6 +16,9 @@ describe("API foundation", () => {
     const response = await request(app).get("/openapi.json").expect(200);
     const document = response.body as { paths: Record<string, unknown> };
     expect(Object.keys(document.paths).sort()).toEqual([
+      "/api/v1/admin/business-claims",
+      "/api/v1/admin/business-claims/{claimId}",
+      "/api/v1/admin/business-claims/{claimId}/evidence-download-url",
       "/api/v1/admin/customer-reviews",
       "/api/v1/admin/customer-reviews/{reviewId}/moderation",
       "/api/v1/auth/login",
@@ -26,8 +29,12 @@ describe("API foundation", () => {
       "/api/v1/auth/register/user",
       "/api/v1/auth/resend-verification",
       "/api/v1/auth/verify-email",
+      "/api/v1/business-claim-documents/upload-url",
+      "/api/v1/business-claim-documents/{documentId}/complete",
+      "/api/v1/business-claims/mine",
       "/api/v1/business-registration-documents/{documentId}/complete",
       "/api/v1/businesses",
+      "/api/v1/businesses/{businessId}/claims",
       "/api/v1/businesses/{businessId}/customer-reviews",
       "/api/v1/businesses/{businessId}/locations/{locationId}/services",
       "/api/v1/businesses/{businessId}/rating",

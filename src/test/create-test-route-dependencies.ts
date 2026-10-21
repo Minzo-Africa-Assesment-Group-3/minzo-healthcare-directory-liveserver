@@ -69,6 +69,11 @@ export function createTestRouteDependencies() {
       database: {} as DatabaseClient,
       objectStorage,
     },
+    businessClaims: {
+      businessClaimsBucket: "business-claim-documents",
+      database: {} as DatabaseClient,
+      objectStorage,
+    },
     cities: { database: {} as DatabaseClient },
     counties: { database: {} as DatabaseClient },
     rateLimiters: createRateLimitMiddlewares(120, 60_000),

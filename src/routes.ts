@@ -39,7 +39,8 @@ import {
   reviewsContract,
   type ReviewsRouteDependencies,
 } from "./features/reviews copy/routes.js";
-import { businessesContract, createBusinessesHandlers,type BusinessesRouteDependencies } from "./features/businesses/routes.js";
+import { businessesContract, createBusinessesHandlers, type BusinessesRouteDependencies } from "./features/businesses/routes.js";
+import { businessClaimsContract, createBusinessClaimsHandlers, type BusinessClaimsRouteDependencies } from "./features/business-claims/routes.js";
 
 const contract = initContract();
 const server = initServer();
@@ -53,6 +54,7 @@ export const applicationContract = contract.router({
   reviewModeration: customerFeedbackModerationContract,
   reviews: reviewsContract,
   businesses: businessesContract,
+  businessClaims: businessClaimsContract
 });
 
 export interface ApplicationRouteDependencies {
@@ -65,6 +67,7 @@ export interface ApplicationRouteDependencies {
   reviewModeration: CustomerFeedbackModerationRouteDependencies;
   reviews: ReviewsRouteDependencies;
   businesses: BusinessesRouteDependencies;
+  businessClaims: BusinessClaimsRouteDependencies;
 }
 
 function getValidationIssues(error: RequestValidationError) {
@@ -110,6 +113,10 @@ export function registerApplicationRoutes(
       ),
       businesses: createBusinessesHandlers(
         dependencies.businesses,
+        authentication,
+      ),
+      businessClaims: createBusinessClaimsHandlers(
+        dependencies.businessClaims,
         authentication,
       ),
     },
