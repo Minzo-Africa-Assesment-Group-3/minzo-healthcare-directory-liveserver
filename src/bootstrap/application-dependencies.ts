@@ -58,7 +58,10 @@ export function createApplicationDependencies(
         database,
         userAccessToken: authPublic.accessToken,
       },
-      authPublic,
+      authPublic: {
+        ...authPublic,
+        rateLimiters: rateLimiters.authPublic,
+      },
       businessRegistrationDocuments: {
         businessRegistrationsBucket:
           env.SUPABASE_BUSINESS_REGISTRATIONS_BUCKET,
@@ -77,9 +80,11 @@ export function createApplicationDependencies(
       cities: { database },
       counties: { database },
       currentUser: { database },
-      rateLimiters,
       reviewModeration: { database },
-      reviews: { database },
+      reviews: {
+        database,
+        rateLimiters: rateLimiters.reviews,
+      },
     },
     trustProxyHops: env.TRUST_PROXY_HOPS,
   };

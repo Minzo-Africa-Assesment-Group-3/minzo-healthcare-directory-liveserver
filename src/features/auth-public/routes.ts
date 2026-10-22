@@ -34,44 +34,35 @@ export interface AuthPublicRouteDependencies {
   maxOtpAttempts: number;
   refreshTokenCookie: RefreshTokenCookieService;
   refreshTokenTtlSeconds: number;
+  rateLimiters: AuthPublicRateLimitMiddlewares;
   verificationTokenTtlSeconds: number;
 }
 
 export function createAuthPublicHandlers(
   dependencies: AuthPublicRouteDependencies,
-  rateLimiters: AuthPublicRateLimitMiddlewares,
 ) {
   return {
     registerUser: {
-      middleware: [rateLimiters.register],
+      middleware: [dependencies.rateLimiters.registration],
       handler: commands.createRegisterUserHandler(dependencies),
     },
     registerBusiness: {
-      middleware: [rateLimiters.register],
+      middleware: [dependencies.rateLimiters.registration],
       handler: commands.createRegisterBusinessHandler(dependencies),
     },
     login: {
-      middleware: [rateLimiters.login],
+      middleware: [dependencies.rateLimiters.credential],
       handler: commands.createLoginHandler(dependencies),
     },
-    refreshToken: {
-      middleware: [rateLimiters.refreshToken],
-      handler: commands.createRefreshTokenHandler(dependencies),
-    },
-    logout: {
-      middleware: [rateLimiters.logout],
-      handler: commands.createLogoutHandler(dependencies),
-    },
-    verifyEmail: {
-      middleware: [rateLimiters.verifyEmail],
-      handler: commands.createVerifyEmailHandler(dependencies),
-    },
+    refreshToken: commands.createRefreshTokenHandler(dependencies),
+    logout: commands.createLogoutHandler(dependencies),
+    verifyEmail: commands.createVerifyEmailHandler(dependencies),
     resendVerification: {
-      middleware: [rateLimiters.resendVerification],
+      middleware: [dependencies.rateLimiters.registration],
       handler: commands.createResendVerificationHandler(dependencies),
     },
     verifyLoginOtp: {
-      middleware: [rateLimiters.verifyLoginOtp],
+      middleware: [dependencies.rateLimiters.credential],
       handler: commands.createVerifyLoginOtpHandler(dependencies),
     },
   };

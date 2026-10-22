@@ -16,7 +16,6 @@ import {
   systemHandlers,
 } from "./features/system/routes.js";
 import { sendProblemDetails } from "./shared/errors/problem-details.js";
-import type { RateLimitMiddlewares } from "./shared/middleware/rate-limit.middleware.js";
 import { createBusinessRegistrationDocumentsHandlers, businessRegistrationDocumentsContract, type BusinessRegistrationDocumentsRouteDependencies } from "./features/business-registration-documents/routes.js";
 import { createAuthenticationMiddlewares, type AuthenticationMiddlewareDependencies } from "./shared/authentication/authentication.middleware.js";
 import {
@@ -61,7 +60,6 @@ export const applicationContract = contract.router({
 
 export interface ApplicationRouteDependencies {
   authPublic: AuthPublicRouteDependencies;
-  rateLimiters: RateLimitMiddlewares;
   businessRegistrationDocuments: BusinessRegistrationDocumentsRouteDependencies;
   authentication: AuthenticationMiddlewareDependencies;
   cities: CitiesRouteDependencies;
@@ -92,10 +90,7 @@ export function registerApplicationRoutes(
   const applicationRouter = server.router(
     applicationContract,
     {
-      authPublic: createAuthPublicHandlers(
-        dependencies.authPublic,
-        dependencies.rateLimiters.authPublic,
-      ),
+      authPublic: createAuthPublicHandlers(dependencies.authPublic),
       system: systemHandlers,
       businessRegistrationDocuments:
         createBusinessRegistrationDocumentsHandlers(
@@ -109,11 +104,7 @@ export function registerApplicationRoutes(
           dependencies.reviewModeration,
           authentication,
         ),
-      reviews: createReviewsHandlers(
-        dependencies.reviews,
-        authentication,
-        dependencies.rateLimiters.reviews,
-      ),
+      reviews: createReviewsHandlers(dependencies.reviews, authentication),
       businesses: createBusinessesHandlers(
         dependencies.businesses,
         authentication,

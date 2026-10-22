@@ -29,6 +29,7 @@ export const reviewsContract = contract.router({
 
 export interface ReviewsRouteDependencies {
   database: DatabaseClient;
+  rateLimiters: ReviewsRateLimitMiddlewares;
 }
 
 export function createReviewsHandlers(
@@ -37,19 +38,18 @@ export function createReviewsHandlers(
     optionalUser: optionallyAuthenticateUser,
     user: authenticateUser,
   }: AuthenticationMiddlewares,
-  rateLimiters: ReviewsRateLimitMiddlewares,
 ) {
   return {
     create: {
-      middleware: [authenticateUser, rateLimiters.write],
+      middleware: [authenticateUser, dependencies.rateLimiters.write],
       handler: createCreateReviewHandler(dependencies),
     },
     updateMine: {
-      middleware: [authenticateUser, rateLimiters.write],
+      middleware: [authenticateUser, dependencies.rateLimiters.write],
       handler: createUpdateReviewHandler(dependencies),
     },
     deleteMine: {
-      middleware: [authenticateUser, rateLimiters.write],
+      middleware: [authenticateUser, dependencies.rateLimiters.write],
       handler: createDeleteReviewHandler(dependencies),
     },
     listForBusiness: {

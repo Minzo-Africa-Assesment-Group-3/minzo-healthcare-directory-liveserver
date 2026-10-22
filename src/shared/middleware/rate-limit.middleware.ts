@@ -14,37 +14,23 @@ interface RateLimiterOptions {
 }
 
 export interface AuthPublicRateLimitMiddlewares {
-  login: RequestHandler;
-  logout: RequestHandler;
-  refreshToken: RequestHandler;
-  register: RequestHandler;
-  resendVerification: RequestHandler;
-  verifyEmail: RequestHandler;
-  verifyLoginOtp: RequestHandler;
-}
-
-export interface AuthAdminRateLimitMiddlewares {
-  login: RequestHandler;
-  logout: RequestHandler;
-  refreshSession: RequestHandler;
-  verifyLoginOtp: RequestHandler;
+  credential: RequestHandler;
+  registration: RequestHandler;
 }
 
 export interface RateLimitMiddlewares {
   api: RequestHandler;
-  authAdmin: AuthAdminRateLimitMiddlewares;
   authPublic: AuthPublicRateLimitMiddlewares;
-  contactMessages: ContactMessagesRateLimitMiddlewares;
   reviews: ReviewsRateLimitMiddlewares;
-}
-
-export interface ContactMessagesRateLimitMiddlewares {
-  send: RequestHandler;
 }
 
 export interface ReviewsRateLimitMiddlewares {
   write: RequestHandler;
 }
+
+const MINUTE = 60_000;
+const FIFTEEN_MINUTES = 15 * MINUTE;
+const HOUR = 60 * MINUTE;
 
 export function createRateLimiter({
   identifier,
@@ -85,80 +71,27 @@ export function createRateLimitMiddlewares(
       identifier: "api",
       limit: apiLimit,
       skip: (request) =>
-        request.method === "OPTIONS" || request.path === "/v1/health",
+        request.method === "OPTIONS" ||
+        request.path === "/api/v1/health",
       windowMs: apiWindowMs,
     }),
-    authAdmin: {
-      login: createRateLimiter({
-        identifier: "auth-admin-login",
-        limit: 25,
-        windowMs: 15 * 60_000,
-      }),
-      logout: createRateLimiter({
-        identifier: "auth-admin-logout",
-        limit: 100,
-        windowMs: 15 * 60_000,
-      }),
-      refreshSession: createRateLimiter({
-        identifier: "auth-admin-refresh",
-        limit: 100,
-        windowMs: 15 * 60_000,
-      }),
-      verifyLoginOtp: createRateLimiter({
-        identifier: "auth-admin-verify-otp",
-        limit: 30,
-        windowMs: 15 * 60_000,
-      }),
-    },
     authPublic: {
-      login: createRateLimiter({
-        identifier: "auth-public-login",
-        limit: 25,
-        windowMs: 15 * 60_000,
+      credential: createRateLimiter({
+        identifier: "auth-public-credential",
+        limit: 5,
+        windowMs: FIFTEEN_MINUTES,
       }),
-      logout: createRateLimiter({
-        identifier: "auth-public-logout",
-        limit: 100,
-        windowMs: 15 * 60_000,
-      }),
-      refreshToken: createRateLimiter({
-        identifier: "auth-public-refresh",
-        limit: 100,
-        windowMs: 15 * 60_000,
-      }),
-      register: createRateLimiter({
-        identifier: "auth-public-register",
-        limit: 25,
-        windowMs: 60 * 60_000,
-      }),
-      resendVerification: createRateLimiter({
-        identifier: "auth-public-resend-verification",
-        limit: 15,
-        windowMs: 60 * 60_000,
-      }),
-      verifyEmail: createRateLimiter({
-        identifier: "auth-public-verify-email",
-        limit: 50,
-        windowMs: 60 * 60_000,
-      }),
-      verifyLoginOtp: createRateLimiter({
-        identifier: "auth-public-verify-otp",
-        limit: 30,
-        windowMs: 15 * 60_000,
-      }),
-    },
-    contactMessages: {
-      send: createRateLimiter({
-        identifier: "business-contact-message-send",
-        limit: 25,
-        windowMs: 15 * 60_000,
+      registration: createRateLimiter({
+        identifier: "auth-public-registration",
+        limit: 5,
+        windowMs: HOUR,
       }),
     },
     reviews: {
       write: createRateLimiter({
         identifier: "review-write",
-        limit: 100,
-        windowMs: 60 * 60_000,
+        limit: 20,
+        windowMs: HOUR,
       }),
     },
   };

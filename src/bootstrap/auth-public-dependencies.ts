@@ -15,11 +15,16 @@ interface CreateAuthPublicDependenciesOptions {
   env: Environment;
 }
 
+type AuthPublicServiceDependencies = Omit<
+  AuthPublicRouteDependencies,
+  "rateLimiters"
+>;
+
 export function createAuthPublicDependencies({
   database,
   emailSender,
   env,
-}: CreateAuthPublicDependenciesOptions): AuthPublicRouteDependencies {
+}: CreateAuthPublicDependenciesOptions): AuthPublicServiceDependencies {
   const authEmail = createAuthEmailService(emailSender, env.FRONTEND_URL);
   const accessToken = createAccessTokenService({
     audience: env.JWT_AUDIENCE,

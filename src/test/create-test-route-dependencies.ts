@@ -3,7 +3,11 @@ import type { ObjectStorage } from "../infrastructure/storage/index.js";
 import { createAccessTokenService } from "../shared/authentication/access-token.js";
 import { createLoginOtpService } from "../shared/authentication/login-otp.js";
 import { createRefreshTokenCookieService } from "../shared/authentication/refresh-token-cookie.js";
-import { createRateLimitMiddlewares } from "../shared/middleware/rate-limit.middleware.js";
+import type { RequestHandler } from "express";
+
+const allowRequest: RequestHandler = (_request, _response, next) => {
+  next();
+};
 
 const unexpectedStorageCall = async (): Promise<never> => {
   throw new Error("Object storage was not expected in this test.");
@@ -59,6 +63,10 @@ export function createTestRouteDependencies() {
         secure: false,
       }),
       refreshTokenTtlSeconds: 2_592_000,
+      rateLimiters: {
+        credential: allowRequest,
+        registration: allowRequest,
+      },
       verificationTokenTtlSeconds: 86_400,
     },
     authAdmin: {
@@ -77,9 +85,13 @@ export function createTestRouteDependencies() {
     cities: { database: {} as DatabaseClient },
     counties: { database: {} as DatabaseClient },
     currentUser: { database: {} as DatabaseClient },
-    rateLimiters: createRateLimitMiddlewares(120, 60_000),
     reviewModeration: { database: {} as DatabaseClient },
-    reviews: { database: {} as DatabaseClient },
+    reviews: {
+      database: {} as DatabaseClient,
+      rateLimiters: {
+        write: allowRequest,
+      },
+    },
     businesses: { database: {} as DatabaseClient, objectStorage },
   };
 }
