@@ -1,220 +1,140 @@
-# Contributing to Minzo Express Boilerplate
+# Contributing
 
-Thank you for contributing. This project is intended to remain a small,
-production-ready foundation that teams can understand and extend without
-unnecessary abstractions.
+Thank you for contributing to the Minzo Healthcare Directory API.
 
-## Prerequisites
+## Before You Start
 
-- Node.js 22 LTS
-- npm
-- PostgreSQL
-- Git
+- Check the existing feature structure before creating new files.
+- Keep each change focused on one business feature or concern.
+- Discuss major architecture or data-model changes before implementing them.
+- Do not introduce a new dependency unless there is a clear product or technical need.
 
-## Local setup
+## Feature Structure
 
-1. Install the dependencies:
+This project uses Vertical Slice Architecture.
 
-   ```bash
-   npm install
-   ```
+New business functionality should normally live under `src/features/<feature-name>/`.
 
-2. Create your local environment file:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-3. Update `DATABASE_URL` in `.env` for your PostgreSQL installation. Never
-   commit `.env` or real credentials.
-
-4. Generate the Prisma client:
-
-   ```bash
-   npm run db:generate
-   ```
-
-5. Apply the development migrations:
-
-   ```bash
-   npm run db:migrate:dev
-   ```
-
-6. Seed the normalized healthcare directory:
-
-   ```bash
-   npm run db:seed
-   ```
-
-7. Start the development server:
-
-   ```bash
-   npm run dev
-   ```
-
-The API documentation is available at `http://127.0.0.1:3000/docs` by
-default, and the OpenAPI document is available at `/openapi.json`.
-
-## Architecture
-
-The application is a modular monolith organized with Vertical Slice
-Architecture and lightweight CQRS.
+For example:
 
 ```text
-src/
-├── features/          Business capabilities and their vertical slices
-├── infrastructure/    Database, logging, OpenAPI, and external concerns
-├── shared/            Small, genuinely cross-cutting building blocks
-├── config/            Validated application configuration
-├── routes.ts          Application contract and handler composition
-├── app.ts             Express application composition
-└── server.ts          Process startup and graceful shutdown
+src/features/businesses/
+├── commands/
+├── queries/
+├── routes.ts
+└── businesses.test.ts
 ```
 
-Commands change application state. Queries read application state. Keep them
-separate when that distinction is meaningful, but do not introduce buses,
-mediators, repositories, or use-case classes merely to satisfy a pattern.
+Keep the request contract, validation, handler, business rules, and tests close to the feature they support.
 
-### Adding an HTTP slice
+Avoid placing business-specific logic in generic global folders.
 
-A typical query is organized like this:
+## Commands and Queries
 
-```text
-src/features/users/queries/list-users/
-├── list-users.contract.ts
-├── list-users.handler.ts
-└── list-users.test.ts
-```
+Use clear separation where it improves readability:
 
-- The **contract** is the single source of truth for the HTTP method, path,
-  request validation, response validation, and OpenAPI information.
-- The **handler** coordinates the request and returns one of the responses
-  declared by the contract.
-- The **test** verifies externally observable behavior.
-- Add a `*.use-case.ts` only when business or application behavior is
-  substantial enough to benefit from separation. A trivial object return does
-  not need another file.
-- Compose the slice contract and handler in the feature's `routes.ts`, then
-  compose that feature at the application level in `src/routes.ts`.
+- `commands/` for operations that create, update, delete, approve, or otherwise change data.
+- `queries/` for operations that only retrieve data.
 
-Do not declare the same Express route separately for documentation. ts-rest
-generates OpenAPI from the contract.
+Do not create extra abstractions for simple operations.
 
-## Project conventions
+## API Contracts
 
-### TypeScript and modules
+Every endpoint should have a ts-rest contract.
 
-- Keep TypeScript strict and avoid `any`.
-- This is an ES Modules project.
-- Include `.js` in relative imports, even when importing a `.ts` source file:
+The contract should define:
 
-  ```typescript
-  import { createApp } from "./app.js";
-  ```
+- HTTP method and path
+- Request body, query parameters, headers, and path parameters
+- Response status codes and response body shapes
+- Endpoint summary and description where useful
+- Authentication metadata where required
 
-- Prefer named exports and type-only imports where appropriate.
-- Keep dependencies explicit. Avoid global mutable state and hidden service
-  locators.
+Use Zod schemas for request and response validation.
 
-### Validation and responses
+## Authentication and Authorization
 
-- Validate all untrusted input at the HTTP boundary with Zod.
-- Declare successful response shapes in the ts-rest contract.
-- Return errors using the shared RFC Problem Details implementation.
-- Do not expose internal errors, stack traces, secrets, or database details to
-  API clients.
-- Use the shared pagination utilities for page-based list endpoints. Features
-  remain responsible for their own Prisma queries and filters.
+- Keep authentication and authorization as separate concerns.
+- Public endpoints must remain public unless protection is necessary.
+- Protected actions must use the relevant route authentication middleware.
+- Do not trust a user ID supplied in a request body when the authenticated identity should be used instead.
+- Use deny-by-default thinking for sensitive actions.
 
-### Database changes
+## Rate Limiting
 
-- Keep Prisma schema changes focused and reviewable.
-- Create a named development migration with:
+The API has a global rate limit for all API routes.
 
-  ```bash
-  npm run db:migrate:dev -- --name describe_the_change
-  ```
+Only add a feature-level rate limiter when an operation has a clear abuse risk, such as:
 
-- Commit the Prisma schema and generated migration files.
-- Do not commit `src/generated/prisma`; it is generated during setup and build.
-- Do not modify a migration that has already been applied in a shared
-  environment. Add a corrective migration instead.
-- Use transactions when several writes must succeed or fail together.
+- Credential verification
+- Account registration
+- Sending email
+- Creating public content
+- Upload authorization
 
-### Logging and security
+Do not create a separate rate-limit policy for ordinary reads, logout, or refresh-token requests unless there is a demonstrated need.
 
-- Use the shared Pino logger instead of `console.log`.
-- Log useful structured context, including the request ID when investigating a
-  request.
-- Never log passwords, tokens, authorization headers, secrets, or sensitive
-  personal information.
-- Treat all client input as untrusted and use deny-by-default authorization
-  when protected features are introduced.
+## Database Changes
 
-## Quality checks
+When changing Prisma models:
 
-Run these commands before opening a pull request:
+1. Update the relevant Prisma schema files.
+2. Format and validate the schema.
+3. Create a development migration.
+4. Generate the Prisma client.
+5. Update affected tests and seed data.
+
+Typical commands:
 
 ```bash
-npm run lint
+npm run db:migrate:dev
+npm run db:generate
 npm run typecheck
+npm run lint
 npm test
-npm run build
 ```
 
-ESLint can automatically correct some safe issues:
+Do not edit an already-applied migration. Create a new migration instead.
+
+## File Uploads
+
+Do not send large files through the API server unless there is a specific reason.
+
+Use the existing upload flow:
+
+1. Backend authorizes an upload and creates a controlled object path.
+2. Client uploads directly to Supabase Storage.
+3. Backend verifies the uploaded object.
+4. Backend attaches the verified object to the relevant record.
+
+Never accept an arbitrary storage object key from a client as proof of ownership.
+
+## Code Quality
+
+Before opening a pull request, run:
 
 ```bash
-npm run lint:fix
+npm run typecheck
+npm run lint
+npm test
 ```
 
-Review automatic changes before committing them. Do not disable a rule merely
-to make a warning disappear; document the reason when an exception is truly
-necessary.
+Code should be readable, typed, and focused. Avoid unrelated formatting changes or refactoring in the same pull request.
 
-Add tests for new behavior and regressions. Prefer integration tests at the
-HTTP boundary for slices, with focused unit tests for business logic that has
-meaningful branching or edge cases.
+## Environment Variables and Secrets
 
-## Git workflow
+- Never commit `.env` files or production credentials.
+- Add new required variables to `.env.example` using safe placeholder values.
+- Keep secrets in the deployment platform’s environment-variable settings.
+- Rotate a secret immediately if it is accidentally exposed.
 
-- Create a focused branch from the current shared branch.
-- Keep commits small and related to one concern.
-- Use clear Conventional Commit-style messages, for example:
+## Pull Requests
 
-  ```text
-  feat: add user registration
-  fix: prevent reuse of revoked refresh tokens
-  test: cover pagination boundaries
-  refactor: simplify authorization policy loading
-  docs: explain local database setup
-  ```
+A pull request should:
 
-- Do not commit secrets, `.env`, generated Prisma clients, build output, logs,
-  or unrelated editor files.
-- Do not mix broad refactoring with a feature or bug fix unless the refactoring
-  is required for that change.
-
-## Pull request checklist
-
-Before requesting review, confirm that:
-
-- [ ] The change has a clear purpose and limited scope.
-- [ ] Architectural decisions or important tradeoffs are explained.
-- [ ] Request and response schemas reflect the implemented behavior.
-- [ ] Error paths and security implications were considered.
-- [ ] New behavior and relevant edge cases are tested.
-- [ ] `npm run lint` passes.
-- [ ] `npm run typecheck` passes.
-- [ ] `npm test` passes.
-- [ ] `npm run build` passes.
-- [ ] Database migrations are included when required.
-- [ ] Documentation and `.env.example` are updated when configuration changes.
-- [ ] No secrets, generated clients, or unrelated changes are included.
-
-## Review expectations
-
-Reviews should prioritize correctness, security, maintainability, and clear
-feature boundaries. Separate required changes from optional suggestions, and
-explain the reasoning behind requested changes. Be direct and respectful; the
-goal is shared ownership and a codebase that the next engineer can understand.
+- Have a clear title describing the change.
+- Focus on one feature, fix, or refactor.
+- Include database migrations when the schema changes.
+- Include tests when behaviour changes.
+- Explain any deployment, environment, or migration requirements.
+- Avoid mixing unrelated work into the same pull request.
