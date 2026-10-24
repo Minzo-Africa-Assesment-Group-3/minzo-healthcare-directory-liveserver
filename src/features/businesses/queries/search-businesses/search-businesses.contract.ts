@@ -21,6 +21,7 @@ export const searchBusinessesQuerySchema = paginationQuerySchema
     search: optionalTrimmedText(150),
     county: optionalTrimmedText(100),
     city: optionalTrimmedText(100),
+    facilityType: optionalTrimmedText(100),
     serviceId: z.preprocess(
       (value) => value === "" ? undefined : value,
       z.string().uuid().optional(),
@@ -103,7 +104,7 @@ export const searchBusinessesContract = contract.query({
   strictStatusCodes: true,
   summary: "Search the public business directory",
   description:
-    "Returns approved businesses with an active matching location. Text search is relevance-ranked and typo-tolerant across business, location, service, and public professional data. Supports county, city, service, and PostGIS proximity filters.",
+    "Returns approved businesses with an active matching location. Text search is relevance-ranked and typo-tolerant across business, location, service, and public professional data. Supports county, city, facility type, service, and PostGIS proximity filters.",
   responses: {
     200: paginatedResponseSchema(businessSearchResultSchema),
     400: problemDetailsSchema,

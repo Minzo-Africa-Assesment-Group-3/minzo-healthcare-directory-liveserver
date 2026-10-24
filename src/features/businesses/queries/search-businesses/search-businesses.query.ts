@@ -58,6 +58,14 @@ function createLocationFilter(
     ...(query.city
       ? { cityOrTown: { equals: query.city, mode: "insensitive" } }
       : {}),
+    ...(query.facilityType
+      ? {
+          facilityType: {
+            equals: query.facilityType,
+            mode: "insensitive",
+          },
+        }
+      : {}),
     ...(query.serviceId
       ? {
           services: {
@@ -113,6 +121,12 @@ function createEligibleLocationConditions(
   if (query.city) {
     conditions.push(
       Prisma.sql`LOWER(filter_location."city_or_town") = LOWER(${query.city})`,
+    );
+  }
+
+  if (query.facilityType) {
+    conditions.push(
+      Prisma.sql`LOWER(filter_location."facility_type") = LOWER(${query.facilityType})`,
     );
   }
 
@@ -387,6 +401,12 @@ function createProximityConditions(
 
   if (query.city) {
     conditions.push(Prisma.sql`bl."city_or_town" ILIKE ${query.city}`);
+  }
+
+  if (query.facilityType) {
+    conditions.push(
+      Prisma.sql`LOWER(bl."facility_type") = LOWER(${query.facilityType})`,
+    );
   }
 
   if (query.serviceId) {

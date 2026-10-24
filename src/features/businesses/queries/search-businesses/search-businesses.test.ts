@@ -111,6 +111,7 @@ describe("business search contract", () => {
       search: "clinic",
       county: "Montserrado",
       city: "Monrovia",
+      facilityType: "Clinic",
       serviceId,
     });
 
@@ -125,6 +126,10 @@ describe("business search contract", () => {
           },
           cityOrTown: {
             equals: "Monrovia",
+            mode: "insensitive",
+          },
+          facilityType: {
+            equals: "Clinic",
             mode: "insensitive",
           },
           services: {
@@ -179,7 +184,7 @@ describe("public business search endpoint", () => {
     const app = createTestApp(database);
 
     const response = await request(app).get(
-      "/api/v1/businesses?search=clinic&county=Montserrado&pageSize=1",
+      "/api/v1/businesses?search=clinic&county=Montserrado&facilityType=Clinic&pageSize=1",
     );
     const body = searchBusinessesContract.responses[200].parse(
       response.body,
@@ -203,7 +208,7 @@ describe("public business search endpoint", () => {
       },
     ]);
     expect(body.pagination.nextPageUrl).toBe(
-      "/api/v1/businesses?search=clinic&county=Montserrado&pageSize=1&pageNumber=2",
+      "/api/v1/businesses?search=clinic&county=Montserrado&facilityType=Clinic&pageSize=1&pageNumber=2",
     );
     expect(isParameterizedSql(rawSearchQuery)).toBe(true);
 
@@ -213,6 +218,7 @@ describe("public business search endpoint", () => {
 
     expect(rawSearchQuery.sql).toContain("websearch_to_tsquery");
     expect(rawSearchQuery.values).toContain("clinic");
+    expect(rawSearchQuery.values).toContain("Clinic");
     expect(findManyQuery).toMatchObject({
       where: {
         id: { in: [businessId] },
