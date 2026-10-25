@@ -20,6 +20,8 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:seed": "prisma db seed",
     "db:seed:deploy": "node dist/scripts/seed-database.js",
+    "admin:seed": "tsx src/scripts/seed-super-admin.ts",
+    "admin:seed:deploy": "node dist/scripts/seed-super-admin.js",
     "db:studio": "prisma studio"
   },
   "keywords": [],
