@@ -47,6 +47,7 @@ export function createAuthPublicDependencies({
     authEmail,
     loginOtp,
     maxOtpAttempts: env.LOGIN_OTP_MAX_ATTEMPTS,
+    passwordResetTokenTtlSeconds: env.PASSWORD_RESET_TOKEN_TTL_SECONDS,
     refreshTokenCookie,
     refreshTokenTtlSeconds: env.REFRESH_TOKEN_TTL_SECONDS,
     verificationTokenTtlSeconds: env.EMAIL_VERIFICATION_TOKEN_TTL_SECONDS

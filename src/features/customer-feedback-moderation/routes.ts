@@ -9,6 +9,7 @@ import { createModerateCustomerFeedbackAutomationHandler } from "./commands/mode
 import { listCustomerFeedbackForModerationContract } from "./queries/list-customer-feedback/list-customer-feedback.contract.js";
 import { createListCustomerFeedbackForModerationHandler } from "./queries/list-customer-feedback/list-customer-feedback.handler.js";
 import { createServiceKeyMiddleware } from "../../shared/authentication/index.js";
+import type { ReviewRejectionNotificationQueue } from "./services/review-rejection-notification-queue.js";
 
 const contract = initContract();
 
@@ -22,6 +23,7 @@ export interface CustomerFeedbackModerationRouteDependencies {
   automationActorReference: string;
   automationServiceKey: string;
   database: DatabaseClient;
+  reviewRejectionNotificationQueue: ReviewRejectionNotificationQueue;
 }
 
 export function createCustomerFeedbackModerationHandlers(
@@ -43,7 +45,8 @@ export function createCustomerFeedbackModerationHandlers(
       middleware: [authenticateAutomation],
       handler: createModerateCustomerFeedbackAutomationHandler({
         actorReference: dependencies.automationActorReference,
-        database: dependencies.database
+        database: dependencies.database,
+        reviewRejectionNotificationQueue: dependencies.reviewRejectionNotificationQueue
       })
     }
   };

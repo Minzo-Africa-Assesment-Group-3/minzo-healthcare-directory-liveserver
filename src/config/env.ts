@@ -64,6 +64,7 @@ const environmentSchema = z.object({
   EMAIL_FROM: z.string().trim().min(1),
   FRONTEND_URL: z.string().trim().url(),
   EMAIL_VERIFICATION_TOKEN_TTL_SECONDS: z.coerce.number().int().min(300).max(604_800).default(86_400),
+  PASSWORD_RESET_TOKEN_TTL_SECONDS: z.coerce.number().int().min(300).max(86_400).default(3_600),
   LOGIN_OTP_TTL_SECONDS: z.coerce.number().int().min(60).max(900).default(300),
   LOGIN_OTP_MAX_ATTEMPTS: z.coerce.number().int().min(3).max(10).default(5),
   LOGIN_OTP_HMAC_SECRET: hexadecimalSecretSchema("LOGIN_OTP_HMAC_SECRET"),

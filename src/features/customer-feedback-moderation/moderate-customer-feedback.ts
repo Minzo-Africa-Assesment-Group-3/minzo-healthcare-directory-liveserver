@@ -2,6 +2,7 @@ import { Prisma } from "../../generated/prisma/client.js";
 import type { DatabaseClient } from "../../infrastructure/database/index.js";
 import { AppError } from "../../shared/errors/app-error.js";
 import { recordAuditLog } from "../audit-logs/record-audit-log.js";
+import type { ReviewRejectionNotificationQueue } from "./services/review-rejection-notification-queue.js";
 
 export type CustomerFeedbackModerationActor =
   { type: "ADMIN"; adminUserId: string } | { type: "AUTOMATION"; actorReference: string };
@@ -13,6 +14,7 @@ export interface ModerateCustomerFeedbackInput {
   database: DatabaseClient;
   decision: CustomerFeedbackModerationDecision;
   expectedReviewUpdatedAt?: Date;
+  reviewRejectionNotificationQueue: ReviewRejectionNotificationQueue;
   reviewId: string;
   reason?: string;
 }
@@ -31,6 +33,7 @@ export async function moderateCustomerFeedback({
   database,
   decision,
   expectedReviewUpdatedAt,
+  reviewRejectionNotificationQueue,
   reviewId,
   reason
 }: ModerateCustomerFeedbackInput) {
@@ -134,6 +137,13 @@ export async function moderateCustomerFeedback({
             reason: normalizedReason
           }
         });
+
+        if (decision === "REJECTED") {
+          await reviewRejectionNotificationQueue.enqueue(transaction, {
+            moderationActionId: moderation.id,
+            reviewId: feedback.id
+          });
+        }
 
         return {
           reviewId: feedback.id,

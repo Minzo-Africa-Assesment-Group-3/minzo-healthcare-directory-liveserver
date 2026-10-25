@@ -10,11 +10,15 @@ export interface ReviewModerationTask {
 }
 
 export interface ReviewModerationQueue {
+  initialize(): Promise<void>;
   enqueue(transaction: Prisma.TransactionClient, task: ReviewModerationTask): Promise<void>;
 }
 
 export function createReviewModerationQueue(jobQueue: PgBoss): ReviewModerationQueue {
   return Object.freeze({
+    async initialize(): Promise<void> {
+      await jobQueue.createQueue(reviewModerationQueueName);
+    },
     async enqueue(transaction: Prisma.TransactionClient, task: ReviewModerationTask): Promise<void> {
       await jobQueue.send(
         reviewModerationQueueName,

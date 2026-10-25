@@ -216,6 +216,10 @@ describe("customer review moderation", () => {
       },
       database,
       decision: "FLAGGED",
+      reviewRejectionNotificationQueue: {
+        async enqueue() {},
+        async initialize() {}
+      },
       reviewId: feedbackId,
       reason: "Potential personal medical information."
     });

@@ -18,6 +18,8 @@ export const authPublicContract = contract.router({
   login: commands.loginContract,
   refreshToken: commands.refreshTokenContract,
   logout: commands.logoutContract,
+  requestPasswordReset: commands.requestPasswordResetContract,
+  resetPassword: commands.resetPasswordContract,
   resendVerification: commands.resendVerificationContract,
   verifyEmail: commands.verifyEmailContract,
   verifyLoginOtp: commands.verifyLoginOtpContract
@@ -30,6 +32,7 @@ export interface AuthPublicRouteDependencies {
   database: DatabaseClient;
   loginOtp: LoginOtpService;
   maxOtpAttempts: number;
+  passwordResetTokenTtlSeconds: number;
   refreshTokenCookie: RefreshTokenCookieService;
   refreshTokenTtlSeconds: number;
   rateLimiters: AuthPublicRateLimitMiddlewares;
@@ -52,6 +55,14 @@ export function createAuthPublicHandlers(dependencies: AuthPublicRouteDependenci
     },
     refreshToken: commands.createRefreshTokenHandler(dependencies),
     logout: commands.createLogoutHandler(dependencies),
+    requestPasswordReset: {
+      middleware: [dependencies.rateLimiters.credential],
+      handler: commands.createRequestPasswordResetHandler(dependencies)
+    },
+    resetPassword: {
+      middleware: [dependencies.rateLimiters.credential],
+      handler: commands.createResetPasswordHandler(dependencies)
+    },
     verifyEmail: commands.createVerifyEmailHandler(dependencies),
     resendVerification: {
       middleware: [dependencies.rateLimiters.registration],

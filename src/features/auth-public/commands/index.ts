@@ -1,5 +1,9 @@
 export { loginContract } from "./login/login.contract.js";
 export { createLoginHandler } from "./login/login.handler.js";
+export { requestPasswordResetContract } from "./request-password-reset/request-password-reset.contract.js";
+export { createRequestPasswordResetHandler } from "./request-password-reset/request-password-reset.handler.js";
+export { resetPasswordContract } from "./reset-password/reset-password.contract.js";
+export { createResetPasswordHandler } from "./reset-password/reset-password.handler.js";
 export { logoutContract } from "./logout/logout.contract.js";
 export { createLogoutHandler } from "./logout/logout.handler.js";
 export { refreshTokenContract } from "./refresh-token/refresh-token.contract.js";

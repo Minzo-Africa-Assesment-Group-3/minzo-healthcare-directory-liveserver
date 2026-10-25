@@ -2,6 +2,9 @@ import type { Environment } from "../config/env.js";
 import { createAiReviewModerationClient } from "../features/customer-feedback-moderation/services/ai-review-moderation-client.js";
 import { createReviewModerationQueue } from "../features/customer-feedback-moderation/services/review-moderation-queue.js";
 import { createReviewModerationWorker } from "../features/customer-feedback-moderation/services/review-moderation-worker.js";
+import { createReviewRejectionEmailService } from "../features/customer-feedback-moderation/services/review-rejection-email.js";
+import { createReviewRejectionNotificationQueue } from "../features/customer-feedback-moderation/services/review-rejection-notification-queue.js";
+import { createReviewRejectionNotificationWorker } from "../features/customer-feedback-moderation/services/review-rejection-notification-worker.js";
 import { createDatabaseClient, type DatabaseClient } from "../infrastructure/database/index.js";
 import { createResendEmailSender } from "../infrastructure/email/index.js";
 import { createLogger } from "../infrastructure/logging/index.js";
@@ -62,6 +65,8 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
       })
     : undefined;
   const reviewModerationQueue = createReviewModerationQueue(jobQueue);
+  const reviewRejectionNotificationQueue = createReviewRejectionNotificationQueue(jobQueue);
+  const reviewRejectionEmail = createReviewRejectionEmailService(emailSender);
   const reviewModerationWorker = aiReviewModeration
     ? createReviewModerationWorker({
         aiReviewModeration,
@@ -70,12 +75,21 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
         logger
       })
     : undefined;
+  const reviewRejectionNotificationWorker = createReviewRejectionNotificationWorker({
+    database,
+    email: reviewRejectionEmail,
+    jobQueue,
+    logger
+  });
 
   return {
     apiRateLimiter: rateLimiters.api,
     backgroundJobs: createBackgroundJobs({
       jobQueue,
-      reviewModerationWorker
+      reviewModerationQueue,
+      reviewModerationWorker,
+      reviewRejectionNotificationQueue,
+      reviewRejectionNotificationWorker
     }),
     corsMiddleware: createCorsMiddleware(env.CORS_ALLOWED_ORIGINS),
     database,
@@ -110,7 +124,8 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
       reviewModeration: {
         automationActorReference: env.AI_MODERATION_ACTOR_REFERENCE,
         automationServiceKey: env.AI_MODERATION_SERVICE_KEY,
-        database
+        database,
+        reviewRejectionNotificationQueue
       },
       reviews: {
         database,

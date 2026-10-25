@@ -54,10 +54,12 @@ export function createTestRouteDependencies() {
       database: {} as DatabaseClient,
       authEmail: {
         async sendVerificationEmail() {},
-        async sendLoginOtp() {}
+        async sendLoginOtp() {},
+        async sendPasswordResetEmail() {}
       },
       loginOtp,
       maxOtpAttempts: 5,
+      passwordResetTokenTtlSeconds: 3_600,
       refreshTokenCookie: createRefreshTokenCookieService({
         name: "refresh_token",
         path: "/api/v1/auth",
@@ -89,11 +91,16 @@ export function createTestRouteDependencies() {
     reviewModeration: {
       automationActorReference: "langchain-review-moderator-test",
       automationServiceKey: "a".repeat(64),
-      database: {} as DatabaseClient
+      database: {} as DatabaseClient,
+      reviewRejectionNotificationQueue: {
+        async enqueue() {},
+        async initialize() {}
+      }
     },
     reviews: {
       database: {} as DatabaseClient,
       moderationQueue: {
+        async initialize() {},
         async enqueue() {}
       },
       rateLimiters: {

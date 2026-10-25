@@ -141,6 +141,7 @@ describe("review endpoints", () => {
     routes.authentication.database = database;
     routes.reviews.database = database;
     routes.reviews.moderationQueue = {
+      async initialize() {},
       async enqueue() {
         moderationTaskQueued = true;
       }
