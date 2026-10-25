@@ -9,6 +9,7 @@ import {
   type LoginOtpService,
   type RefreshTokenCookieService
 } from "../../../../shared/authentication/index.js";
+import { getUserAccountSummary } from "../../../../shared/account/user-account-summary.js";
 import { AppError } from "../../../../shared/errors/app-error.js";
 import type { verifyLoginOtpContract } from "./verify-login-otp.contract.js";
 
@@ -116,6 +117,12 @@ export function createVerifyLoginOtpHandler(dependencies: {
 
     dependencies.refreshTokenCookie.set(res, refreshToken.token, dependencies.refreshTokenTtlSeconds);
 
+    const user = await getUserAccountSummary(dependencies.database, challenge.user.id);
+
+    if (!user) {
+      throw invalidOtpError();
+    }
+
     return {
       status: 200,
       body: {
@@ -123,11 +130,7 @@ export function createVerifyLoginOtpHandler(dependencies: {
         tokenType: "Bearer",
         expiresIn: dependencies.accessTokenTtlSeconds,
         refreshTokenExpiresAt: refreshToken.expiresAt.toISOString(),
-        user: {
-          id: challenge.user.id,
-          email: challenge.user.email,
-          displayName: challenge.user.displayName
-        }
+        user
       }
     };
   };

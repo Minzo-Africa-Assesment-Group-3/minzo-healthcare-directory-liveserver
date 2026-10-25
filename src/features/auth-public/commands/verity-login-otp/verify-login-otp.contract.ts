@@ -2,6 +2,7 @@ import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
 import { problemDetailsSchema } from "../../../../shared/errors/problem-details.schema.js";
+import { userAccountSummarySchema } from "../../../../shared/account/user-account-summary.js";
 
 const contract = initContract();
 
@@ -21,11 +22,7 @@ export const verifyLoginOtpContract = contract.mutation({
       tokenType: z.literal("Bearer"),
       expiresIn: z.number().int().positive(),
       refreshTokenExpiresAt: z.string().datetime(),
-      user: z.object({
-        id: z.string().uuid(),
-        email: z.string().email(),
-        displayName: z.string()
-      })
+      user: userAccountSummarySchema
     }),
     401: problemDetailsSchema
   },

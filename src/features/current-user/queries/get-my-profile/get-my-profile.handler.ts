@@ -1,8 +1,9 @@
 import type { AppRouteQueryImplementation } from "@ts-rest/express";
-import type { DatabaseClient } from "../../../../infrastructure/database/database.js";
-import type { getMyProfileContract } from "./get-my-profile.contract.js";
+import type { DatabaseClient } from "../../../../infrastructure/database/index.js";
 import { requireAuthenticatedPrincipal } from "../../../../shared/authentication/route-authentication.js";
+import { getUserAccountSummary } from "../../../../shared/account/user-account-summary.js";
 import { AppError } from "../../../../shared/errors/app-error.js";
+import type { getMyProfileContract } from "./get-my-profile.contract.js";
 
 export function createGetMyProfileHandler({
   database
@@ -12,18 +13,7 @@ export function createGetMyProfileHandler({
   return async ({ req, res }) => {
     res.setHeader("Cache-Control", "no-store");
     const userId = requireAuthenticatedPrincipal(req, "user").subjectId;
-    const user = await database.user.findUnique({
-      where: { id: userId, status: "ACTIVE", deletedAt: null },
-      select: {
-        id: true,
-        displayName: true,
-        email: true,
-        phone: true,
-        status: true,
-        emailVerifiedAt: true,
-        createdAt: true
-      }
-    });
+    const user = await getUserAccountSummary(database, userId);
     if (!user) {
       throw new AppError({
         code: "account_unavailable",
@@ -34,11 +24,7 @@ export function createGetMyProfileHandler({
     }
     return {
       status: 200,
-      body: {
-        ...user,
-        emailVerifiedAt: user.emailVerifiedAt?.toISOString() ?? null,
-        createdAt: user.createdAt.toISOString()
-      }
+      body: user
     };
   };
 }

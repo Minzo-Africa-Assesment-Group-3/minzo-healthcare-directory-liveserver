@@ -1,6 +1,7 @@
 import { initContract } from "@ts-rest/core";
-import z from "zod";
+import { z } from "zod";
 
+import { userAccountSummarySchema } from "../../../../shared/account/user-account-summary.js";
 export const getMyProfileContract = initContract().query({
   method: "GET",
   path: "/api/v1/me",
@@ -9,15 +10,7 @@ export const getMyProfileContract = initContract().query({
   summary: "Get my profile",
   description: "Returns the signed-in user's profile.",
   responses: {
-    200: z.object({
-      id: z.string().uuid(),
-      displayName: z.string(),
-      email: z.string().email(),
-      phone: z.string().nullable(),
-      status: z.enum(["PENDING_VERIFICATION", "ACTIVE", "SUSPENDED", "DEACTIVATED"]),
-      emailVerifiedAt: z.string().datetime().nullable(),
-      createdAt: z.string().datetime()
-    })
+    200: userAccountSummarySchema
   },
   metadata: {
     authentication: "user-access-token",
