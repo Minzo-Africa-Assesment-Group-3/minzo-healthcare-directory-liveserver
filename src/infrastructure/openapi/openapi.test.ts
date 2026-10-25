@@ -16,12 +16,18 @@ describe("API foundation", () => {
     const response = await request(app).get("/openapi.json").expect(200);
     const document = response.body as { paths: Record<string, unknown> };
     expect(Object.keys(document.paths).sort()).toEqual([
+      "/api/v1/admin/auth/login",
+      "/api/v1/admin/auth/login/verify-otp",
+      "/api/v1/admin/auth/logout",
+      "/api/v1/admin/auth/refresh",
       "/api/v1/admin/business-claims",
       "/api/v1/admin/business-claims/{claimId}",
       "/api/v1/admin/business-claims/{claimId}/evidence-download-url",
       "/api/v1/admin/customer-reviews",
       "/api/v1/admin/customer-reviews/{reviewId}/moderation",
       "/api/v1/admin/dashboard/overview",
+      "/api/v1/admin/invitations",
+      "/api/v1/admin/invitations/accept",
       "/api/v1/auth/forgot-password",
       "/api/v1/auth/login",
       "/api/v1/auth/login/verify-otp",

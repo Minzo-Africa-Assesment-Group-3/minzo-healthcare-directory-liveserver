@@ -73,7 +73,25 @@ export function createTestRouteDependencies() {
       verificationTokenTtlSeconds: 86_400
     },
     authAdmin: {
-      accessToken: adminAccessToken
+      accessToken: adminAccessToken,
+      accessTokenTtlSeconds: 600,
+      adminAuthEmail: {
+        async sendInvitation() {},
+        async sendLoginOtp() {}
+      },
+      database: {} as DatabaseClient,
+      invitationTokenTtlSeconds: 259_200,
+      loginOtp,
+      maxOtpAttempts: 5,
+      refreshTokenCookie: createRefreshTokenCookieService({
+        name: "admin_refresh_token",
+        path: "/api/v1/admin/auth",
+        secure: false
+      }),
+      refreshTokenTtlSeconds: 86_400,
+      rateLimiters: {
+        credential: allowRequest
+      }
     },
     businessRegistrationDocuments: {
       businessRegistrationsBucket: "business-registration-documents",

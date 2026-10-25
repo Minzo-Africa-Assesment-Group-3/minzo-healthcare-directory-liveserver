@@ -62,6 +62,7 @@ const environmentSchema = z.object({
   ADMIN_LOGIN_OTP_TTL_SECONDS: z.coerce.number().int().min(60).max(600).default(300),
   ADMIN_LOGIN_OTP_MAX_ATTEMPTS: z.coerce.number().int().min(3).max(10).default(5),
   ADMIN_LOGIN_OTP_HMAC_SECRET: hexadecimalSecretSchema("ADMIN_LOGIN_OTP_HMAC_SECRET"),
+  ADMIN_INVITATION_TOKEN_TTL_SECONDS: z.coerce.number().int().min(300).max(604_800).default(259_200),
   RESEND_API_KEY: z.string().trim().startsWith("re_"),
   EMAIL_FROM: z.string().trim().min(1),
   FRONTEND_URL: z.string().trim().url(),

@@ -1,6 +1,6 @@
 import type { Environment } from "../config/env.js";
-import { createAuthEmailService } from "../features/auth-public/services/index.js";
-import type { AuthPublicRouteDependencies } from "../features/auth-public/routes.js";
+import { createAuthEmailService } from "../features/public/auth/services/index.js";
+import type { AuthPublicRouteDependencies } from "../features/public/auth/routes.js";
 import type { DatabaseClient } from "../infrastructure/database/index.js";
 import type { EmailSender } from "../infrastructure/email/index.js";
 import {

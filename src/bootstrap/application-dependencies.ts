@@ -1,20 +1,20 @@
 import type { Environment } from "../config/env.js";
-import { createAiReviewModerationClient } from "../features/customer-feedback-moderation/services/ai-review-moderation-client.js";
-import { createReviewModerationQueue } from "../features/customer-feedback-moderation/services/review-moderation-queue.js";
-import { createReviewModerationWorker } from "../features/customer-feedback-moderation/services/review-moderation-worker.js";
-import { createReviewRejectionEmailService } from "../features/customer-feedback-moderation/services/review-rejection-email.js";
-import { createReviewRejectionNotificationQueue } from "../features/customer-feedback-moderation/services/review-rejection-notification-queue.js";
-import { createReviewRejectionNotificationWorker } from "../features/customer-feedback-moderation/services/review-rejection-notification-worker.js";
+import { createAiReviewModerationClient } from "../features/admin/customer-reviews/services/ai-review-moderation-client.js";
+import { createReviewModerationQueue } from "../features/admin/customer-reviews/services/review-moderation-queue.js";
+import { createReviewModerationWorker } from "../features/admin/customer-reviews/services/review-moderation-worker.js";
+import { createReviewRejectionEmailService } from "../features/admin/customer-reviews/services/review-rejection-email.js";
+import { createReviewRejectionNotificationQueue } from "../features/admin/customer-reviews/services/review-rejection-notification-queue.js";
+import { createReviewRejectionNotificationWorker } from "../features/admin/customer-reviews/services/review-rejection-notification-worker.js";
 import { createDatabaseClient, type DatabaseClient } from "../infrastructure/database/index.js";
 import { createResendEmailSender } from "../infrastructure/email/index.js";
 import { createLogger } from "../infrastructure/logging/index.js";
 import { createJobQueue } from "../infrastructure/queue/index.js";
 import { createSupabaseObjectStorage } from "../infrastructure/storage/index.js";
 import type { ApplicationRouteDependencies } from "../routes.js";
-import { createAccessTokenService } from "../shared/authentication/index.js";
 import { createCorsMiddleware } from "../shared/middleware/cors.middleware.js";
 import { createRateLimitMiddlewares } from "../shared/middleware/rate-limit.middleware.js";
 import { createAuthPublicDependencies } from "./auth-public-dependencies.js";
+import { createAuthAdminDependencies } from "./auth-admin-dependencies.js";
 import { createBackgroundJobs, type BackgroundJobs } from "./background-jobs.js";
 
 export interface ApplicationDependencies {
@@ -47,12 +47,10 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
     emailSender,
     env
   });
-  const adminAccessToken = createAccessTokenService({
-    audience: env.ADMIN_JWT_AUDIENCE,
-    issuer: env.JWT_ISSUER,
-    realm: "admin",
-    secret: env.ADMIN_JWT_ACCESS_SECRET,
-    ttlSeconds: env.ADMIN_JWT_ACCESS_TOKEN_TTL_SECONDS
+  const authAdmin = createAuthAdminDependencies({
+    database,
+    emailSender,
+    env
   });
   const objectStorage = createSupabaseObjectStorage({
     secretKey: env.SUPABASE_SECRET_KEY,
@@ -97,9 +95,13 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
     routes: {
       adminDashboard: { database },
       authentication: {
-        adminAccessToken,
+        adminAccessToken: authAdmin.accessToken,
         database,
         userAccessToken: authPublic.accessToken
+      },
+      authAdmin: {
+        ...authAdmin,
+        rateLimiters: rateLimiters.authAdmin
       },
       authPublic: {
         ...authPublic,

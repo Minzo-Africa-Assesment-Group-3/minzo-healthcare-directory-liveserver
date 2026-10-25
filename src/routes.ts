@@ -6,19 +6,24 @@ import {
   authPublicContract,
   createAuthPublicHandlers,
   type AuthPublicRouteDependencies
-} from "./features/auth-public/routes.js";
+} from "./features/public/auth/routes.js";
+import {
+  authAdminContract,
+  createAuthAdminHandlers,
+  type AuthAdminRouteDependencies
+} from "./features/admin/auth/routes.js";
 import {
   adminDashboardContract,
   createAdminDashboardHandlers,
   type AdminDashboardRouteDependencies
-} from "./features/admin-dashboard/routes.js";
+} from "./features/admin/dashboard/routes.js";
 import { systemContract, systemHandlers } from "./features/system/routes.js";
 import { sendProblemDetails } from "./shared/errors/problem-details.js";
 import {
   createBusinessRegistrationDocumentsHandlers,
   businessRegistrationDocumentsContract,
   type BusinessRegistrationDocumentsRouteDependencies
-} from "./features/business-registration-documents/routes.js";
+} from "./features/business/registration-documents/routes.js";
 import {
   createAuthenticationMiddlewares,
   type AuthenticationMiddlewareDependencies
@@ -27,43 +32,44 @@ import {
   citiesContract,
   createCitiesHandlers,
   type CitiesRouteDependencies
-} from "./features/cities/routes.js";
+} from "./features/public/directory/cities/routes.js";
 import {
   countiesContract,
   createCountiesHandlers,
   type CountiesRouteDependencies
-} from "./features/counties/routes.js";
+} from "./features/public/directory/counties/routes.js";
 import {
   createCustomerFeedbackModerationHandlers,
   customerFeedbackModerationContract,
   type CustomerFeedbackModerationRouteDependencies
-} from "./features/customer-feedback-moderation/routes.js";
+} from "./features/admin/customer-reviews/routes.js";
 import {
   createReviewsHandlers,
   reviewsContract,
   type ReviewsRouteDependencies
-} from "./features/reviews/routes.js";
+} from "./features/shared/reviews/routes.js";
 import {
   businessesContract,
   createBusinessesHandlers,
   type BusinessesRouteDependencies
-} from "./features/businesses/routes.js";
+} from "./features/shared/businesses/routes.js";
 import {
   businessClaimsContract,
   createBusinessClaimsHandlers,
   type BusinessClaimsRouteDependencies
-} from "./features/business-claims/routes.js";
+} from "./features/public/business-claims/routes.js";
 import {
   createCurrentUserHandlers,
   currentUserContract,
   type CurrentUserRouteDependencies
-} from "./features/current-user/routes.js";
+} from "./features/public/account/routes.js";
 
 const contract = initContract();
 const server = initServer();
 
 export const applicationContract = contract.router({
   adminDashboard: adminDashboardContract,
+  authAdmin: authAdminContract,
   authPublic: authPublicContract,
   system: systemContract,
   businessRegistrationDocuments: businessRegistrationDocumentsContract,
@@ -78,6 +84,7 @@ export const applicationContract = contract.router({
 
 export interface ApplicationRouteDependencies {
   adminDashboard: AdminDashboardRouteDependencies;
+  authAdmin: AuthAdminRouteDependencies;
   authPublic: AuthPublicRouteDependencies;
   businessRegistrationDocuments: BusinessRegistrationDocumentsRouteDependencies;
   authentication: AuthenticationMiddlewareDependencies;
@@ -103,6 +110,7 @@ export function registerApplicationRoutes(app: Express, dependencies: Applicatio
   const authentication = createAuthenticationMiddlewares(dependencies.authentication);
   const applicationRouter = server.router(applicationContract, {
     adminDashboard: createAdminDashboardHandlers(dependencies.adminDashboard, authentication),
+    authAdmin: createAuthAdminHandlers(dependencies.authAdmin, authentication),
     authPublic: createAuthPublicHandlers(dependencies.authPublic),
     system: systemHandlers,
     businessRegistrationDocuments: createBusinessRegistrationDocumentsHandlers(

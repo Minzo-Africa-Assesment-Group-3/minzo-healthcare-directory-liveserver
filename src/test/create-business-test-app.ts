@@ -2,7 +2,7 @@ import { createExpressEndpoints } from "@ts-rest/express";
 import express, { type RequestHandler } from "express";
 import type { Logger } from "pino";
 import { createHttpLogger } from "../infrastructure/logging/index.js";
-import { businessesContract, createBusinessesHandlers } from "../features/businesses/routes.js";
+import { businessesContract, createBusinessesHandlers } from "../features/shared/businesses/routes.js";
 import { createAuthenticationMiddlewares } from "../shared/authentication/authentication.middleware.js";
 import { errorHandler } from "../shared/middleware/error-handler.middleware.js";
 import { notFoundHandler } from "../shared/middleware/not-found.middleware.js";

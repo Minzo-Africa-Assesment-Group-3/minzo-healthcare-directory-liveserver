@@ -74,8 +74,37 @@ model AdminUser {
   businessMediaReviewed   BusinessMedia[]          @relation("BusinessMediaReviewer")
   reviewModerationActions ReviewModerationAction[] @relation("ReviewModerationAdmin")
   auditLogs               AuditLog[]               @relation("AuditLogAdminActor")
+  invitationsSent         AdminInvitation[]        @relation("AdminInvitationInviter")
 
   @@map("admin_users")
+}
+
+enum AdminInvitationStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
+}
+
+model AdminInvitation {
+  id               String                @id @default(uuid()) @db.Uuid
+  email            String                @db.VarChar(320)
+  displayName      String                @map("display_name") @db.VarChar(100)
+  tokenHash        String                @unique @map("token_hash") @db.VarChar(64)
+  status           AdminInvitationStatus @default(PENDING)
+  expiresAt        DateTime              @map("expires_at") @db.Timestamptz(6)
+  acceptedAt       DateTime?             @map("accepted_at") @db.Timestamptz(6)
+  revokedAt        DateTime?             @map("revoked_at") @db.Timestamptz(6)
+  invitedByAdminId String                @map("invited_by_admin_id") @db.Uuid
+  roleId           String                @map("role_id") @db.Uuid
+  createdAt        DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  invitedByAdmin AdminUser @relation("AdminInvitationInviter", fields: [invitedByAdminId], references: [id], onDelete: Restrict)
+  role           AdminRole @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  @@index([email, status])
+  @@index([expiresAt])
+  @@index([invitedByAdminId])
+  @@map("admin_invitations")
 }
 
 model AuditLog {
@@ -144,6 +173,7 @@ model AdminRole {
 
   adminUsers  AdminUserRole[]
   permissions AdminRolePermission[]
+  invitations AdminInvitation[]
 
   @@map("admin_roles")
 }

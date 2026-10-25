@@ -1,9 +1,9 @@
 import type { PgBoss } from "pg-boss";
 
-import type { ReviewModerationWorker } from "../features/customer-feedback-moderation/services/review-moderation-worker.js";
-import type { ReviewModerationQueue } from "../features/customer-feedback-moderation/services/review-moderation-queue.js";
-import type { ReviewRejectionNotificationQueue } from "../features/customer-feedback-moderation/services/review-rejection-notification-queue.js";
-import type { ReviewRejectionNotificationWorker } from "../features/customer-feedback-moderation/services/review-rejection-notification-worker.js";
+import type { ReviewModerationWorker } from "../features/admin/customer-reviews/services/review-moderation-worker.js";
+import type { ReviewModerationQueue } from "../features/admin/customer-reviews/services/review-moderation-queue.js";
+import type { ReviewRejectionNotificationQueue } from "../features/admin/customer-reviews/services/review-rejection-notification-queue.js";
+import type { ReviewRejectionNotificationWorker } from "../features/admin/customer-reviews/services/review-rejection-notification-worker.js";
 
 export interface BackgroundJobs {
   start(): Promise<void>;

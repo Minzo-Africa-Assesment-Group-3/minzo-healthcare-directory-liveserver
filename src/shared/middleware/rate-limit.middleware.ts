@@ -15,8 +15,13 @@ export interface AuthPublicRateLimitMiddlewares {
   registration: RequestHandler;
 }
 
+export interface AuthAdminRateLimitMiddlewares {
+  credential: RequestHandler;
+}
+
 export interface RateLimitMiddlewares {
   api: RequestHandler;
+  authAdmin: AuthAdminRateLimitMiddlewares;
   authPublic: AuthPublicRateLimitMiddlewares;
   reviews: ReviewsRateLimitMiddlewares;
 }
@@ -62,6 +67,13 @@ export function createRateLimitMiddlewares(apiLimit: number, apiWindowMs: number
       skip: (request) => request.method === "OPTIONS" || request.path === "/api/v1/health",
       windowMs: apiWindowMs
     }),
+    authAdmin: {
+      credential: createRateLimiter({
+        identifier: "auth-admin-credential",
+        limit: 5,
+        windowMs: FIFTEEN_MINUTES
+      })
+    },
     authPublic: {
       credential: createRateLimiter({
         identifier: "auth-public-credential",
