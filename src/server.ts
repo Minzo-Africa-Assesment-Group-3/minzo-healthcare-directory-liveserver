@@ -8,7 +8,8 @@ async function startServer(): Promise<void> {
 
   const logger = createLogger({
     environment: env.NODE_ENV,
-    level: env.LOG_LEVEL
+    level: env.LOG_LEVEL,
+    prettyPrint: env.LOG_PRETTY_PRINT
   });
 
   const dependencies = createApplicationDependencies(env);

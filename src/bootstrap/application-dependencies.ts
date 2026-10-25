@@ -30,7 +30,8 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
   const database = createDatabaseClient(env.DATABASE_URL);
   const logger = createLogger({
     environment: env.NODE_ENV,
-    level: env.LOG_LEVEL
+    level: env.LOG_LEVEL,
+    prettyPrint: env.LOG_PRETTY_PRINT
   });
   const jobQueue = createJobQueue({
     databaseUrl: env.DATABASE_URL,

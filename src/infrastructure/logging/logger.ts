@@ -4,6 +4,7 @@ import pino, { type LevelWithSilent, type Logger, type LoggerOptions } from "pin
 export interface LoggerConfig {
   environment: string;
   level: LevelWithSilent;
+  prettyPrint?: boolean;
 }
 
 function createLoggerOptions(config: LoggerConfig): LoggerOptions {
@@ -16,7 +17,7 @@ function createLoggerOptions(config: LoggerConfig): LoggerOptions {
       hostname: hostname(),
       pid: process.pid
     },
-    ...(config.environment === "development"
+    ...(config.environment === "development" || config.prettyPrint
       ? {
           transport: {
             target: "pino-pretty",

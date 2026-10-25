@@ -2,6 +2,7 @@ import "dotenv/config";
 import { z } from "zod";
 
 const logLevels = ["fatal", "error", "warn", "info", "debug", "trace", "silent"] as const;
+const booleanEnvironmentSchema = z.enum(["true", "false"]).transform((value) => value === "true");
 
 function isPostgresUrl(value: string): boolean {
   try {
@@ -40,6 +41,7 @@ const environmentSchema = z.object({
   HOST: z.string().trim().min(1).default("127.0.0.1"),
   PORT: z.coerce.number().int().min(1).max(65_535).default(3000),
   LOG_LEVEL: z.enum(logLevels).default("info"),
+  LOG_PRETTY_PRINT: booleanEnvironmentSchema.default("false"),
   DATABASE_URL: z.string().trim().refine(isPostgresUrl, {
     message: "DATABASE_URL must be a valid PostgreSQL connection URL"
   }),
