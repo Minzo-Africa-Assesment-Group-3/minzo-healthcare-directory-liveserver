@@ -1,8 +1,5 @@
 import { AppError } from "../errors/app-error.js";
-import type {
-  AccessTokenService,
-  VerifiedAccessToken,
-} from "./access-token.js";
+import type { AccessTokenService, VerifiedAccessToken } from "./access-token.js";
 
 export interface AccessTokenRequest {
   headers: {
@@ -16,13 +13,13 @@ function authenticationRequiredError(cause?: unknown): AppError {
     code: "authentication_required",
     message: "A valid bearer access token is required.",
     statusCode: 401,
-    title: "Authentication required",
+    title: "Authentication required"
   });
 }
 
 export async function requireAccessToken(
   request: AccessTokenRequest,
-  accessToken: AccessTokenService,
+  accessToken: AccessTokenService
 ): Promise<VerifiedAccessToken> {
   const authorization = request.headers.authorization;
 
@@ -32,11 +29,7 @@ export async function requireAccessToken(
 
   const [scheme, token, unexpectedPart] = authorization.trim().split(/\s+/);
 
-  if (
-    scheme?.toLowerCase() !== "bearer" ||
-    !token ||
-    unexpectedPart !== undefined
-  ) {
+  if (scheme?.toLowerCase() !== "bearer" || !token || unexpectedPart !== undefined) {
     throw authenticationRequiredError();
   }
 

@@ -22,10 +22,10 @@ function activeSuperAdmin() {
       {
         role: {
           name: "SUPER_ADMIN",
-          permissions: [],
-        },
-      },
-    ],
+          permissions: []
+        }
+      }
+    ]
   };
 }
 
@@ -36,13 +36,13 @@ function createTestApp(database: DatabaseClient) {
 
   return {
     accessToken: routes.authAdmin.accessToken.create({
-      subjectId: adminUserId,
+      subjectId: adminUserId
     }),
     app: createApp({
       ...createTestHttpDependencies(),
       logger: createLogger({ environment: "test", level: "silent" }),
-      routes,
-    }),
+      routes
+    })
   };
 }
 
@@ -51,15 +51,15 @@ describe("customer review moderation", () => {
     expect(listCustomerFeedbackForModerationContract.query.parse({})).toEqual({
       moderationStatus: "UNREVIEWED",
       pageNumber: 1,
-      pageSize: 20,
+      pageSize: 20
     });
   });
 
   it("requires a reason when feedback is rejected", () => {
     expect(() =>
       moderateCustomerFeedbackContract.body.parse({
-        decision: "REJECTED",
-      }),
+        decision: "REJECTED"
+      })
     ).toThrow();
   });
 
@@ -67,17 +67,15 @@ describe("customer review moderation", () => {
     const app = createApp({
       ...createTestHttpDependencies(),
       logger: createLogger({ environment: "test", level: "silent" }),
-      routes: createTestRouteDependencies(),
+      routes: createTestRouteDependencies()
     });
 
-    const response = await request(app).get(
-      "/api/v1/admin/customer-reviews",
-    );
+    const response = await request(app).get("/api/v1/admin/customer-reviews");
 
     expect(response.status).toBe(401);
     expect(response.body).toMatchObject({
       code: "authentication_required",
-      status: 401,
+      status: 401
     });
   });
 
@@ -92,13 +90,13 @@ describe("customer review moderation", () => {
             id: feedbackId,
             status: "PUBLISHED",
             moderationStatus: "UNREVIEWED",
-            updatedAt: now,
+            updatedAt: now
           };
         },
         async updateMany(args: unknown) {
           reviewUpdate = args;
           return { count: 1 };
-        },
+        }
       },
       reviewModerationAction: {
         async create(args: unknown) {
@@ -110,33 +108,34 @@ describe("customer review moderation", () => {
             adminUserId,
             actorReference: null,
             reason: "Contains a personal attack.",
-            createdAt: now,
+            createdAt: now
           };
-        },
+        }
       },
+      auditLog: {
+        async create() {
+          return { id: "audit-log-id" };
+        }
+      }
     };
     const database = {
       adminUser: {
         async findUnique() {
           return activeSuperAdmin();
-        },
+        }
       },
-      async $transaction(
-        callback: (client: typeof transaction) => Promise<unknown>,
-      ) {
+      async $transaction(callback: (client: typeof transaction) => Promise<unknown>) {
         return callback(transaction);
-      },
+      }
     } as unknown as DatabaseClient;
     const { accessToken, app } = createTestApp(database);
 
     const response = await request(app)
-      .patch(
-        `/api/v1/admin/customer-reviews/${feedbackId}/moderation`,
-      )
+      .patch(`/api/v1/admin/customer-reviews/${feedbackId}/moderation`)
       .set("Authorization", `Bearer ${await accessToken}`)
       .send({
         decision: "REJECTED",
-        reason: "Contains a personal attack.",
+        reason: "Contains a personal attack."
       });
 
     expect(response.status).toBe(200);
@@ -148,22 +147,22 @@ describe("customer review moderation", () => {
         actorType: "ADMIN",
         decision: "REJECTED",
         adminUserId,
-        reason: "Contains a personal attack.",
-      },
+        reason: "Contains a personal attack."
+      }
     });
     expect(reviewUpdate).toMatchObject({
       data: {
         status: "HIDDEN",
-        moderationStatus: "REJECTED",
-      },
+        moderationStatus: "REJECTED"
+      }
     });
     expect(moderationCreate).toMatchObject({
       data: {
         actorType: "ADMIN",
         adminUserId,
         decision: "REJECTED",
-        reviewId: feedbackId,
-      },
+        reviewId: feedbackId
+      }
     });
   });
 
@@ -177,12 +176,12 @@ describe("customer review moderation", () => {
             id: feedbackId,
             status: "PUBLISHED",
             moderationStatus: "UNREVIEWED",
-            updatedAt: now,
+            updatedAt: now
           };
         },
         async updateMany() {
           return { count: 1 };
-        },
+        }
       },
       reviewModerationAction: {
         async create(args: unknown) {
@@ -194,28 +193,31 @@ describe("customer review moderation", () => {
             adminUserId: null,
             actorReference: "langchain-feedback-moderator-v1",
             reason: "Potential personal medical information.",
-            createdAt: now,
+            createdAt: now
           };
-        },
+        }
       },
+      auditLog: {
+        async create() {
+          return { id: "audit-log-id" };
+        }
+      }
     };
     const database = {
-      async $transaction(
-        callback: (client: typeof transaction) => Promise<unknown>,
-      ) {
+      async $transaction(callback: (client: typeof transaction) => Promise<unknown>) {
         return callback(transaction);
-      },
+      }
     } as unknown as DatabaseClient;
 
     const result = await moderateCustomerFeedback({
       actor: {
         type: "AUTOMATION",
-        actorReference: "langchain-feedback-moderator-v1",
+        actorReference: "langchain-feedback-moderator-v1"
       },
       database,
       decision: "FLAGGED",
       reviewId: feedbackId,
-      reason: "Potential personal medical information.",
+      reason: "Potential personal medical information."
     });
 
     expect(result).toMatchObject({
@@ -223,16 +225,16 @@ describe("customer review moderation", () => {
       moderationStatus: "FLAGGED",
       moderation: {
         actorType: "AUTOMATION",
-        actorReference: "langchain-feedback-moderator-v1",
-      },
+        actorReference: "langchain-feedback-moderator-v1"
+      }
     });
     expect(moderationCreate).toMatchObject({
       data: {
         actorType: "AUTOMATION",
         actorReference: "langchain-feedback-moderator-v1",
         adminUserId: null,
-        decision: "FLAGGED",
-      },
+        decision: "FLAGGED"
+      }
     });
   });
 });

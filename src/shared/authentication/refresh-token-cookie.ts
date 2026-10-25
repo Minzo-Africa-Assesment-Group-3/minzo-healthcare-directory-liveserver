@@ -1,7 +1,4 @@
-import type {
-  Request,
-  Response,
-} from "express";
+import type { Request, Response } from "express";
 
 export interface RefreshTokenCookieService {
   clear(response: Response): void;
@@ -18,7 +15,7 @@ export function createRefreshTokenCookieService(options: {
     httpOnly: true,
     path: options.path,
     sameSite: "lax" as const,
-    secure: options.secure,
+    secure: options.secure
   };
 
   return Object.freeze({
@@ -29,25 +26,19 @@ export function createRefreshTokenCookieService(options: {
     read(request: Request): string | undefined {
       const cookies: unknown = request.cookies;
 
-      if (
-        typeof cookies !== "object" ||
-        cookies === null ||
-        !(options.name in cookies)
-      ) {
+      if (typeof cookies !== "object" || cookies === null || !(options.name in cookies)) {
         return undefined;
       }
 
       const token = (cookies as Record<string, unknown>)[options.name];
-      return typeof token === "string" && token.length > 0
-        ? token
-        : undefined;
+      return typeof token === "string" && token.length > 0 ? token : undefined;
     },
 
     set(response: Response, token: string, ttlSeconds: number): void {
       response.cookie(options.name, token, {
         ...cookieOptions,
-        maxAge: ttlSeconds * 1_000,
+        maxAge: ttlSeconds * 1_000
       });
-    },
+    }
   });
 }

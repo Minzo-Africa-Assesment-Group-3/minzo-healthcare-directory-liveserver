@@ -26,21 +26,16 @@ function escapeHtml(value: string): string {
       "<": "&lt;",
       ">": "&gt;",
       '"': "&quot;",
-      "'": "&#039;",
+      "'": "&#039;"
     };
 
     return entities[character] ?? character;
   });
 }
 
-export function createAuthEmailService(
-  emailSender: EmailSender,
-  frontendUrl: string,
-): AuthEmailService {
+export function createAuthEmailService(emailSender: EmailSender, frontendUrl: string): AuthEmailService {
   return Object.freeze({
-    async sendVerificationEmail(
-      input: SendVerificationEmailInput,
-    ): Promise<void> {
+    async sendVerificationEmail(input: SendVerificationEmailInput): Promise<void> {
       const verificationUrl = new URL("/register/verify-email", frontendUrl);
       verificationUrl.searchParams.set("token", input.token);
 
@@ -52,7 +47,7 @@ export function createAuthEmailService(
         subject: "Verify your Minzo Africa email address",
         text: `Hello ${input.displayName}, verify your email address: ${verificationUrl.toString()}`,
         html: `<p>Hello ${safeName},</p><p>Please verify your email address to activate your Minzo Africa account.</p><p><a href="${safeUrl}">Verify email address</a></p>`,
-        idempotencyKey: `email-verification/${input.tokenId}`,
+        idempotencyKey: `email-verification/${input.tokenId}`
       });
     },
 
@@ -65,8 +60,8 @@ export function createAuthEmailService(
         subject: "Your Minzo Africa login code",
         text: `Hello ${input.displayName}, your login code is ${input.otp}. It expires shortly.`,
         html: `<p>Hello ${safeName},</p><p>Your login code is:</p><p><strong>${safeOtp}</strong></p><p>This code expires shortly. If you did not attempt to sign in, you can ignore this email.</p>`,
-        idempotencyKey: `login-otp/${input.challengeId}`,
+        idempotencyKey: `login-otp/${input.challengeId}`
       });
-    },
+    }
   });
 }

@@ -356,12 +356,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "outpatient-clinic",
-          "pharmacy",
-          "emergency-care",
-          "inpatient-wards"
-        ]
+        "serviceSlugs": ["outpatient-clinic", "pharmacy", "emergency-care", "inpatient-wards"]
       }
     },
     {
@@ -390,12 +385,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pediatrics",
-          "laboratory",
-          "inpatient-wards",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["pediatrics", "laboratory", "inpatient-wards", "pharmacy"]
       }
     },
     {
@@ -424,12 +414,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pediatrics",
-          "outpatient-clinic",
-          "laboratory",
-          "inpatient-wards"
-        ]
+        "serviceSlugs": ["pediatrics", "outpatient-clinic", "laboratory", "inpatient-wards"]
       }
     },
     {
@@ -458,12 +443,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "outpatient-clinic",
-          "laboratory",
-          "maternity-delivery",
-          "surgery"
-        ]
+        "serviceSlugs": ["outpatient-clinic", "laboratory", "maternity-delivery", "surgery"]
       }
     },
     {
@@ -492,12 +472,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pediatrics",
-          "pharmacy",
-          "inpatient-wards",
-          "surgery"
-        ]
+        "serviceSlugs": ["pediatrics", "pharmacy", "inpatient-wards", "surgery"]
       }
     },
     {
@@ -560,12 +535,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "malaria-testing-treatment",
-          "family-planning",
-          "child-health"
-        ]
+        "serviceSlugs": ["basic-laboratory", "malaria-testing-treatment", "family-planning", "child-health"]
       }
     },
     {
@@ -594,12 +564,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "child-health",
-          "antenatal-care",
-          "immunization"
-        ]
+        "serviceSlugs": ["basic-laboratory", "child-health", "antenatal-care", "immunization"]
       }
     },
     {
@@ -866,12 +831,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "pediatrics",
-          "emergency-care",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["surgery", "pediatrics", "emergency-care", "pharmacy"]
       }
     },
     {
@@ -900,12 +860,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pharmacy",
-          "laboratory",
-          "maternity-delivery",
-          "outpatient-clinic"
-        ]
+        "serviceSlugs": ["pharmacy", "laboratory", "maternity-delivery", "outpatient-clinic"]
       }
     },
     {
@@ -934,12 +889,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pediatrics",
-          "laboratory",
-          "emergency-care",
-          "maternity-delivery"
-        ]
+        "serviceSlugs": ["pediatrics", "laboratory", "emergency-care", "maternity-delivery"]
       }
     },
     {
@@ -968,12 +918,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pediatrics",
-          "inpatient-wards",
-          "outpatient-clinic",
-          "surgery"
-        ]
+        "serviceSlugs": ["pediatrics", "inpatient-wards", "outpatient-clinic", "surgery"]
       }
     },
     {
@@ -1002,12 +947,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "inpatient-wards",
-          "outpatient-clinic",
-          "laboratory",
-          "surgery"
-        ]
+        "serviceSlugs": ["inpatient-wards", "outpatient-clinic", "laboratory", "surgery"]
       }
     },
     {
@@ -1036,12 +976,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "antenatal-care",
-          "immunization",
-          "child-health",
-          "outpatient-consultation"
-        ]
+        "serviceSlugs": ["antenatal-care", "immunization", "child-health", "outpatient-consultation"]
       }
     },
     {
@@ -1070,12 +1005,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "family-planning",
-          "child-health",
-          "antenatal-care",
-          "immunization"
-        ]
+        "serviceSlugs": ["family-planning", "child-health", "antenatal-care", "immunization"]
       }
     },
     {
@@ -1376,12 +1306,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "maternity-delivery",
-          "inpatient-wards",
-          "pharmacy",
-          "emergency-care"
-        ]
+        "serviceSlugs": ["maternity-delivery", "inpatient-wards", "pharmacy", "emergency-care"]
       }
     },
     {
@@ -1410,12 +1335,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pharmacy",
-          "maternity-delivery",
-          "pediatrics",
-          "surgery"
-        ]
+        "serviceSlugs": ["pharmacy", "maternity-delivery", "pediatrics", "surgery"]
       }
     },
     {
@@ -1444,12 +1364,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "emergency-care",
-          "outpatient-clinic",
-          "pharmacy",
-          "maternity-delivery"
-        ]
+        "serviceSlugs": ["emergency-care", "outpatient-clinic", "pharmacy", "maternity-delivery"]
       }
     },
     {
@@ -1478,12 +1393,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "maternity-delivery",
-          "outpatient-clinic",
-          "surgery",
-          "emergency-care"
-        ]
+        "serviceSlugs": ["maternity-delivery", "outpatient-clinic", "surgery", "emergency-care"]
       }
     },
     {
@@ -1512,12 +1422,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "emergency-care",
-          "inpatient-wards",
-          "laboratory",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["emergency-care", "inpatient-wards", "laboratory", "pharmacy"]
       }
     },
     {
@@ -1546,12 +1451,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "child-health",
-          "antenatal-care",
-          "outpatient-consultation",
-          "immunization"
-        ]
+        "serviceSlugs": ["child-health", "antenatal-care", "outpatient-consultation", "immunization"]
       }
     },
     {
@@ -1614,12 +1514,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "family-planning",
-          "child-health",
-          "outpatient-consultation",
-          "antenatal-care"
-        ]
+        "serviceSlugs": ["family-planning", "child-health", "outpatient-consultation", "antenatal-care"]
       }
     },
     {
@@ -1648,12 +1543,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "family-planning",
-          "immunization",
-          "antenatal-care",
-          "child-health"
-        ]
+        "serviceSlugs": ["family-planning", "immunization", "antenatal-care", "child-health"]
       }
     },
     {
@@ -1784,12 +1674,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_2000",
-        "serviceSlugs": [
-          "prescription-dispensing",
-          "medical-supplies",
-          "first-aid-supplies",
-          "health-advice"
-        ]
+        "serviceSlugs": ["prescription-dispensing", "medical-supplies", "first-aid-supplies", "health-advice"]
       }
     },
     {
@@ -1886,12 +1771,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "laboratory",
-          "maternity-delivery",
-          "surgery",
-          "pediatrics"
-        ]
+        "serviceSlugs": ["laboratory", "maternity-delivery", "surgery", "pediatrics"]
       }
     },
     {
@@ -1920,12 +1800,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "outpatient-clinic",
-          "emergency-care",
-          "inpatient-wards",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["outpatient-clinic", "emergency-care", "inpatient-wards", "pharmacy"]
       }
     },
     {
@@ -1954,12 +1829,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pharmacy",
-          "maternity-delivery",
-          "laboratory",
-          "surgery"
-        ]
+        "serviceSlugs": ["pharmacy", "maternity-delivery", "laboratory", "surgery"]
       }
     },
     {
@@ -1988,12 +1858,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "emergency-care",
-          "surgery",
-          "pharmacy",
-          "maternity-delivery"
-        ]
+        "serviceSlugs": ["emergency-care", "surgery", "pharmacy", "maternity-delivery"]
       }
     },
     {
@@ -2022,12 +1887,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "inpatient-wards",
-          "pharmacy",
-          "surgery",
-          "outpatient-clinic"
-        ]
+        "serviceSlugs": ["inpatient-wards", "pharmacy", "surgery", "outpatient-clinic"]
       }
     },
     {
@@ -2124,12 +1984,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "outpatient-consultation",
-          "basic-laboratory",
-          "immunization",
-          "family-planning"
-        ]
+        "serviceSlugs": ["outpatient-consultation", "basic-laboratory", "immunization", "family-planning"]
       }
     },
     {
@@ -2158,12 +2013,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "family-planning",
-          "antenatal-care",
-          "outpatient-consultation",
-          "immunization"
-        ]
+        "serviceSlugs": ["family-planning", "antenatal-care", "outpatient-consultation", "immunization"]
       }
     },
     {
@@ -2192,12 +2042,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "immunization",
-          "family-planning",
-          "antenatal-care",
-          "basic-laboratory"
-        ]
+        "serviceSlugs": ["immunization", "family-planning", "antenatal-care", "basic-laboratory"]
       }
     },
     {
@@ -2226,12 +2071,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "DAILY_0800_2100",
-        "serviceSlugs": [
-          "first-aid-supplies",
-          "vitamins-supplements",
-          "medical-supplies",
-          "health-advice"
-        ]
+        "serviceSlugs": ["first-aid-supplies", "vitamins-supplements", "medical-supplies", "health-advice"]
       }
     },
     {
@@ -2396,12 +2236,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "outpatient-clinic",
-          "maternity-delivery",
-          "laboratory"
-        ]
+        "serviceSlugs": ["surgery", "outpatient-clinic", "maternity-delivery", "laboratory"]
       }
     },
     {
@@ -2430,12 +2265,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "maternity-delivery",
-          "inpatient-wards",
-          "emergency-care"
-        ]
+        "serviceSlugs": ["surgery", "maternity-delivery", "inpatient-wards", "emergency-care"]
       }
     },
     {
@@ -2464,12 +2294,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "outpatient-clinic",
-          "pediatrics",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["surgery", "outpatient-clinic", "pediatrics", "pharmacy"]
       }
     },
     {
@@ -2498,12 +2323,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pediatrics",
-          "inpatient-wards",
-          "pharmacy",
-          "outpatient-clinic"
-        ]
+        "serviceSlugs": ["pediatrics", "inpatient-wards", "pharmacy", "outpatient-clinic"]
       }
     },
     {
@@ -2532,12 +2352,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pediatrics",
-          "outpatient-clinic",
-          "surgery",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["pediatrics", "outpatient-clinic", "surgery", "pharmacy"]
       }
     },
     {
@@ -2600,12 +2415,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "antenatal-care",
-          "immunization",
-          "family-planning",
-          "outpatient-consultation"
-        ]
+        "serviceSlugs": ["antenatal-care", "immunization", "family-planning", "outpatient-consultation"]
       }
     },
     {
@@ -2634,12 +2444,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "malaria-testing-treatment",
-          "child-health",
-          "family-planning",
-          "immunization"
-        ]
+        "serviceSlugs": ["malaria-testing-treatment", "child-health", "family-planning", "immunization"]
       }
     },
     {
@@ -2668,12 +2473,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "antenatal-care",
-          "immunization",
-          "family-planning",
-          "child-health"
-        ]
+        "serviceSlugs": ["antenatal-care", "immunization", "family-planning", "child-health"]
       }
     },
     {
@@ -2906,12 +2706,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "inpatient-wards",
-          "outpatient-clinic",
-          "surgery",
-          "maternity-delivery"
-        ]
+        "serviceSlugs": ["inpatient-wards", "outpatient-clinic", "surgery", "maternity-delivery"]
       }
     },
     {
@@ -2940,12 +2735,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "laboratory",
-          "pediatrics",
-          "inpatient-wards",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["laboratory", "pediatrics", "inpatient-wards", "pharmacy"]
       }
     },
     {
@@ -2974,12 +2764,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "outpatient-clinic",
-          "laboratory",
-          "pediatrics"
-        ]
+        "serviceSlugs": ["surgery", "outpatient-clinic", "laboratory", "pediatrics"]
       }
     },
     {
@@ -3008,12 +2793,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "laboratory",
-          "pharmacy",
-          "outpatient-clinic",
-          "inpatient-wards"
-        ]
+        "serviceSlugs": ["laboratory", "pharmacy", "outpatient-clinic", "inpatient-wards"]
       }
     },
     {
@@ -3042,12 +2822,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "emergency-care",
-          "inpatient-wards",
-          "maternity-delivery"
-        ]
+        "serviceSlugs": ["surgery", "emergency-care", "inpatient-wards", "maternity-delivery"]
       }
     },
     {
@@ -3076,12 +2851,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "immunization",
-          "family-planning",
-          "child-health",
-          "outpatient-consultation"
-        ]
+        "serviceSlugs": ["immunization", "family-planning", "child-health", "outpatient-consultation"]
       }
     },
     {
@@ -3110,12 +2880,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "antenatal-care",
-          "malaria-testing-treatment",
-          "immunization",
-          "basic-laboratory"
-        ]
+        "serviceSlugs": ["antenatal-care", "malaria-testing-treatment", "immunization", "basic-laboratory"]
       }
     },
     {
@@ -3144,12 +2909,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "malaria-testing-treatment",
-          "antenatal-care",
-          "basic-laboratory",
-          "child-health"
-        ]
+        "serviceSlugs": ["malaria-testing-treatment", "antenatal-care", "basic-laboratory", "child-health"]
       }
     },
     {
@@ -3178,12 +2938,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "antenatal-care",
-          "immunization",
-          "basic-laboratory",
-          "malaria-testing-treatment"
-        ]
+        "serviceSlugs": ["antenatal-care", "immunization", "basic-laboratory", "malaria-testing-treatment"]
       }
     },
     {
@@ -3212,12 +2967,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "outpatient-consultation",
-          "family-planning",
-          "immunization"
-        ]
+        "serviceSlugs": ["basic-laboratory", "outpatient-consultation", "family-planning", "immunization"]
       }
     },
     {
@@ -3246,12 +2996,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "DAILY_0800_2100",
-        "serviceSlugs": [
-          "first-aid-supplies",
-          "health-advice",
-          "vitamins-supplements",
-          "medical-supplies"
-        ]
+        "serviceSlugs": ["first-aid-supplies", "health-advice", "vitamins-supplements", "medical-supplies"]
       }
     },
     {
@@ -3416,12 +3161,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "outpatient-clinic",
-          "pediatrics",
-          "maternity-delivery",
-          "emergency-care"
-        ]
+        "serviceSlugs": ["outpatient-clinic", "pediatrics", "maternity-delivery", "emergency-care"]
       }
     },
     {
@@ -3450,12 +3190,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pharmacy",
-          "laboratory",
-          "pediatrics",
-          "emergency-care"
-        ]
+        "serviceSlugs": ["pharmacy", "laboratory", "pediatrics", "emergency-care"]
       }
     },
     {
@@ -3484,12 +3219,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "outpatient-clinic",
-          "laboratory",
-          "pediatrics",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["outpatient-clinic", "laboratory", "pediatrics", "pharmacy"]
       }
     },
     {
@@ -3518,12 +3248,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "laboratory",
-          "emergency-care",
-          "pediatrics",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["laboratory", "emergency-care", "pediatrics", "pharmacy"]
       }
     },
     {
@@ -3552,12 +3277,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "maternity-delivery",
-          "laboratory",
-          "pharmacy",
-          "outpatient-clinic"
-        ]
+        "serviceSlugs": ["maternity-delivery", "laboratory", "pharmacy", "outpatient-clinic"]
       }
     },
     {
@@ -3586,12 +3306,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "immunization",
-          "antenatal-care",
-          "basic-laboratory",
-          "outpatient-consultation"
-        ]
+        "serviceSlugs": ["immunization", "antenatal-care", "basic-laboratory", "outpatient-consultation"]
       }
     },
     {
@@ -3620,12 +3335,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "malaria-testing-treatment",
-          "basic-laboratory",
-          "child-health",
-          "immunization"
-        ]
+        "serviceSlugs": ["malaria-testing-treatment", "basic-laboratory", "child-health", "immunization"]
       }
     },
     {
@@ -3654,12 +3364,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "malaria-testing-treatment",
-          "child-health",
-          "family-planning"
-        ]
+        "serviceSlugs": ["basic-laboratory", "malaria-testing-treatment", "child-health", "family-planning"]
       }
     },
     {
@@ -3688,12 +3393,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "immunization",
-          "family-planning",
-          "malaria-testing-treatment",
-          "antenatal-care"
-        ]
+        "serviceSlugs": ["immunization", "family-planning", "malaria-testing-treatment", "antenatal-care"]
       }
     },
     {
@@ -3926,12 +3626,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "inpatient-wards",
-          "emergency-care",
-          "pharmacy",
-          "laboratory"
-        ]
+        "serviceSlugs": ["inpatient-wards", "emergency-care", "pharmacy", "laboratory"]
       }
     },
     {
@@ -3960,12 +3655,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "inpatient-wards",
-          "laboratory",
-          "pharmacy",
-          "maternity-delivery"
-        ]
+        "serviceSlugs": ["inpatient-wards", "laboratory", "pharmacy", "maternity-delivery"]
       }
     },
     {
@@ -3994,12 +3684,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "maternity-delivery",
-          "laboratory",
-          "pharmacy",
-          "surgery"
-        ]
+        "serviceSlugs": ["maternity-delivery", "laboratory", "pharmacy", "surgery"]
       }
     },
     {
@@ -4028,12 +3713,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "laboratory",
-          "maternity-delivery",
-          "surgery",
-          "pediatrics"
-        ]
+        "serviceSlugs": ["laboratory", "maternity-delivery", "surgery", "pediatrics"]
       }
     },
     {
@@ -4062,12 +3742,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pharmacy",
-          "emergency-care",
-          "outpatient-clinic",
-          "inpatient-wards"
-        ]
+        "serviceSlugs": ["pharmacy", "emergency-care", "outpatient-clinic", "inpatient-wards"]
       }
     },
     {
@@ -4096,12 +3771,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "child-health",
-          "antenatal-care",
-          "outpatient-consultation",
-          "immunization"
-        ]
+        "serviceSlugs": ["child-health", "antenatal-care", "outpatient-consultation", "immunization"]
       }
     },
     {
@@ -4164,12 +3834,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "child-health",
-          "family-planning",
-          "antenatal-care",
-          "malaria-testing-treatment"
-        ]
+        "serviceSlugs": ["child-health", "family-planning", "antenatal-care", "malaria-testing-treatment"]
       }
     },
     {
@@ -4232,12 +3897,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "malaria-testing-treatment",
-          "child-health",
-          "immunization",
-          "antenatal-care"
-        ]
+        "serviceSlugs": ["malaria-testing-treatment", "child-health", "immunization", "antenatal-care"]
       }
     },
     {
@@ -4300,12 +3960,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "DAILY_0800_2100",
-        "serviceSlugs": [
-          "medical-supplies",
-          "first-aid-supplies",
-          "health-advice",
-          "prescription-dispensing"
-        ]
+        "serviceSlugs": ["medical-supplies", "first-aid-supplies", "health-advice", "prescription-dispensing"]
       }
     },
     {
@@ -4436,12 +4091,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "maternity-delivery",
-          "pharmacy",
-          "inpatient-wards"
-        ]
+        "serviceSlugs": ["surgery", "maternity-delivery", "pharmacy", "inpatient-wards"]
       }
     },
     {
@@ -4470,12 +4120,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "outpatient-clinic",
-          "surgery",
-          "emergency-care",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["outpatient-clinic", "surgery", "emergency-care", "pharmacy"]
       }
     },
     {
@@ -4504,12 +4149,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "outpatient-clinic",
-          "pharmacy",
-          "surgery",
-          "emergency-care"
-        ]
+        "serviceSlugs": ["outpatient-clinic", "pharmacy", "surgery", "emergency-care"]
       }
     },
     {
@@ -4538,12 +4178,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "inpatient-wards",
-          "outpatient-clinic",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["surgery", "inpatient-wards", "outpatient-clinic", "pharmacy"]
       }
     },
     {
@@ -4572,12 +4207,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pharmacy",
-          "emergency-care",
-          "surgery",
-          "inpatient-wards"
-        ]
+        "serviceSlugs": ["pharmacy", "emergency-care", "surgery", "inpatient-wards"]
       }
     },
     {
@@ -4640,12 +4270,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "child-health",
-          "family-planning",
-          "antenatal-care",
-          "basic-laboratory"
-        ]
+        "serviceSlugs": ["child-health", "family-planning", "antenatal-care", "basic-laboratory"]
       }
     },
     {
@@ -4674,12 +4299,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "child-health",
-          "antenatal-care",
-          "immunization",
-          "basic-laboratory"
-        ]
+        "serviceSlugs": ["child-health", "antenatal-care", "immunization", "basic-laboratory"]
       }
     },
     {
@@ -4742,12 +4362,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "immunization",
-          "child-health",
-          "outpatient-consultation"
-        ]
+        "serviceSlugs": ["basic-laboratory", "immunization", "child-health", "outpatient-consultation"]
       }
     },
     {
@@ -4946,12 +4561,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pediatrics",
-          "emergency-care",
-          "outpatient-clinic",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["pediatrics", "emergency-care", "outpatient-clinic", "pharmacy"]
       }
     },
     {
@@ -4980,12 +4590,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "laboratory",
-          "inpatient-wards",
-          "emergency-care"
-        ]
+        "serviceSlugs": ["surgery", "laboratory", "inpatient-wards", "emergency-care"]
       }
     },
     {
@@ -5014,12 +4619,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pediatrics",
-          "pharmacy",
-          "maternity-delivery",
-          "inpatient-wards"
-        ]
+        "serviceSlugs": ["pediatrics", "pharmacy", "maternity-delivery", "inpatient-wards"]
       }
     },
     {
@@ -5048,12 +4648,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "laboratory",
-          "surgery",
-          "outpatient-clinic",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["laboratory", "surgery", "outpatient-clinic", "pharmacy"]
       }
     },
     {
@@ -5082,12 +4677,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "maternity-delivery",
-          "inpatient-wards",
-          "pediatrics",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["maternity-delivery", "inpatient-wards", "pediatrics", "pharmacy"]
       }
     },
     {
@@ -5150,12 +4740,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "child-health",
-          "antenatal-care",
-          "family-planning",
-          "basic-laboratory"
-        ]
+        "serviceSlugs": ["child-health", "antenatal-care", "family-planning", "basic-laboratory"]
       }
     },
     {
@@ -5184,12 +4769,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "outpatient-consultation",
-          "immunization",
-          "family-planning",
-          "child-health"
-        ]
+        "serviceSlugs": ["outpatient-consultation", "immunization", "family-planning", "child-health"]
       }
     },
     {
@@ -5218,12 +4798,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "family-planning",
-          "malaria-testing-treatment",
-          "child-health"
-        ]
+        "serviceSlugs": ["basic-laboratory", "family-planning", "malaria-testing-treatment", "child-health"]
       }
     },
     {
@@ -5252,12 +4827,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "malaria-testing-treatment",
-          "family-planning",
-          "child-health"
-        ]
+        "serviceSlugs": ["basic-laboratory", "malaria-testing-treatment", "family-planning", "child-health"]
       }
     },
     {
@@ -5320,12 +4890,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_2000",
-        "serviceSlugs": [
-          "first-aid-supplies",
-          "medical-supplies",
-          "vitamins-supplements",
-          "health-advice"
-        ]
+        "serviceSlugs": ["first-aid-supplies", "medical-supplies", "vitamins-supplements", "health-advice"]
       }
     },
     {
@@ -5456,12 +5021,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "inpatient-wards",
-          "outpatient-clinic",
-          "emergency-care",
-          "maternity-delivery"
-        ]
+        "serviceSlugs": ["inpatient-wards", "outpatient-clinic", "emergency-care", "maternity-delivery"]
       }
     },
     {
@@ -5490,12 +5050,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "maternity-delivery",
-          "outpatient-clinic",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["surgery", "maternity-delivery", "outpatient-clinic", "pharmacy"]
       }
     },
     {
@@ -5524,12 +5079,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pharmacy",
-          "pediatrics",
-          "maternity-delivery",
-          "surgery"
-        ]
+        "serviceSlugs": ["pharmacy", "pediatrics", "maternity-delivery", "surgery"]
       }
     },
     {
@@ -5558,12 +5108,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "outpatient-clinic",
-          "pharmacy",
-          "surgery",
-          "inpatient-wards"
-        ]
+        "serviceSlugs": ["outpatient-clinic", "pharmacy", "surgery", "inpatient-wards"]
       }
     },
     {
@@ -5592,12 +5137,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pharmacy",
-          "surgery",
-          "pediatrics",
-          "inpatient-wards"
-        ]
+        "serviceSlugs": ["pharmacy", "surgery", "pediatrics", "inpatient-wards"]
       }
     },
     {
@@ -5626,12 +5166,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "inpatient-wards",
-          "pediatrics",
-          "emergency-care"
-        ]
+        "serviceSlugs": ["surgery", "inpatient-wards", "pediatrics", "emergency-care"]
       }
     },
     {
@@ -5660,12 +5195,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "pediatrics",
-          "laboratory",
-          "emergency-care"
-        ]
+        "serviceSlugs": ["surgery", "pediatrics", "laboratory", "emergency-care"]
       }
     },
     {
@@ -5694,12 +5224,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "emergency-care",
-          "inpatient-wards",
-          "surgery",
-          "pediatrics"
-        ]
+        "serviceSlugs": ["emergency-care", "inpatient-wards", "surgery", "pediatrics"]
       }
     },
     {
@@ -5728,12 +5253,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "pediatrics",
-          "laboratory",
-          "outpatient-clinic"
-        ]
+        "serviceSlugs": ["surgery", "pediatrics", "laboratory", "outpatient-clinic"]
       }
     },
     {
@@ -5762,12 +5282,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "pediatrics",
-          "pharmacy",
-          "laboratory"
-        ]
+        "serviceSlugs": ["surgery", "pediatrics", "pharmacy", "laboratory"]
       }
     },
     {
@@ -5796,12 +5311,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "laboratory",
-          "maternity-delivery",
-          "emergency-care",
-          "surgery"
-        ]
+        "serviceSlugs": ["laboratory", "maternity-delivery", "emergency-care", "surgery"]
       }
     },
     {
@@ -5830,12 +5340,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "emergency-care",
-          "surgery",
-          "inpatient-wards",
-          "outpatient-clinic"
-        ]
+        "serviceSlugs": ["emergency-care", "surgery", "inpatient-wards", "outpatient-clinic"]
       }
     },
     {
@@ -5857,21 +5362,14 @@
         "addressLine": "Tubman Boulevard & 1st Street, Sinkor, Monrovia, Montserrado County",
         "contactPhone": "+231 770 029 511 / +231 770 911 911",
         "contactEmail": "countrymanager.lr@ami.health",
-        "additionalContactEmails": [
-          "reception.lr@ami.health"
-        ],
+        "additionalContactEmails": ["reception.lr@ami.health"],
         "websiteUrl": "https://ami.health/global/liberia/",
         "coordinates": null,
         "timezone": "Africa/Monrovia",
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "outpatient-consultation",
-          "antenatal-care",
-          "family-planning"
-        ]
+        "serviceSlugs": ["basic-laboratory", "outpatient-consultation", "antenatal-care", "family-planning"]
       }
     },
     {
@@ -5900,12 +5398,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "family-planning",
-          "malaria-testing-treatment",
-          "basic-laboratory",
-          "antenatal-care"
-        ]
+        "serviceSlugs": ["family-planning", "malaria-testing-treatment", "basic-laboratory", "antenatal-care"]
       }
     },
     {
@@ -5934,12 +5427,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "malaria-testing-treatment",
-          "immunization",
-          "basic-laboratory",
-          "antenatal-care"
-        ]
+        "serviceSlugs": ["malaria-testing-treatment", "immunization", "basic-laboratory", "antenatal-care"]
       }
     },
     {
@@ -5968,12 +5456,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "child-health",
-          "malaria-testing-treatment",
-          "basic-laboratory",
-          "antenatal-care"
-        ]
+        "serviceSlugs": ["child-health", "malaria-testing-treatment", "basic-laboratory", "antenatal-care"]
       }
     },
     {
@@ -6002,12 +5485,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "antenatal-care",
-          "immunization",
-          "family-planning"
-        ]
+        "serviceSlugs": ["basic-laboratory", "antenatal-care", "immunization", "family-planning"]
       }
     },
     {
@@ -6036,12 +5514,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "child-health",
-          "outpatient-consultation",
-          "basic-laboratory",
-          "immunization"
-        ]
+        "serviceSlugs": ["child-health", "outpatient-consultation", "basic-laboratory", "immunization"]
       }
     },
     {
@@ -6070,12 +5543,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "antenatal-care",
-          "basic-laboratory",
-          "immunization",
-          "child-health"
-        ]
+        "serviceSlugs": ["antenatal-care", "basic-laboratory", "immunization", "child-health"]
       }
     },
     {
@@ -6104,12 +5572,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "immunization",
-          "child-health",
-          "basic-laboratory",
-          "antenatal-care"
-        ]
+        "serviceSlugs": ["immunization", "child-health", "basic-laboratory", "antenatal-care"]
       }
     },
     {
@@ -6138,12 +5601,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "antenatal-care",
-          "immunization",
-          "outpatient-consultation"
-        ]
+        "serviceSlugs": ["basic-laboratory", "antenatal-care", "immunization", "outpatient-consultation"]
       }
     },
     {
@@ -6172,12 +5630,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "outpatient-consultation",
-          "immunization",
-          "family-planning"
-        ]
+        "serviceSlugs": ["basic-laboratory", "outpatient-consultation", "immunization", "family-planning"]
       }
     },
     {
@@ -6206,12 +5659,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "child-health",
-          "immunization",
-          "family-planning",
-          "antenatal-care"
-        ]
+        "serviceSlugs": ["child-health", "immunization", "family-planning", "antenatal-care"]
       }
     },
     {
@@ -6240,12 +5688,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "family-planning",
-          "immunization",
-          "outpatient-consultation",
-          "antenatal-care"
-        ]
+        "serviceSlugs": ["family-planning", "immunization", "outpatient-consultation", "antenatal-care"]
       }
     },
     {
@@ -6410,12 +5853,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "DAILY_0800_2100",
-        "serviceSlugs": [
-          "medical-supplies",
-          "health-advice",
-          "first-aid-supplies",
-          "vitamins-supplements"
-        ]
+        "serviceSlugs": ["medical-supplies", "health-advice", "first-aid-supplies", "vitamins-supplements"]
       }
     },
     {
@@ -6648,12 +6086,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "DAILY_0800_2100",
-        "serviceSlugs": [
-          "medical-supplies",
-          "health-advice",
-          "vitamins-supplements",
-          "first-aid-supplies"
-        ]
+        "serviceSlugs": ["medical-supplies", "health-advice", "vitamins-supplements", "first-aid-supplies"]
       }
     },
     {
@@ -6784,12 +6217,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "laboratory",
-          "surgery",
-          "maternity-delivery",
-          "inpatient-wards"
-        ]
+        "serviceSlugs": ["laboratory", "surgery", "maternity-delivery", "inpatient-wards"]
       }
     },
     {
@@ -6818,12 +6246,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "emergency-care",
-          "inpatient-wards",
-          "laboratory",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["emergency-care", "inpatient-wards", "laboratory", "pharmacy"]
       }
     },
     {
@@ -6852,12 +6275,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pharmacy",
-          "outpatient-clinic",
-          "inpatient-wards",
-          "pediatrics"
-        ]
+        "serviceSlugs": ["pharmacy", "outpatient-clinic", "inpatient-wards", "pediatrics"]
       }
     },
     {
@@ -6886,12 +6304,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "laboratory",
-          "maternity-delivery",
-          "pharmacy",
-          "pediatrics"
-        ]
+        "serviceSlugs": ["laboratory", "maternity-delivery", "pharmacy", "pediatrics"]
       }
     },
     {
@@ -6920,12 +6333,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pediatrics",
-          "surgery",
-          "inpatient-wards",
-          "emergency-care"
-        ]
+        "serviceSlugs": ["pediatrics", "surgery", "inpatient-wards", "emergency-care"]
       }
     },
     {
@@ -6954,12 +6362,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "antenatal-care",
-          "family-planning",
-          "outpatient-consultation"
-        ]
+        "serviceSlugs": ["basic-laboratory", "antenatal-care", "family-planning", "outpatient-consultation"]
       }
     },
     {
@@ -6988,12 +6391,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "family-planning",
-          "basic-laboratory",
-          "immunization",
-          "antenatal-care"
-        ]
+        "serviceSlugs": ["family-planning", "basic-laboratory", "immunization", "antenatal-care"]
       }
     },
     {
@@ -7022,12 +6420,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "antenatal-care",
-          "immunization",
-          "outpatient-consultation",
-          "basic-laboratory"
-        ]
+        "serviceSlugs": ["antenatal-care", "immunization", "outpatient-consultation", "basic-laboratory"]
       }
     },
     {
@@ -7090,12 +6483,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "malaria-testing-treatment",
-          "family-planning",
-          "antenatal-care"
-        ]
+        "serviceSlugs": ["basic-laboratory", "malaria-testing-treatment", "family-planning", "antenatal-care"]
       }
     },
     {
@@ -7226,12 +6614,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_2000",
-        "serviceSlugs": [
-          "prescription-dispensing",
-          "first-aid-supplies",
-          "medical-supplies",
-          "health-advice"
-        ]
+        "serviceSlugs": ["prescription-dispensing", "first-aid-supplies", "medical-supplies", "health-advice"]
       }
     },
     {
@@ -7294,12 +6677,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "laboratory",
-          "pharmacy",
-          "pediatrics"
-        ]
+        "serviceSlugs": ["surgery", "laboratory", "pharmacy", "pediatrics"]
       }
     },
     {
@@ -7328,12 +6706,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "emergency-care",
-          "pediatrics",
-          "pharmacy",
-          "inpatient-wards"
-        ]
+        "serviceSlugs": ["emergency-care", "pediatrics", "pharmacy", "inpatient-wards"]
       }
     },
     {
@@ -7362,12 +6735,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pediatrics",
-          "surgery",
-          "emergency-care",
-          "inpatient-wards"
-        ]
+        "serviceSlugs": ["pediatrics", "surgery", "emergency-care", "inpatient-wards"]
       }
     },
     {
@@ -7396,12 +6764,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "maternity-delivery",
-          "surgery",
-          "laboratory",
-          "inpatient-wards"
-        ]
+        "serviceSlugs": ["maternity-delivery", "surgery", "laboratory", "inpatient-wards"]
       }
     },
     {
@@ -7430,12 +6793,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "maternity-delivery",
-          "pharmacy",
-          "surgery",
-          "outpatient-clinic"
-        ]
+        "serviceSlugs": ["maternity-delivery", "pharmacy", "surgery", "outpatient-clinic"]
       }
     },
     {
@@ -7464,12 +6822,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "antenatal-care",
-          "family-planning",
-          "immunization"
-        ]
+        "serviceSlugs": ["basic-laboratory", "antenatal-care", "family-planning", "immunization"]
       }
     },
     {
@@ -7532,12 +6885,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "outpatient-consultation",
-          "antenatal-care",
-          "basic-laboratory",
-          "immunization"
-        ]
+        "serviceSlugs": ["outpatient-consultation", "antenatal-care", "basic-laboratory", "immunization"]
       }
     },
     {
@@ -7600,12 +6948,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "basic-laboratory",
-          "malaria-testing-treatment",
-          "child-health",
-          "antenatal-care"
-        ]
+        "serviceSlugs": ["basic-laboratory", "malaria-testing-treatment", "child-health", "antenatal-care"]
       }
     },
     {
@@ -7668,12 +7011,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_2000",
-        "serviceSlugs": [
-          "medical-supplies",
-          "health-advice",
-          "first-aid-supplies",
-          "prescription-dispensing"
-        ]
+        "serviceSlugs": ["medical-supplies", "health-advice", "first-aid-supplies", "prescription-dispensing"]
       }
     },
     {
@@ -7770,12 +7108,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_2000",
-        "serviceSlugs": [
-          "health-advice",
-          "vitamins-supplements",
-          "first-aid-supplies",
-          "medical-supplies"
-        ]
+        "serviceSlugs": ["health-advice", "vitamins-supplements", "first-aid-supplies", "medical-supplies"]
       }
     },
     {
@@ -7804,12 +7137,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pediatrics",
-          "laboratory",
-          "inpatient-wards",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["pediatrics", "laboratory", "inpatient-wards", "pharmacy"]
       }
     },
     {
@@ -7838,12 +7166,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pediatrics",
-          "outpatient-clinic",
-          "inpatient-wards",
-          "pharmacy"
-        ]
+        "serviceSlugs": ["pediatrics", "outpatient-clinic", "inpatient-wards", "pharmacy"]
       }
     },
     {
@@ -7872,12 +7195,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "laboratory",
-          "emergency-care",
-          "outpatient-clinic",
-          "maternity-delivery"
-        ]
+        "serviceSlugs": ["laboratory", "emergency-care", "outpatient-clinic", "maternity-delivery"]
       }
     },
     {
@@ -7906,12 +7224,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "emergency-care",
-          "surgery",
-          "pediatrics",
-          "laboratory"
-        ]
+        "serviceSlugs": ["emergency-care", "surgery", "pediatrics", "laboratory"]
       }
     },
     {
@@ -7940,12 +7253,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "surgery",
-          "inpatient-wards",
-          "pediatrics",
-          "emergency-care"
-        ]
+        "serviceSlugs": ["surgery", "inpatient-wards", "pediatrics", "emergency-care"]
       }
     },
     {
@@ -7974,12 +7282,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "child-health",
-          "antenatal-care",
-          "outpatient-consultation",
-          "immunization"
-        ]
+        "serviceSlugs": ["child-health", "antenatal-care", "outpatient-consultation", "immunization"]
       }
     },
     {
@@ -8008,12 +7311,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "immunization",
-          "basic-laboratory",
-          "child-health",
-          "antenatal-care"
-        ]
+        "serviceSlugs": ["immunization", "basic-laboratory", "child-health", "antenatal-care"]
       }
     },
     {
@@ -8042,12 +7340,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "family-planning",
-          "outpatient-consultation",
-          "basic-laboratory",
-          "child-health"
-        ]
+        "serviceSlugs": ["family-planning", "outpatient-consultation", "basic-laboratory", "child-health"]
       }
     },
     {
@@ -8246,12 +7539,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "DAILY_0800_2100",
-        "serviceSlugs": [
-          "vitamins-supplements",
-          "medical-supplies",
-          "first-aid-supplies",
-          "health-advice"
-        ]
+        "serviceSlugs": ["vitamins-supplements", "medical-supplies", "first-aid-supplies", "health-advice"]
       }
     },
     {
@@ -8314,12 +7602,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "outpatient-clinic",
-          "surgery",
-          "pharmacy",
-          "inpatient-wards"
-        ]
+        "serviceSlugs": ["outpatient-clinic", "surgery", "pharmacy", "inpatient-wards"]
       }
     },
     {
@@ -8348,12 +7631,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "emergency-care",
-          "pediatrics",
-          "surgery",
-          "outpatient-clinic"
-        ]
+        "serviceSlugs": ["emergency-care", "pediatrics", "surgery", "outpatient-clinic"]
       }
     },
     {
@@ -8382,12 +7660,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "emergency-care",
-          "laboratory",
-          "pharmacy",
-          "maternity-delivery"
-        ]
+        "serviceSlugs": ["emergency-care", "laboratory", "pharmacy", "maternity-delivery"]
       }
     },
     {
@@ -8416,12 +7689,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "outpatient-clinic",
-          "surgery",
-          "inpatient-wards",
-          "pediatrics"
-        ]
+        "serviceSlugs": ["outpatient-clinic", "surgery", "inpatient-wards", "pediatrics"]
       }
     },
     {
@@ -8450,12 +7718,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "OPEN_24_7",
-        "serviceSlugs": [
-          "pharmacy",
-          "pediatrics",
-          "maternity-delivery",
-          "surgery"
-        ]
+        "serviceSlugs": ["pharmacy", "pediatrics", "maternity-delivery", "surgery"]
       }
     },
     {
@@ -8484,12 +7747,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "antenatal-care",
-          "family-planning",
-          "child-health",
-          "malaria-testing-treatment"
-        ]
+        "serviceSlugs": ["antenatal-care", "family-planning", "child-health", "malaria-testing-treatment"]
       }
     },
     {
@@ -8518,12 +7776,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "family-planning",
-          "outpatient-consultation",
-          "antenatal-care",
-          "immunization"
-        ]
+        "serviceSlugs": ["family-planning", "outpatient-consultation", "antenatal-care", "immunization"]
       }
     },
     {
@@ -8552,12 +7805,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "immunization",
-          "family-planning",
-          "basic-laboratory",
-          "child-health"
-        ]
+        "serviceSlugs": ["immunization", "family-planning", "basic-laboratory", "child-health"]
       }
     },
     {
@@ -8586,12 +7834,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_SAT_0800_1700",
-        "serviceSlugs": [
-          "antenatal-care",
-          "basic-laboratory",
-          "child-health",
-          "family-planning"
-        ]
+        "serviceSlugs": ["antenatal-care", "basic-laboratory", "child-health", "family-planning"]
       }
     },
     {
@@ -8620,12 +7863,7 @@
         "status": "ACTIVE",
         "isPrimary": true,
         "openingHoursScheduleCode": "MON_FRI_0800_1700",
-        "serviceSlugs": [
-          "family-planning",
-          "outpatient-consultation",
-          "immunization",
-          "child-health"
-        ]
+        "serviceSlugs": ["family-planning", "outpatient-consultation", "immunization", "child-health"]
       }
     },
     {

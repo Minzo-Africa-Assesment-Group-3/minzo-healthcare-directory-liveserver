@@ -18,8 +18,8 @@ export function createSearchBusinessesHandler(dependencies: {
         pageNumber: query.pageNumber,
         pageSize: query.pageSize,
         requestUrl: req.originalUrl,
-        totalItems: result.totalItems,
-      }),
+        totalItems: result.totalItems
+      })
     };
   };
 }

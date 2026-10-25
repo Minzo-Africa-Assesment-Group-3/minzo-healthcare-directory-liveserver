@@ -1,12 +1,6 @@
-import {
-  createSecretKey,
-  randomUUID,
-} from "node:crypto";
+import { createSecretKey, randomUUID } from "node:crypto";
 
-import {
-  jwtVerify,
-  SignJWT,
-} from "jose";
+import { jwtVerify, SignJWT } from "jose";
 
 export type AuthenticationRealm = "admin" | "user";
 
@@ -56,16 +50,14 @@ export function createAccessTokenService({
   issuer,
   realm,
   secret,
-  ttlSeconds,
+  ttlSeconds
 }: AccessTokenServiceOptions): AccessTokenService {
   if (!Number.isInteger(ttlSeconds) || ttlSeconds < 1) {
     throw new RangeError("ttlSeconds must be a positive integer.");
   }
 
   if (!/^[a-fA-F0-9]{64}$/.test(secret)) {
-    throw new Error(
-      "The access-token secret must be a 64-character hexadecimal value.",
-    );
+    throw new Error("The access-token secret must be a 64-character hexadecimal value.");
   }
 
   const signingKey = createSecretKey(Buffer.from(secret, "hex"));
@@ -89,7 +81,7 @@ export function createAccessTokenService({
       const { payload } = await jwtVerify(token, signingKey, {
         algorithms: ["HS256"],
         audience,
-        issuer,
+        issuer
       });
 
       if (payload.realm !== realm) {
@@ -101,8 +93,8 @@ export function createAccessTokenService({
         tokenId: requiredString(payload.jti, "jti"),
         issuedAt: requiredNumber(payload.iat, "iat"),
         expiresAt: requiredNumber(payload.exp, "exp"),
-        realm,
+        realm
       };
-    },
+    }
   });
 }

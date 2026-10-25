@@ -1,6 +1,6 @@
 import {
   verifiedDocumentExtension,
-  type VerifiedDocumentMimeType,
+  type VerifiedDocumentMimeType
 } from "../../shared/documents/verified-document.js";
 
 export function createBusinessRegistrationDocumentObjectKey(options: {
@@ -13,6 +13,6 @@ export function createBusinessRegistrationDocumentObjectKey(options: {
     "business-registrations",
     options.businessId,
     options.userId,
-    `${options.documentId}.${verifiedDocumentExtension(options.mimeType)}`,
+    `${options.documentId}.${verifiedDocumentExtension(options.mimeType)}`
   ].join("/");
 }

@@ -13,7 +13,7 @@ export const verifyLoginOtpContract = contract.mutation({
   description: "Consumes a login challenge, returns an access token, and sets a refresh-token cookie.",
   body: z.object({
     challengeId: z.string().uuid(),
-    otp: z.string().regex(/^\d{4}$/),
+    otp: z.string().regex(/^\d{4}$/)
   }),
   responses: {
     200: z.object({
@@ -24,13 +24,13 @@ export const verifyLoginOtpContract = contract.mutation({
       user: z.object({
         id: z.string().uuid(),
         email: z.string().email(),
-        displayName: z.string(),
-      }),
+        displayName: z.string()
+      })
     }),
-    401: problemDetailsSchema,
+    401: problemDetailsSchema
   },
   metadata: {
     authentication: "public",
-    openApiTags: ["Authentication"],
-  },
+    openApiTags: ["Authentication"]
+  }
 });

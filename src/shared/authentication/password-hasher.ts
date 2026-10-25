@@ -1,15 +1,11 @@
-import {
-  argon2id,
-  hash,
-  verify,
-} from "argon2";
+import { argon2id, hash, verify } from "argon2";
 
 const passwordHashOptions = {
   type: argon2id,
   memoryCost: 65_536,
   timeCost: 3,
   parallelism: 1,
-  hashLength: 32,
+  hashLength: 32
 } as const;
 
 // Keeps missing-account and existing-account login paths similarly expensive.
@@ -20,23 +16,18 @@ export async function hashPassword(password: string): Promise<string> {
   return hash(password, passwordHashOptions);
 }
 
-export async function verifyPassword(
-  passwordHash: string,
-  password: string,
-): Promise<boolean> {
+export async function verifyPassword(passwordHash: string, password: string): Promise<boolean> {
   return verify(passwordHash, password);
 }
 
 export async function verifyLoginPassword(
   storedPasswordHash: string | null | undefined,
-  suppliedPassword: string,
+  suppliedPassword: string
 ): Promise<boolean> {
   const passwordMatches = await verifyPassword(
     storedPasswordHash ?? accountEnumerationTimingHash,
-    suppliedPassword,
+    suppliedPassword
   );
 
-  return storedPasswordHash !== null &&
-    storedPasswordHash !== undefined &&
-    passwordMatches;
+  return storedPasswordHash !== null && storedPasswordHash !== undefined && passwordMatches;
 }

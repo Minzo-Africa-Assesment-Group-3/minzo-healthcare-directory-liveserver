@@ -13,25 +13,18 @@ describe("CORS middleware", () => {
   });
 
   it("allows a configured browser origin with credentials", async () => {
-    const response = await request(app)
-      .get("/resource")
-      .set("Origin", "http://localhost:5173");
+    const response = await request(app).get("/resource").set("Origin", "http://localhost:5173");
 
     expect(response.status).toBe(200);
-    expect(response.headers["access-control-allow-origin"])
-      .toBe("http://localhost:5173");
-    expect(response.headers["access-control-allow-credentials"])
-      .toBe("true");
+    expect(response.headers["access-control-allow-origin"]).toBe("http://localhost:5173");
+    expect(response.headers["access-control-allow-credentials"]).toBe("true");
   });
 
   it("does not grant CORS access to an unconfigured origin", async () => {
-    const response = await request(app)
-      .get("/resource")
-      .set("Origin", "https://untrusted.example");
+    const response = await request(app).get("/resource").set("Origin", "https://untrusted.example");
 
     expect(response.status).toBe(200);
-    expect(response.headers["access-control-allow-origin"])
-      .toBeUndefined();
+    expect(response.headers["access-control-allow-origin"]).toBeUndefined();
   });
 
   it("handles browser preflight requests", async () => {
@@ -41,19 +34,20 @@ describe("CORS middleware", () => {
       .set("Access-Control-Request-Method", "GET");
 
     expect(response.status).toBe(204);
-    expect(response.headers["access-control-allow-origin"])
-      .toBe("http://localhost:5173");
+    expect(response.headers["access-control-allow-origin"]).toBe("http://localhost:5173");
   });
 });
 
 describe("rate-limit middleware", () => {
   it("returns Problem Details after the request limit is exceeded", async () => {
     const app = express();
-    app.use(createRateLimiter({
-      identifier: "test-policy",
-      limit: 2,
-      windowMs: 60_000,
-    }));
+    app.use(
+      createRateLimiter({
+        identifier: "test-policy",
+        limit: 2,
+        windowMs: 60_000
+      })
+    );
     app.get("/resource", (_request, response) => {
       response.json({ status: "ok" });
     });
@@ -63,13 +57,12 @@ describe("rate-limit middleware", () => {
     const response = await request(app).get("/resource");
 
     expect(response.status).toBe(429);
-    expect(response.headers["content-type"])
-      .toContain("application/problem+json");
+    expect(response.headers["content-type"]).toContain("application/problem+json");
     expect(response.headers["ratelimit-policy"]).toBeDefined();
     expect(response.body).toMatchObject({
       code: "rate_limit_exceeded",
       status: 429,
-      title: "Too many requests",
+      title: "Too many requests"
     });
   });
 });

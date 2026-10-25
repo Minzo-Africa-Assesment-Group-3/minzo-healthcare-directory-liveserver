@@ -17,20 +17,20 @@ describe("business registration documents", () => {
       requestBusinessRegistrationDocumentUploadContract.body.parse({
         fileName: "registration.pdf",
         mimeType: "application/pdf",
-        sizeBytes: 25_000,
-      }),
+        sizeBytes: 25_000
+      })
     ).toEqual({
       fileName: "registration.pdf",
       mimeType: "application/pdf",
-      sizeBytes: 25_000,
+      sizeBytes: 25_000
     });
 
     expect(() =>
       requestBusinessRegistrationDocumentUploadContract.body.parse({
         fileName: "malware.exe",
         mimeType: "application/octet-stream",
-        sizeBytes: 25_000,
-      }),
+        sizeBytes: 25_000
+      })
     ).toThrow();
   });
 
@@ -40,28 +40,24 @@ describe("business registration documents", () => {
         businessId: "business-id",
         documentId: "document-id",
         mimeType: "application/pdf",
-        userId: "user-id",
-      }),
-    ).toBe(
-      "business-registrations/business-id/user-id/document-id.pdf",
-    );
+        userId: "user-id"
+      })
+    ).toBe("business-registrations/business-id/user-id/document-id.pdf");
   });
 
   it("protects upload authorization", async () => {
     const app = createApp({
       ...createTestHttpDependencies(),
       logger: createLogger({ environment: "test", level: "silent" }),
-      routes: createTestRouteDependencies(),
+      routes: createTestRouteDependencies()
     });
 
     const response = await request(app)
-      .post(
-        `/api/v1/businesses/${businessId}/registration-document/upload-url`,
-      )
+      .post(`/api/v1/businesses/${businessId}/registration-document/upload-url`)
       .send({
         fileName: "registration.pdf",
         mimeType: "application/pdf",
-        sizeBytes: 25_000,
+        sizeBytes: 25_000
       });
 
     expect(response.status).toBe(401);
@@ -71,11 +67,11 @@ describe("business registration documents", () => {
     const app = createApp({
       ...createTestHttpDependencies(),
       logger: createLogger({ environment: "test", level: "silent" }),
-      routes: createTestRouteDependencies(),
+      routes: createTestRouteDependencies()
     });
 
     const response = await request(app).post(
-      `/api/v1/business-registration-documents/${documentId}/complete`,
+      `/api/v1/business-registration-documents/${documentId}/complete`
     );
 
     expect(response.status).toBe(401);

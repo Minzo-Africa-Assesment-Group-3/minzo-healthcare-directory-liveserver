@@ -10,7 +10,7 @@ import { presentManagedBusinessFeedback } from "./list-managed-business-feedback
 import { managedBusinessFeedbackSelect } from "./list-managed-business-feedback.select.js";
 
 function getOrderBy(
-  sort: "NEWEST" | "OLDEST" | "RATING_HIGH" | "RATING_LOW",
+  sort: "NEWEST" | "OLDEST" | "RATING_HIGH" | "RATING_LOW"
 ): Prisma.ReviewOrderByWithRelationInput[] {
   switch (sort) {
     case "OLDEST":
@@ -32,20 +32,16 @@ export function createListManagedBusinessFeedbackHandler(dependencies: {
     await requireBusinessFeedbackViewer({
       businessId: params.businessId,
       database: dependencies.database,
-      userId,
+      userId
     });
 
     const search = query.search?.trim();
     const where: Prisma.ReviewWhereInput = {
       businessId: params.businessId,
       status: query.publicationStatus ?? { not: "DELETED" },
-      ...(query.moderationStatus
-        ? { moderationStatus: query.moderationStatus }
-        : {}),
+      ...(query.moderationStatus ? { moderationStatus: query.moderationStatus } : {}),
       ...(query.stars !== undefined ? { stars: query.stars } : {}),
-      ...(search
-        ? { text: { contains: search, mode: "insensitive" } }
-        : {}),
+      ...(search ? { text: { contains: search, mode: "insensitive" } } : {})
     };
     const [totalItems, feedback] = await dependencies.database.$transaction([
       dependencies.database.review.count({ where }),
@@ -54,8 +50,8 @@ export function createListManagedBusinessFeedbackHandler(dependencies: {
         orderBy: getOrderBy(query.sort),
         skip: (query.pageNumber - 1) * query.pageSize,
         take: query.pageSize,
-        select: managedBusinessFeedbackSelect,
-      }),
+        select: managedBusinessFeedbackSelect
+      })
     ]);
 
     return {
@@ -65,8 +61,8 @@ export function createListManagedBusinessFeedbackHandler(dependencies: {
         pageNumber: query.pageNumber,
         pageSize: query.pageSize,
         requestUrl: req.originalUrl,
-        totalItems,
-      }),
+        totalItems
+      })
     };
   };
 }

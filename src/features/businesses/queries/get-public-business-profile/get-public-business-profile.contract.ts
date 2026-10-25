@@ -9,24 +9,16 @@ const contract = initContract();
 
 const openingPeriodSchema = z.object({
   id: z.string().uuid(),
-  dayOfWeek: z.enum([
-    "MONDAY",
-    "TUESDAY",
-    "WEDNESDAY",
-    "THURSDAY",
-    "FRIDAY",
-    "SATURDAY",
-    "SUNDAY",
-  ]),
+  dayOfWeek: z.enum(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]),
   opensAt: z.string().regex(/^(?:[1-9]|1[0-2]):[0-5]\d (?:AM|PM)$/),
   closesAt: z.string().regex(/^(?:[1-9]|1[0-2]):[0-5]\d (?:AM|PM)$/),
-  closesNextDay: z.boolean(),
+  closesNextDay: z.boolean()
 });
 
 const serviceSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
-  slug: z.string(),
+  slug: z.string()
 });
 
 const professionalSchema = z.object({
@@ -39,11 +31,11 @@ const professionalSchema = z.object({
     "PHARMACIST",
     "PEDIATRICIAN",
     "OPHTHALMOLOGIST",
-    "OTHER",
+    "OTHER"
   ]),
   professionalTitle: z.string().nullable(),
   yearsExperience: z.number().int().nonnegative().nullable(),
-  verificationStatus: z.enum(["UNVERIFIED", "VERIFIED"]),
+  verificationStatus: z.enum(["UNVERIFIED", "VERIFIED"])
 });
 
 const locationSchema = z.object({
@@ -64,7 +56,7 @@ const locationSchema = z.object({
   isPrimary: z.boolean(),
   openingPeriods: z.array(openingPeriodSchema),
   services: z.array(serviceSchema),
-  professionals: z.array(professionalSchema),
+  professionals: z.array(professionalSchema)
 });
 
 export const publicBusinessProfileSchema = z.object({
@@ -78,20 +70,20 @@ export const publicBusinessProfileSchema = z.object({
   rating: z.object({
     averageRating: z.number().min(1).max(5).nullable(),
     reviewCount: z.number().int().nonnegative(),
-    ratingWindowMonths: z.literal(RATING_WINDOW_MONTHS),
+    ratingWindowMonths: z.literal(RATING_WINDOW_MONTHS)
   }),
   gallery: z.object({
     coverImage: publicBusinessMediaSchema.nullable(),
-    images: z.array(publicBusinessMediaSchema),
+    images: z.array(publicBusinessMediaSchema)
   }),
-  locations: z.array(locationSchema),
+  locations: z.array(locationSchema)
 });
 
 export const getPublicBusinessProfileContract = contract.query({
   method: "GET",
   path: "/api/v1/businesses/:slug",
   pathParams: z.object({
-    slug: z.string().trim().min(1).max(220),
+    slug: z.string().trim().min(1).max(220)
   }),
   strictStatusCodes: true,
   summary: "Get a public business profile",
@@ -101,10 +93,10 @@ export const getPublicBusinessProfileContract = contract.query({
     200: publicBusinessProfileSchema,
     400: problemDetailsSchema,
     404: problemDetailsSchema,
-    503: problemDetailsSchema,
+    503: problemDetailsSchema
   },
   metadata: {
     authentication: "public",
-    openApiTags: ["Businesses"],
-  },
+    openApiTags: ["Businesses"]
+  }
 });

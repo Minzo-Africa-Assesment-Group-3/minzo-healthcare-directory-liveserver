@@ -29,6 +29,7 @@ model User {
   emailVerificationTokens       EmailVerificationToken[]
   loginChallenges               LoginChallenge[]
   businessMemberships           BusinessMembership[]
+  followedBusinesses            BusinessFollow[]
   businessStaffProfiles         BusinessStaffMember[]
   businessClaims                BusinessClaim[]
   businessClaimDocuments        BusinessClaimDocument[]
@@ -45,6 +46,11 @@ enum AdminStatus {
   ACTIVE
   SUSPENDED
   DEACTIVATED
+}
+
+enum AuditActorType {
+  ADMIN
+  AUTOMATION
 }
 
 model AdminUser {
@@ -66,8 +72,29 @@ model AdminUser {
   businessesReviewed      Business[]               @relation("BusinessReviewer")
   businessMediaReviewed   BusinessMedia[]          @relation("BusinessMediaReviewer")
   reviewModerationActions ReviewModerationAction[] @relation("ReviewModerationAdmin")
+  auditLogs               AuditLog[]               @relation("AuditLogAdminActor")
 
   @@map("admin_users")
+}
+
+model AuditLog {
+  id             String         @id @default(uuid()) @db.Uuid
+  actorType      AuditActorType @map("actor_type")
+  actorAdminId   String?        @map("actor_admin_id") @db.Uuid
+  actorReference String?        @map("actor_reference") @db.VarChar(200)
+  action         String         @db.VarChar(150)
+  entityType     String         @map("entity_type") @db.VarChar(100)
+  entityId       String         @map("entity_id") @db.Uuid
+  metadata       Json?          @db.JsonB
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  actorAdmin AdminUser? @relation("AuditLogAdminActor", fields: [actorAdminId], references: [id], onDelete: Restrict)
+
+  @@index([createdAt])
+  @@index([actorAdminId, createdAt])
+  @@index([entityType, entityId, createdAt])
+  @@index([action, createdAt])
+  @@map("audit_logs")
 }
 
 model AdminLoginChallenge {

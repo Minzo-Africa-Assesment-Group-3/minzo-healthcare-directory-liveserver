@@ -12,16 +12,14 @@ import { registerBusiness } from "./register-business.use-case.js";
 function registrationConflictError(): AppError {
   return new AppError({
     code: "business_registration_conflict",
-    message:
-      "An account, registration number, or registration document already exists.",
+    message: "An account, registration number, or registration document already exists.",
     statusCode: 409,
-    title: "Business registration conflict",
+    title: "Business registration conflict"
   });
 }
 
 function isUniqueConstraintViolation(error: unknown): boolean {
-  return error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === "P2002";
+  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002";
 }
 
 export function createRegisterBusinessHandler(dependencies: {
@@ -32,16 +30,14 @@ export function createRegisterBusinessHandler(dependencies: {
   return async ({ body }) => {
     const email = body.user.email.trim().toLowerCase();
     const passwordHash = await hashPassword(body.user.password);
-    const verificationToken = generateEmailVerificationToken(
-      dependencies.verificationTokenTtlSeconds,
-    );
+    const verificationToken = generateEmailVerificationToken(dependencies.verificationTokenTtlSeconds);
 
     try {
       const result = await registerBusiness(dependencies.database, {
         body,
         email,
         passwordHash,
-        verificationToken,
+        verificationToken
       });
 
       try {
@@ -49,7 +45,7 @@ export function createRegisterBusinessHandler(dependencies: {
           displayName: result.user.displayName,
           email: result.user.email,
           token: verificationToken.token,
-          tokenId: verificationToken.id,
+          tokenId: verificationToken.id
         });
       } catch (cause) {
         throw new AppError({
@@ -58,7 +54,7 @@ export function createRegisterBusinessHandler(dependencies: {
           message:
             "Your account and business application were created, but the verification email could not be sent. Request another verification email.",
           statusCode: 503,
-          title: "Verification email unavailable",
+          title: "Verification email unavailable"
         });
       }
 
@@ -69,19 +65,19 @@ export function createRegisterBusinessHandler(dependencies: {
             "Your business application was submitted for approval. Check your email to verify your account.",
           user: {
             ...result.user,
-            status: "PENDING_VERIFICATION" as const,
+            status: "PENDING_VERIFICATION" as const
           },
           business: {
             ...result.business,
             status: "PENDING_APPROVAL" as const,
-            membershipRole: body.business.membershipRole,
+            membershipRole: body.business.membershipRole
           },
           primaryLocation: {
             ...result.primaryLocation,
             status: "DRAFT" as const,
-            isPrimary: true as const,
-          },
-        },
+            isPrimary: true as const
+          }
+        }
       };
     } catch (error) {
       if (isUniqueConstraintViolation(error)) {

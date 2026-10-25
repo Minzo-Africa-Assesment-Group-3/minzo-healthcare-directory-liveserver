@@ -12,7 +12,7 @@ const contract = initContract();
 
 export const businessRegistrationDocumentsContract = contract.router({
   requestUpload: requestBusinessRegistrationDocumentUploadContract,
-  completeUpload: completeBusinessRegistrationDocumentUploadContract,
+  completeUpload: completeBusinessRegistrationDocumentUploadContract
 });
 
 export interface BusinessRegistrationDocumentsRouteDependencies {
@@ -23,18 +23,16 @@ export interface BusinessRegistrationDocumentsRouteDependencies {
 
 export function createBusinessRegistrationDocumentsHandlers(
   dependencies: BusinessRegistrationDocumentsRouteDependencies,
-  { user: authenticateUser }: AuthenticationMiddlewares,
+  { user: authenticateUser }: AuthenticationMiddlewares
 ) {
   return {
     requestUpload: {
       middleware: [authenticateUser],
-      handler:
-        createRequestBusinessRegistrationDocumentUploadHandler(dependencies),
+      handler: createRequestBusinessRegistrationDocumentUploadHandler(dependencies)
     },
     completeUpload: {
       middleware: [authenticateUser],
-      handler:
-        createCompleteBusinessRegistrationDocumentUploadHandler(dependencies),
-    },
+      handler: createCompleteBusinessRegistrationDocumentUploadHandler(dependencies)
+    }
   };
 }

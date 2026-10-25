@@ -15,7 +15,7 @@ export const registerUserContract = contract.mutation({
     email: z.string().trim().email().max(320),
     password: z.string().min(12).max(128),
     displayName: z.string().trim().min(2).max(100),
-    phone: z.string().trim().min(7).max(30).optional(),
+    phone: z.string().trim().min(7).max(30).optional()
   }),
   responses: {
     201: z.object({
@@ -26,14 +26,14 @@ export const registerUserContract = contract.mutation({
         displayName: z.string(),
         phone: z.string().nullable(),
         status: z.literal("PENDING_VERIFICATION"),
-        createdAt: z.string().datetime(),
-      }),
+        createdAt: z.string().datetime()
+      })
     }),
     409: problemDetailsSchema,
-    503: problemDetailsSchema,
+    503: problemDetailsSchema
   },
   metadata: {
     authentication: "public",
-    openApiTags: ["Authentication"],
-  },
+    openApiTags: ["Authentication"]
+  }
 });

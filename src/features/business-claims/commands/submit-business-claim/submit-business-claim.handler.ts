@@ -13,7 +13,7 @@ function claimConflictError(message: string): AppError {
     code: "business_claim_conflict",
     message,
     statusCode: 409,
-    title: "Business claim conflict",
+    title: "Business claim conflict"
   });
 }
 
@@ -21,8 +21,7 @@ export function createSubmitBusinessClaimHandler(dependencies: {
   database: DatabaseClient;
 }): AppRouteMutationImplementation<typeof submitBusinessClaimContract> {
   return async ({ body, params, req }) => {
-    const claimantUserId =
-      requireAuthenticatedPrincipal(req, "user").subjectId;
+    const claimantUserId = requireAuthenticatedPrincipal(req, "user").subjectId;
 
     try {
       const claim = await dependencies.database.$transaction(
@@ -36,12 +35,12 @@ export function createSubmitBusinessClaimHandler(dependencies: {
               memberships: {
                 where: { userId: claimantUserId },
                 select: { userId: true },
-                take: 1,
+                take: 1
               },
               _count: {
-                select: { memberships: true },
-              },
-            },
+                select: { memberships: true }
+              }
+            }
           });
 
           if (!business) {
@@ -49,7 +48,7 @@ export function createSubmitBusinessClaimHandler(dependencies: {
               code: "business_not_found",
               message: "The requested business does not exist.",
               statusCode: 404,
-              title: "Business not found",
+              title: "Business not found"
             });
           }
 
@@ -62,24 +61,19 @@ export function createSubmitBusinessClaimHandler(dependencies: {
           }
 
           if (business.source === "SELF_REGISTERED") {
-            throw claimConflictError(
-              "Self-registered businesses cannot be claimed through this workflow.",
-            );
+            throw claimConflictError("Self-registered businesses cannot be claimed through this workflow.");
           }
 
           if (business.status !== "APPROVED") {
-            throw claimConflictError(
-              "This business is not currently available to be claimed.",
-            );
+            throw claimConflictError("This business is not currently available to be claimed.");
           }
 
-          const document =
-            await transaction.businessClaimDocument.findFirst({
-              where: {
-                id: body.evidenceDocumentId,
-                ownerUserId: claimantUserId,
-              },
-            });
+          const document = await transaction.businessClaimDocument.findFirst({
+            where: {
+              id: body.evidenceDocumentId,
+              ownerUserId: claimantUserId
+            }
+          });
 
           if (
             !document ||
@@ -87,28 +81,23 @@ export function createSubmitBusinessClaimHandler(dependencies: {
             !document.verifiedMimeType ||
             document.verifiedSizeBytes === null
           ) {
-            throw claimConflictError(
-              "The evidence document is not verified or cannot be used.",
-            );
+            throw claimConflictError("The evidence document is not verified or cannot be used.");
           }
 
-          const attachedDocument =
-            await transaction.businessClaimDocument.updateMany({
-              where: {
-                id: document.id,
-                ownerUserId: claimantUserId,
-                status: "UPLOADED",
-              },
-              data: {
-                status: "ATTACHED",
-                attachedAt: new Date(),
-              },
-            });
+          const attachedDocument = await transaction.businessClaimDocument.updateMany({
+            where: {
+              id: document.id,
+              ownerUserId: claimantUserId,
+              status: "UPLOADED"
+            },
+            data: {
+              status: "ATTACHED",
+              attachedAt: new Date()
+            }
+          });
 
           if (attachedDocument.count !== 1) {
-            throw claimConflictError(
-              "The evidence document is already in use.",
-            );
+            throw claimConflictError("The evidence document is already in use.");
           }
 
           return transaction.businessClaim.create({
@@ -121,19 +110,19 @@ export function createSubmitBusinessClaimHandler(dependencies: {
               evidenceDocumentKey: document.objectKey,
               evidenceDocumentOriginalName: document.originalFileName,
               evidenceDocumentMimeType: document.verifiedMimeType,
-              evidenceDocumentSizeBytes: document.verifiedSizeBytes,
+              evidenceDocumentSizeBytes: document.verifiedSizeBytes
             },
-            select: businessClaimSelect,
+            select: businessClaimSelect
           });
         },
         {
-          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-        },
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable
+        }
       );
 
       return {
         status: 201,
-        body: presentBusinessClaim(claim),
+        body: presentBusinessClaim(claim)
       };
     } catch (error) {
       if (
@@ -141,7 +130,7 @@ export function createSubmitBusinessClaimHandler(dependencies: {
         (error.code === "P2002" || error.code === "P2034")
       ) {
         throw claimConflictError(
-          "The claim, business, or evidence document changed while the request was being processed.",
+          "The claim, business, or evidence document changed while the request was being processed."
         );
       }
 

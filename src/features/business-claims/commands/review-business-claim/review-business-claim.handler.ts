@@ -4,6 +4,7 @@ import { Prisma } from "../../../../generated/prisma/client.js";
 import type { DatabaseClient } from "../../../../infrastructure/database/index.js";
 import { requireAuthenticatedPrincipal } from "../../../../shared/authentication/route-authentication.js";
 import { AppError } from "../../../../shared/errors/app-error.js";
+import { recordAuditLog } from "../../../audit-logs/record-audit-log.js";
 import { requireBusinessClaimsAdmin } from "../../business-claim.authorization.js";
 import { presentAdminBusinessClaim } from "../../business-claim.presenter.js";
 import { adminBusinessClaimSelect } from "../../business-claim.select.js";
@@ -14,7 +15,7 @@ function claimStateConflictError(): AppError {
     code: "business_claim_state_conflict",
     message: "The business claim is no longer available for this decision.",
     statusCode: 409,
-    title: "Business claim state conflict",
+    title: "Business claim state conflict"
   });
 }
 
@@ -25,7 +26,7 @@ export function createReviewBusinessClaimHandler(dependencies: {
     const adminUserId = requireAuthenticatedPrincipal(req, "admin").subjectId;
     const reviewedByAdminId = await requireBusinessClaimsAdmin({
       adminUserId,
-      database: dependencies.database,
+      database: dependencies.database
     });
     const reviewedAt = new Date();
 
@@ -44,11 +45,11 @@ export function createReviewBusinessClaimHandler(dependencies: {
                 select: {
                   status: true,
                   _count: {
-                    select: { memberships: true },
-                  },
-                },
-              },
-            },
+                    select: { memberships: true }
+                  }
+                }
+              }
+            }
           });
 
           if (!claim) {
@@ -56,7 +57,7 @@ export function createReviewBusinessClaimHandler(dependencies: {
               code: "business_claim_not_found",
               message: "The requested business claim does not exist.",
               statusCode: 404,
-              title: "Business claim not found",
+              title: "Business claim not found"
             });
           }
 
@@ -65,10 +66,7 @@ export function createReviewBusinessClaimHandler(dependencies: {
           }
 
           if (body.decision === "APPROVED") {
-            if (
-              claim.business.status !== "APPROVED" ||
-              claim.business._count.memberships > 0
-            ) {
+            if (claim.business.status !== "APPROVED" || claim.business._count.memberships > 0) {
               throw claimStateConflictError();
             }
 
@@ -76,15 +74,15 @@ export function createReviewBusinessClaimHandler(dependencies: {
               where: {
                 userId_businessId: {
                   userId: claim.claimantUserId,
-                  businessId: claim.businessId,
-                },
+                  businessId: claim.businessId
+                }
               },
               update: { role: claim.requestedRole },
               create: {
                 userId: claim.claimantUserId,
                 businessId: claim.businessId,
-                role: claim.requestedRole,
-              },
+                role: claim.requestedRole
+              }
             });
 
             await transaction.business.update({
@@ -92,45 +90,58 @@ export function createReviewBusinessClaimHandler(dependencies: {
               data: {
                 verificationStatus: "VERIFIED",
                 verifiedAt: reviewedAt,
-                verifiedByAdminId: reviewedByAdminId,
-              },
+                verifiedByAdminId: reviewedByAdminId
+              }
             });
 
             await transaction.businessClaim.updateMany({
               where: {
                 businessId: claim.businessId,
                 id: { not: claim.id },
-                status: "PENDING",
+                status: "PENDING"
               },
               data: {
                 status: "REJECTED",
                 reviewedAt,
                 reviewedByAdminId,
-                reviewNote:
-                  "Another ownership claim for this business was approved.",
-              },
+                reviewNote: "Another ownership claim for this business was approved."
+              }
             });
           }
 
-          return transaction.businessClaim.update({
+          const reviewedClaim = await transaction.businessClaim.update({
             where: { id: claim.id },
             data: {
               status: body.decision,
               reviewedAt,
               reviewedByAdminId,
-              reviewNote: body.reviewNote?.trim() ?? null,
+              reviewNote: body.reviewNote?.trim() ?? null
             },
-            select: adminBusinessClaimSelect,
+            select: adminBusinessClaimSelect
           });
+
+          await recordAuditLog(transaction, {
+            actor: { type: "ADMIN", adminUserId: reviewedByAdminId },
+            action: body.decision === "APPROVED" ? "business.claim.approved" : "business.claim.rejected",
+            entity: { id: claim.id, type: "BUSINESS_CLAIM" },
+            metadata: {
+              businessId: claim.businessId,
+              decision: body.decision,
+              requestedRole: claim.requestedRole,
+              reviewNote: body.reviewNote?.trim() ?? null
+            }
+          });
+
+          return reviewedClaim;
         },
         {
-          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-        },
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable
+        }
       );
 
       return {
         status: 200,
-        body: presentAdminBusinessClaim(reviewedClaim),
+        body: presentAdminBusinessClaim(reviewedClaim)
       };
     } catch (error) {
       if (

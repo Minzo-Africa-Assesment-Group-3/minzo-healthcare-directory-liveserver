@@ -9,12 +9,12 @@ const contract = initContract();
 const moderateCustomerFeedbackBodySchema = z.discriminatedUnion("decision", [
   z.object({
     decision: z.literal("APPROVED"),
-    reason: z.string().trim().min(3).max(1000).optional(),
+    reason: z.string().trim().min(3).max(1000).optional()
   }),
   z.object({
     decision: z.literal("REJECTED"),
-    reason: z.string().trim().min(3).max(1000),
-  }),
+    reason: z.string().trim().min(3).max(1000)
+  })
 ]);
 
 export const moderateCustomerFeedbackContract = contract.mutation({
@@ -31,10 +31,10 @@ export const moderateCustomerFeedbackContract = contract.mutation({
     401: problemDetailsSchema,
     403: problemDetailsSchema,
     404: problemDetailsSchema,
-    409: problemDetailsSchema,
+    409: problemDetailsSchema
   },
   metadata: {
     openApiTags: ["Admin Customer Reviews"],
-    authentication: "admin-access-token",
-  },
+    authentication: "admin-access-token"
+  }
 });

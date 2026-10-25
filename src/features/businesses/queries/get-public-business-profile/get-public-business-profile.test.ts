@@ -17,10 +17,7 @@ const serviceId = "fa406b35-1f88-4d20-8248-5273585d3b0e";
 const professionalId = "5c94c9d4-67a1-4dcb-8fea-eed1dd30dd66";
 const mediaId = "01ac73ce-a265-4503-af3a-67fdfbc7668c";
 
-function createTestApp(
-  database: DatabaseClient,
-  objectStorage?: ObjectStorage,
-) {
+function createTestApp(database: DatabaseClient, objectStorage?: ObjectStorage) {
   const routes = createTestRouteDependencies();
   routes.businesses.database = database;
 
@@ -31,7 +28,7 @@ function createTestApp(
   return createApp({
     ...createTestHttpDependencies(),
     logger: createLogger({ environment: "test", level: "silent" }),
-    routes,
+    routes
   });
 }
 
@@ -54,8 +51,8 @@ describe("public business profile endpoint", () => {
           objectKey: `business-media/${businessId}/clinic.jpg`,
           altText: "Front of Monrovia Family Clinic",
           isCover: true,
-          sortOrder: 0,
-        },
+          sortOrder: 0
+        }
       ],
       locations: [
         {
@@ -80,17 +77,17 @@ describe("public business profile endpoint", () => {
               dayOfWeek: "MONDAY",
               opensAtMinutes: 480,
               closesAtMinutes: 1_020,
-              closesNextDay: false,
-            },
+              closesNextDay: false
+            }
           ],
           services: [
             {
               service: {
                 id: serviceId,
                 name: "General Practice",
-                slug: "general-practice",
-              },
-            },
+                slug: "general-practice"
+              }
+            }
           ],
           staffMembers: [
             {
@@ -99,35 +96,33 @@ describe("public business profile endpoint", () => {
               profession: "GENERAL_PRACTITIONER",
               professionalTitle: "Medical Doctor",
               yearsExperience: 8,
-              verificationStatus: "VERIFIED",
-            },
-          ],
-        },
-      ],
+              verificationStatus: "VERIFIED"
+            }
+          ]
+        }
+      ]
     };
     const transaction = {
       business: {
         async findFirst(args: unknown) {
           businessQuery = args;
           return business;
-        },
+        }
       },
       review: {
         async aggregate(args: unknown) {
           ratingQuery = args;
           return {
             _avg: { stars: 4.666_666 },
-            _count: { _all: 3 },
+            _count: { _all: 3 }
           };
-        },
-      },
+        }
+      }
     };
     const database = {
-      async $transaction(
-        callback: (client: typeof transaction) => Promise<unknown>,
-      ) {
+      async $transaction(callback: (client: typeof transaction) => Promise<unknown>) {
         return callback(transaction);
-      },
+      }
     } as unknown as DatabaseClient;
     const objectStorage = {
       async createSignedUploadAuthorization() {
@@ -147,16 +142,12 @@ describe("public business profile endpoint", () => {
       },
       async removeObject() {
         throw new Error("Object removal was not expected.");
-      },
+      }
     } satisfies ObjectStorage;
     const app = createTestApp(database, objectStorage);
 
-    const response = await request(app).get(
-      "/api/v1/businesses/monrovia-family-clinic",
-    );
-    const body = getPublicBusinessProfileContract.responses[200].parse(
-      response.body,
-    );
+    const response = await request(app).get("/api/v1/businesses/monrovia-family-clinic");
+    const body = getPublicBusinessProfileContract.responses[200].parse(response.body);
 
     expect(response.status).toBe(200);
     expect(body).toMatchObject({
@@ -166,20 +157,20 @@ describe("public business profile endpoint", () => {
       rating: {
         averageRating: 4.67,
         reviewCount: 3,
-        ratingWindowMonths: 12,
+        ratingWindowMonths: 12
       },
       gallery: {
         coverImage: {
           id: mediaId,
           url: "https://storage.example.com/clinic.jpg",
-          isCover: true,
+          isCover: true
         },
         images: [
           {
             id: mediaId,
-            url: "https://storage.example.com/clinic.jpg",
-          },
-        ],
+            url: "https://storage.example.com/clinic.jpg"
+          }
+        ]
       },
       locations: [
         {
@@ -191,23 +182,23 @@ describe("public business profile endpoint", () => {
               dayOfWeek: "MONDAY",
               opensAt: "8:00 AM",
               closesAt: "5:00 PM",
-              closesNextDay: false,
-            },
+              closesNextDay: false
+            }
           ],
           services: [
             {
               id: serviceId,
-              name: "General Practice",
-            },
+              name: "General Practice"
+            }
           ],
           professionals: [
             {
               id: professionalId,
-              displayName: "Dr. Jane Doe",
-            },
-          ],
-        },
-      ],
+              displayName: "Dr. Jane Doe"
+            }
+          ]
+        }
+      ]
     });
     expect(body).not.toHaveProperty("registrationNumber");
     expect(body).not.toHaveProperty("memberships");
@@ -216,32 +207,32 @@ describe("public business profile endpoint", () => {
     expect(businessQuery).toMatchObject({
       where: {
         slug: "monrovia-family-clinic",
-        status: "APPROVED",
+        status: "APPROVED"
       },
       select: {
         _count: {
-          select: { memberships: true },
+          select: { memberships: true }
         },
         media: {
-          where: { status: "APPROVED" },
+          where: { status: "APPROVED" }
         },
         locations: {
           where: { status: "ACTIVE" },
           select: {
             staffMembers: {
-              where: { isPublic: true },
-            },
-          },
-        },
-      },
+              where: { isPublic: true }
+            }
+          }
+        }
+      }
     });
     const parsedRatingQuery = z
       .object({
         where: z.object({
           businessId: z.string(),
           status: z.literal("PUBLISHED"),
-          submittedAt: z.object({ gte: z.date() }),
-        }),
+          submittedAt: z.object({ gte: z.date() })
+        })
       })
       .parse(ratingQuery);
 
@@ -253,31 +244,27 @@ describe("public business profile endpoint", () => {
       business: {
         async findFirst() {
           return null;
-        },
+        }
       },
       review: {
         async aggregate() {
           throw new Error("The rating query should not run.");
-        },
-      },
+        }
+      }
     };
     const database = {
-      async $transaction(
-        callback: (client: typeof transaction) => Promise<unknown>,
-      ) {
+      async $transaction(callback: (client: typeof transaction) => Promise<unknown>) {
         return callback(transaction);
-      },
+      }
     } as unknown as DatabaseClient;
     const app = createTestApp(database);
 
-    const response = await request(app).get(
-      "/api/v1/businesses/not-public",
-    );
+    const response = await request(app).get("/api/v1/businesses/not-public");
 
     expect(response.status).toBe(404);
     expect(response.body).toMatchObject({
       code: "business_not_found",
-      status: 404,
+      status: 404
     });
   });
 });

@@ -16,9 +16,9 @@ export const businessClaimSelect = {
     select: {
       id: true,
       displayName: true,
-      slug: true,
-    },
-  },
+      slug: true
+    }
+  }
 } satisfies Prisma.BusinessClaimSelect;
 
 export const adminBusinessClaimSelect = {
@@ -28,7 +28,7 @@ export const adminBusinessClaimSelect = {
       id: true,
       displayName: true,
       email: true,
-      phone: true,
-    },
-  },
+      phone: true
+    }
+  }
 } satisfies Prisma.BusinessClaimSelect;

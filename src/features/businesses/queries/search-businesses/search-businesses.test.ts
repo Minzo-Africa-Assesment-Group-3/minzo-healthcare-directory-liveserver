@@ -6,10 +6,7 @@ import type { DatabaseClient } from "../../../../infrastructure/database/index.j
 import { createLogger } from "../../../../infrastructure/logging/index.js";
 import { createTestHttpDependencies } from "../../../../test/create-test-http-dependencies.js";
 import { createTestRouteDependencies } from "../../../../test/create-test-route-dependencies.js";
-import {
-  searchBusinessesContract,
-  searchBusinessesQuerySchema,
-} from "./search-businesses.contract.js";
+import { searchBusinessesContract, searchBusinessesQuerySchema } from "./search-businesses.contract.js";
 import { createBusinessSearchWhere } from "./search-businesses.query.js";
 
 const businessId = "6f5c79f2-787c-44f0-a47f-92de621dd97a";
@@ -21,9 +18,14 @@ function isParameterizedSql(value: unknown): value is {
   sql: string;
   values: unknown[];
 } {
-  return typeof value === "object" && value !== null &&
-    "sql" in value && typeof value.sql === "string" &&
-    "values" in value && Array.isArray(value.values);
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "sql" in value &&
+    typeof value.sql === "string" &&
+    "values" in value &&
+    Array.isArray(value.values)
+  );
 }
 
 function businessRecord() {
@@ -49,10 +51,10 @@ function businessRecord() {
             service: {
               id: serviceId,
               name: "General Practice",
-              slug: "general-practice",
-            },
-          },
-        ],
+              slug: "general-practice"
+            }
+          }
+        ]
       },
       {
         id: nearbyLocationId,
@@ -64,9 +66,9 @@ function businessRecord() {
         latitude: 6.29,
         longitude: -10.78,
         isPrimary: false,
-        services: [],
-      },
-    ],
+        services: []
+      }
+    ]
   };
 }
 
@@ -77,7 +79,7 @@ function createTestApp(database: DatabaseClient) {
   return createApp({
     ...createTestHttpDependencies(),
     logger: createLogger({ environment: "test", level: "silent" }),
-    routes,
+    routes
   });
 }
 
@@ -85,7 +87,7 @@ describe("business search contract", () => {
   it("applies pagination defaults", () => {
     expect(searchBusinessesQuerySchema.parse({})).toEqual({
       pageNumber: 1,
-      pageSize: 20,
+      pageSize: 20
     });
   });
 
@@ -93,17 +95,15 @@ describe("business search contract", () => {
     expect(() =>
       searchBusinessesQuerySchema.parse({
         latitude: 6.3,
-        longitude: -10.8,
-      }),
-    ).toThrow(
-      "latitude, longitude, and radiusKm must be supplied together.",
-    );
+        longitude: -10.8
+      })
+    ).toThrow("latitude, longitude, and radiusKm must be supplied together.");
   });
 
   it("requires proximity coordinates for distance sorting", () => {
-    expect(() =>
-      searchBusinessesQuerySchema.parse({ sort: "distance" }),
-    ).toThrow("Distance sorting requires proximity coordinates.");
+    expect(() => searchBusinessesQuerySchema.parse({ sort: "distance" })).toThrow(
+      "Distance sorting requires proximity coordinates."
+    );
   });
 
   it("builds approved-business and active-location filters", () => {
@@ -112,7 +112,7 @@ describe("business search contract", () => {
       county: "Montserrado",
       city: "Monrovia",
       facilityType: "Clinic",
-      serviceId,
+      serviceId
     });
 
     expect(createBusinessSearchWhere(query)).toMatchObject({
@@ -122,21 +122,21 @@ describe("business search contract", () => {
           status: "ACTIVE",
           county: {
             equals: "Montserrado",
-            mode: "insensitive",
+            mode: "insensitive"
           },
           cityOrTown: {
             equals: "Monrovia",
-            mode: "insensitive",
+            mode: "insensitive"
           },
           facilityType: {
             equals: "Clinic",
-            mode: "insensitive",
+            mode: "insensitive"
           },
           services: {
-            some: { serviceId },
-          },
-        },
-      },
+            some: { serviceId }
+          }
+        }
+      }
     });
   });
 });
@@ -152,15 +152,15 @@ describe("public business search endpoint", () => {
         return [
           {
             businessId,
-            totalCount: 3n,
-          },
+            totalCount: 3n
+          }
         ];
       },
       business: {
         async findMany(args: unknown) {
           findManyQuery = args;
           return [businessRecord()];
-        },
+        }
       },
       review: {
         async groupBy() {
@@ -168,27 +168,23 @@ describe("public business search endpoint", () => {
             {
               businessId,
               _avg: { stars: 4.5 },
-              _count: { _all: 8 },
-            },
+              _count: { _all: 8 }
+            }
           ];
-        },
-      },
+        }
+      }
     };
     const database = {
-      async $transaction(
-        callback: (client: typeof transaction) => Promise<unknown>,
-      ) {
+      async $transaction(callback: (client: typeof transaction) => Promise<unknown>) {
         return callback(transaction);
-      },
+      }
     } as unknown as DatabaseClient;
     const app = createTestApp(database);
 
     const response = await request(app).get(
-      "/api/v1/businesses?search=clinic&county=Montserrado&facilityType=Clinic&pageSize=1",
+      "/api/v1/businesses?search=clinic&county=Montserrado&facilityType=Clinic&pageSize=1"
     );
-    const body = searchBusinessesContract.responses[200].parse(
-      response.body,
-    );
+    const body = searchBusinessesContract.responses[200].parse(response.body);
 
     expect(response.status).toBe(200);
     expect(body.data).toMatchObject([
@@ -197,18 +193,18 @@ describe("public business search endpoint", () => {
         isClaimed: false,
         location: {
           id: primaryLocationId,
-          county: "Montserrado",
+          county: "Montserrado"
         },
         rating: {
           averageRating: 4.5,
           reviewCount: 8,
-          ratingWindowMonths: 12,
+          ratingWindowMonths: 12
         },
-        distanceKm: null,
-      },
+        distanceKm: null
+      }
     ]);
     expect(body.pagination.nextPageUrl).toBe(
-      "/api/v1/businesses?search=clinic&county=Montserrado&facilityType=Clinic&pageSize=1&pageNumber=2",
+      "/api/v1/businesses?search=clinic&county=Montserrado&facilityType=Clinic&pageSize=1&pageNumber=2"
     );
     expect(isParameterizedSql(rawSearchQuery)).toBe(true);
 
@@ -222,8 +218,8 @@ describe("public business search endpoint", () => {
     expect(findManyQuery).toMatchObject({
       where: {
         id: { in: [businessId] },
-        status: "APPROVED",
-      },
+        status: "APPROVED"
+      }
     });
   });
 
@@ -238,36 +234,32 @@ describe("public business search endpoint", () => {
             businessId,
             locationId: nearbyLocationId,
             distanceMeters: 1_234.5,
-            totalCount: 1n,
-          },
+            totalCount: 1n
+          }
         ];
       },
       business: {
         async findMany() {
           return [businessRecord()];
-        },
+        }
       },
       review: {
         async groupBy() {
           return [];
-        },
-      },
+        }
+      }
     };
     const database = {
-      async $transaction(
-        callback: (client: typeof transaction) => Promise<unknown>,
-      ) {
+      async $transaction(callback: (client: typeof transaction) => Promise<unknown>) {
         return callback(transaction);
-      },
+      }
     } as unknown as DatabaseClient;
     const app = createTestApp(database);
 
     const response = await request(app).get(
-      "/api/v1/businesses?latitude=6.29&longitude=-10.78&radiusKm=10&sort=distance",
+      "/api/v1/businesses?latitude=6.29&longitude=-10.78&radiusKm=10&sort=distance"
     );
-    const body = searchBusinessesContract.responses[200].parse(
-      response.body,
-    );
+    const body = searchBusinessesContract.responses[200].parse(response.body);
 
     expect(response.status).toBe(200);
     expect(rawQueryCalled).toBe(true);
@@ -275,27 +267,25 @@ describe("public business search endpoint", () => {
       id: businessId,
       location: {
         id: nearbyLocationId,
-        name: "Sinkor Branch",
+        name: "Sinkor Branch"
       },
       rating: {
         averageRating: null,
-        reviewCount: 0,
+        reviewCount: 0
       },
-      distanceKm: 1.23,
+      distanceKm: 1.23
     });
   });
 
   it("returns Problem Details for partial proximity input", async () => {
     const app = createTestApp({} as DatabaseClient);
 
-    const response = await request(app).get(
-      "/api/v1/businesses?latitude=6.29&longitude=-10.78",
-    );
+    const response = await request(app).get("/api/v1/businesses?latitude=6.29&longitude=-10.78");
 
     expect(response.status).toBe(400);
     expect(response.body).toMatchObject({
       code: "request_validation_failed",
-      status: 400,
+      status: 400
     });
   });
 });

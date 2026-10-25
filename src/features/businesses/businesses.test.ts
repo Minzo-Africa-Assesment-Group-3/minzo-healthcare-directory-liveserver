@@ -16,24 +16,22 @@ describe("business service contract", () => {
   it("accepts a complete replacement service list", () => {
     expect(
       updateLocationServicesContract.body.parse({
-        services: ["General Practice", "Pharmacy"],
-      }),
+        services: ["General Practice", "Pharmacy"]
+      })
     ).toEqual({
-      services: ["General Practice", "Pharmacy"],
+      services: ["General Practice", "Pharmacy"]
     });
   });
 
   it("allows an empty list to remove all location services", () => {
-    expect(
-      updateLocationServicesContract.body.parse({ services: [] }),
-    ).toEqual({ services: [] });
+    expect(updateLocationServicesContract.body.parse({ services: [] })).toEqual({ services: [] });
   });
 
   it("rejects duplicate normalized service names", () => {
     expect(() =>
       updateLocationServicesContract.body.parse({
-        services: ["Pharmacy", "pharmacy"],
-      }),
+        services: ["Pharmacy", "pharmacy"]
+      })
     ).toThrow("Services must not contain duplicates.");
   });
 });
@@ -43,19 +41,17 @@ describe("business service endpoint", () => {
     const app = createApp({
       ...createTestHttpDependencies(),
       logger: createLogger({ environment: "test", level: "silent" }),
-      routes: createTestRouteDependencies(),
+      routes: createTestRouteDependencies()
     });
 
     const response = await request(app)
-      .put(
-        `/api/v1/businesses/${businessId}/locations/${locationId}/services`,
-      )
+      .put(`/api/v1/businesses/${businessId}/locations/${locationId}/services`)
       .send({ services: ["Pharmacy"] });
 
     expect(response.status).toBe(401);
     expect(response.body).toMatchObject({
       code: "authentication_required",
-      status: 401,
+      status: 401
     });
   });
 
@@ -71,17 +67,15 @@ describe("business service endpoint", () => {
             id: locationId,
             business: {
               status: "APPROVED",
-              memberships: [{ role: "OWNER" }],
-            },
+              memberships: [{ role: "OWNER" }]
+            }
           };
-        },
+        }
       },
       service: {
-        async upsert(args: {
-          create: { id: string; name: string; slug: string };
-        }) {
+        async upsert(args: { create: { id: string; name: string; slug: string } }) {
           return args.create;
-        },
+        }
       },
       businessLocationService: {
         async deleteMany() {
@@ -95,37 +89,33 @@ describe("business service endpoint", () => {
         }) {
           createdLinks.push(...args.data);
           return { count: args.data.length };
-        },
-      },
+        }
+      }
     };
     const database = {
       user: {
         async findUnique() {
           return { id: userId, status: "ACTIVE", deletedAt: null };
-        },
+        }
       },
-      async $transaction(
-        callback: (client: typeof transaction) => Promise<unknown>,
-      ) {
+      async $transaction(callback: (client: typeof transaction) => Promise<unknown>) {
         return callback(transaction);
-      },
+      }
     } as unknown as DatabaseClient;
     const routes = createTestRouteDependencies();
     routes.authentication.database = database;
     routes.businesses.database = database;
     const accessToken = await routes.authPublic.accessToken.create({
-      subjectId: userId,
+      subjectId: userId
     });
     const app = createApp({
       ...createTestHttpDependencies(),
       logger: createLogger({ environment: "test", level: "silent" }),
-      routes,
+      routes
     });
 
     const response = await request(app)
-      .put(
-        `/api/v1/businesses/${businessId}/locations/${locationId}/services`,
-      )
+      .put(`/api/v1/businesses/${businessId}/locations/${locationId}/services`)
       .set("Authorization", `Bearer ${accessToken}`)
       .send({ services: ["Pharmacy", "General Practice"] });
 
@@ -135,13 +125,11 @@ describe("business service endpoint", () => {
       locationId,
       services: [
         { name: "General Practice", slug: "general-practice" },
-        { name: "Pharmacy", slug: "pharmacy" },
-      ],
+        { name: "Pharmacy", slug: "pharmacy" }
+      ]
     });
     expect(createdLinks).toHaveLength(2);
-    expect(createdLinks.every(
-      (link) => link.businessLocationId === locationId,
-    )).toBe(true);
+    expect(createdLinks.every((link) => link.businessLocationId === locationId)).toBe(true);
   });
 
   it("rejects a user who is not a business member", async () => {
@@ -152,47 +140,43 @@ describe("business service endpoint", () => {
             id: locationId,
             business: {
               status: "APPROVED",
-              memberships: [],
-            },
+              memberships: []
+            }
           };
-        },
-      },
+        }
+      }
     };
     const database = {
       user: {
         async findUnique() {
           return { id: userId, status: "ACTIVE", deletedAt: null };
-        },
+        }
       },
-      async $transaction(
-        callback: (client: typeof transaction) => Promise<unknown>,
-      ) {
+      async $transaction(callback: (client: typeof transaction) => Promise<unknown>) {
         return callback(transaction);
-      },
+      }
     } as unknown as DatabaseClient;
     const routes = createTestRouteDependencies();
     routes.authentication.database = database;
     routes.businesses.database = database;
     const accessToken = await routes.authPublic.accessToken.create({
-      subjectId: userId,
+      subjectId: userId
     });
     const app = createApp({
       ...createTestHttpDependencies(),
       logger: createLogger({ environment: "test", level: "silent" }),
-      routes,
+      routes
     });
 
     const response = await request(app)
-      .put(
-        `/api/v1/businesses/${businessId}/locations/${locationId}/services`,
-      )
+      .put(`/api/v1/businesses/${businessId}/locations/${locationId}/services`)
       .set("Authorization", `Bearer ${accessToken}`)
       .send({ services: ["Pharmacy"] });
 
     expect(response.status).toBe(403);
     expect(response.body).toMatchObject({
       code: "permission_denied",
-      status: 403,
+      status: 403
     });
   });
 });

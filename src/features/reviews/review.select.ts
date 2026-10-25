@@ -10,7 +10,7 @@ export const publicReviewSelect = {
   updatedAt: true,
   author: {
     select: {
-      displayName: true,
-    },
-  },
+      displayName: true
+    }
+  }
 } satisfies Prisma.ReviewSelect;

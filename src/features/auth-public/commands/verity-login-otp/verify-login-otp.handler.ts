@@ -7,7 +7,7 @@ import {
   type AccessTokenService,
   generateRefreshToken,
   type LoginOtpService,
-  type RefreshTokenCookieService,
+  type RefreshTokenCookieService
 } from "../../../../shared/authentication/index.js";
 import { AppError } from "../../../../shared/errors/app-error.js";
 import type { verifyLoginOtpContract } from "./verify-login-otp.contract.js";
@@ -17,7 +17,7 @@ function invalidOtpError(): AppError {
     code: "invalid_login_code",
     message: "The login code is invalid, expired, or has already been used.",
     statusCode: 401,
-    title: "Invalid login code",
+    title: "Invalid login code"
   });
 }
 
@@ -45,10 +45,10 @@ export function createVerifyLoginOtpHandler(dependencies: {
             email: true,
             displayName: true,
             status: true,
-            emailVerifiedAt: true,
-          },
-        },
-      },
+            emailVerifiedAt: true
+          }
+        }
+      }
     });
 
     const now = new Date();
@@ -64,11 +64,7 @@ export function createVerifyLoginOtpHandler(dependencies: {
       throw invalidOtpError();
     }
 
-    const otpIsValid = dependencies.loginOtp.verify(
-      challenge.id,
-      body.otp,
-      challenge.otpDigest,
-    );
+    const otpIsValid = dependencies.loginOtp.verify(challenge.id, body.otp, challenge.otpDigest);
 
     if (!otpIsValid) {
       await dependencies.database.loginChallenge.updateMany({
@@ -76,22 +72,19 @@ export function createVerifyLoginOtpHandler(dependencies: {
           id: challenge.id,
           consumedAt: null,
           expiresAt: { gt: now },
-          failedAttempts: { lt: dependencies.maxOtpAttempts },
+          failedAttempts: { lt: dependencies.maxOtpAttempts }
         },
         data: {
-          failedAttempts: { increment: 1 },
-        },
+          failedAttempts: { increment: 1 }
+        }
       });
 
       throw invalidOtpError();
     }
 
-    const refreshToken = generateRefreshToken(
-      dependencies.refreshTokenTtlSeconds,
-      now,
-    );
+    const refreshToken = generateRefreshToken(dependencies.refreshTokenTtlSeconds, now);
     const accessToken = await dependencies.accessToken.create({
-      subjectId: challenge.user.id,
+      subjectId: challenge.user.id
     });
 
     await dependencies.database.$transaction(async (transaction) => {
@@ -100,11 +93,11 @@ export function createVerifyLoginOtpHandler(dependencies: {
           id: challenge.id,
           consumedAt: null,
           expiresAt: { gt: now },
-          failedAttempts: { lt: dependencies.maxOtpAttempts },
+          failedAttempts: { lt: dependencies.maxOtpAttempts }
         },
         data: {
-          consumedAt: now,
-        },
+          consumedAt: now
+        }
       });
 
       if (consumedChallenge.count !== 1) {
@@ -116,16 +109,12 @@ export function createVerifyLoginOtpHandler(dependencies: {
           userId: challenge.user.id,
           familyId: randomUUID(),
           tokenHash: refreshToken.tokenHash,
-          expiresAt: refreshToken.expiresAt,
-        },
+          expiresAt: refreshToken.expiresAt
+        }
       });
     });
 
-    dependencies.refreshTokenCookie.set(
-      res,
-      refreshToken.token,
-      dependencies.refreshTokenTtlSeconds,
-    );
+    dependencies.refreshTokenCookie.set(res, refreshToken.token, dependencies.refreshTokenTtlSeconds);
 
     return {
       status: 200,
@@ -137,9 +126,9 @@ export function createVerifyLoginOtpHandler(dependencies: {
         user: {
           id: challenge.user.id,
           email: challenge.user.email,
-          displayName: challenge.user.displayName,
-        },
-      },
+          displayName: challenge.user.displayName
+        }
+      }
     };
   };
 }

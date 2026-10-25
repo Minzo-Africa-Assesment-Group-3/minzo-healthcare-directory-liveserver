@@ -13,14 +13,11 @@ export interface SignedDownloadAuthorization {
 }
 
 export interface ObjectStorage {
-  createSignedUploadAuthorization(
-    bucket: string,
-    path: string,
-  ): Promise<SignedUploadAuthorization>;
+  createSignedUploadAuthorization(bucket: string, path: string): Promise<SignedUploadAuthorization>;
   createSignedDownloadAuthorization(
     bucket: string,
     path: string,
-    expiresInSeconds: number,
+    expiresInSeconds: number
   ): Promise<SignedDownloadAuthorization>;
   getObjectInfo(bucket: string, path: string): Promise<StoredObjectInfo>;
   objectExists(bucket: string, path: string): Promise<boolean>;

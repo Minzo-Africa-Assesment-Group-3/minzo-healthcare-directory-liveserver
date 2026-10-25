@@ -6,7 +6,7 @@ function accountUnavailableError(): AppError {
     code: "account_unavailable",
     message: "The authenticated account is not available.",
     statusCode: 403,
-    title: "Account unavailable",
+    title: "Account unavailable"
   });
 }
 
@@ -27,15 +27,15 @@ export async function requireBusinessClaimsAdmin(options: {
               permissions: {
                 select: {
                   permission: {
-                    select: { name: true },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
+                    select: { name: true }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   });
 
   if (!admin || admin.status !== "ACTIVE") {
@@ -45,9 +45,7 @@ export async function requireBusinessClaimsAdmin(options: {
   const canManageClaims = admin.roles.some(
     ({ role }) =>
       role.name === "SUPER_ADMIN" ||
-      role.permissions.some(
-        ({ permission }) => permission.name === "business_claims.manage",
-      ),
+      role.permissions.some(({ permission }) => permission.name === "business_claims.manage")
   );
 
   if (!canManageClaims) {
@@ -55,7 +53,7 @@ export async function requireBusinessClaimsAdmin(options: {
       code: "permission_denied",
       message: "You do not have permission to manage business claims.",
       statusCode: 403,
-      title: "Permission denied",
+      title: "Permission denied"
     });
   }
 

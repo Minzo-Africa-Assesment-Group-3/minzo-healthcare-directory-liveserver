@@ -10,14 +10,14 @@ const dayOfWeekSchema = z.enum([
   "THURSDAY",
   "FRIDAY",
   "SATURDAY",
-  "SUNDAY",
+  "SUNDAY"
 ]);
 
 const openingPeriodSchema = z.object({
   dayOfWeek: dayOfWeekSchema,
   opensAt: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
   closesAt: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
-  closesNextDay: z.boolean(),
+  closesNextDay: z.boolean()
 });
 
 export const liberiaHealthcareSeedFixtureSchema = z.object({
@@ -28,29 +28,29 @@ export const liberiaHealthcareSeedFixtureSchema = z.object({
     timezone: z.literal("Africa/Monrovia"),
     recordCounts: z.object({
       facilities: z.literal(249),
-      professionals: z.literal(80),
-    }),
+      professionals: z.literal(80)
+    })
   }),
   catalogs: z.object({
     facilityTypes: z.array(
       z.object({
         code: z.enum(["HOSPITAL", "CLINIC", "PHARMACY"]),
-        name: z.string().min(1),
-      }),
+        name: z.string().min(1)
+      })
     ),
     services: z.array(
       z.object({
         slug: z.string().min(1),
-        name: z.string().min(1),
-      }),
+        name: z.string().min(1)
+      })
     ),
     openingHourSchedules: z.array(
       z.object({
         code: z.string().min(1),
         sourceLabel: z.string().min(1),
-        openingPeriods: z.array(openingPeriodSchema).min(1),
-      }),
-    ),
+        openingPeriods: z.array(openingPeriodSchema).min(1)
+      })
+    )
   }),
   facilities: z.array(
     z.object({
@@ -62,7 +62,7 @@ export const liberiaHealthcareSeedFixtureSchema = z.object({
         legalName: z.string().min(1),
         source: z.literal("IMPORTED"),
         status: z.literal("APPROVED"),
-        verificationStatus: z.literal("VERIFIED"),
+        verificationStatus: z.literal("VERIFIED")
       }),
       primaryLocation: z.object({
         name: z.string().min(1),
@@ -79,9 +79,9 @@ export const liberiaHealthcareSeedFixtureSchema = z.object({
         status: z.literal("ACTIVE"),
         isPrimary: z.literal(true),
         openingHoursScheduleCode: z.string().min(1),
-        serviceSlugs: z.array(z.string().min(1)).min(1),
-      }),
-    }),
+        serviceSlugs: z.array(z.string().min(1)).min(1)
+      })
+    })
   ),
   professionals: z.array(
     z.object({
@@ -96,7 +96,7 @@ export const liberiaHealthcareSeedFixtureSchema = z.object({
         "NURSE",
         "PHARMACIST",
         "PEDIATRICIAN",
-        "OPHTHALMOLOGIST",
+        "OPHTHALMOLOGIST"
       ]),
       professionalTitle: z.string().min(1),
       phone: z.string().min(1).nullable(),
@@ -104,14 +104,12 @@ export const liberiaHealthcareSeedFixtureSchema = z.object({
       yearsExperience: z.number().int().nonnegative(),
       source: z.literal("IMPORTED"),
       verificationStatus: z.literal("UNVERIFIED"),
-      isPublic: z.literal(false),
-    }),
-  ),
+      isPublic: z.literal(false)
+    })
+  )
 });
 
-export type LiberiaHealthcareSeedFixture = z.infer<
-  typeof liberiaHealthcareSeedFixtureSchema
->;
+export type LiberiaHealthcareSeedFixture = z.infer<typeof liberiaHealthcareSeedFixtureSchema>;
 
 function assertUnique(values: readonly string[], description: string): void {
   if (new Set(values).size !== values.length) {
@@ -119,33 +117,25 @@ function assertUnique(values: readonly string[], description: string): void {
   }
 }
 
-function validateFixtureRelationships(
-  fixture: LiberiaHealthcareSeedFixture,
-): void {
+function validateFixtureRelationships(fixture: LiberiaHealthcareSeedFixture): void {
   if (fixture.source.recordCounts.facilities !== fixture.facilities.length) {
     throw new Error("The declared facility count does not match the fixture.");
   }
 
-  if (
-    fixture.source.recordCounts.professionals !== fixture.professionals.length
-  ) {
-    throw new Error(
-      "The declared professional count does not match the fixture.",
-    );
+  if (fixture.source.recordCounts.professionals !== fixture.professionals.length) {
+    throw new Error("The declared professional count does not match the fixture.");
   }
 
   const facilityKeys = fixture.facilities.map(({ sourceKey }) => sourceKey);
   const serviceSlugs = fixture.catalogs.services.map(({ slug }) => slug);
-  const scheduleCodes = fixture.catalogs.openingHourSchedules.map(
-    ({ code }) => code,
-  );
+  const scheduleCodes = fixture.catalogs.openingHourSchedules.map(({ code }) => code);
 
   assertUnique(facilityKeys, "Facility source keys");
   assertUnique(serviceSlugs, "Service slugs");
   assertUnique(scheduleCodes, "Opening schedule codes");
   assertUnique(
     fixture.professionals.map(({ sourceKey }) => sourceKey),
-    "Professional source keys",
+    "Professional source keys"
   );
 
   const facilityKeySet = new Set(facilityKeys);
@@ -154,48 +144,31 @@ function validateFixtureRelationships(
 
   for (const facility of fixture.facilities) {
     if (facility.business.legalName !== facility.business.displayName) {
-      throw new Error(
-        `Imported legal name must match the workbook facility name for ${facility.sourceKey}.`,
-      );
+      throw new Error(`Imported legal name must match the workbook facility name for ${facility.sourceKey}.`);
     }
 
-    if (
-      !scheduleCodeSet.has(
-        facility.primaryLocation.openingHoursScheduleCode,
-      )
-    ) {
+    if (!scheduleCodeSet.has(facility.primaryLocation.openingHoursScheduleCode)) {
       throw new Error(`Unknown opening schedule for ${facility.sourceKey}.`);
     }
 
     for (const serviceSlug of facility.primaryLocation.serviceSlugs) {
       if (!serviceSlugSet.has(serviceSlug)) {
-        throw new Error(
-          `Unknown service ${serviceSlug} for ${facility.sourceKey}.`,
-        );
+        throw new Error(`Unknown service ${serviceSlug} for ${facility.sourceKey}.`);
       }
     }
   }
 
   for (const professional of fixture.professionals) {
     if (!facilityKeySet.has(professional.facilitySourceKey)) {
-      throw new Error(
-        `${professional.sourceKey} references an unknown facility source key.`,
-      );
+      throw new Error(`${professional.sourceKey} references an unknown facility source key.`);
     }
   }
 }
 
-export async function loadLiberiaHealthcareSeedFixture(): Promise<
-  LiberiaHealthcareSeedFixture
-> {
-  const fixturePath = resolve(
-    process.cwd(),
-    "prisma/seed-data/liberia-healthcare-directory.json",
-  );
+export async function loadLiberiaHealthcareSeedFixture(): Promise<LiberiaHealthcareSeedFixture> {
+  const fixturePath = resolve(process.cwd(), "prisma/seed-data/liberia-healthcare-directory.json");
   const fileContents = await readFile(fixturePath, "utf8");
-  const fixture = liberiaHealthcareSeedFixtureSchema.parse(
-    JSON.parse(fileContents) as unknown,
-  );
+  const fixture = liberiaHealthcareSeedFixtureSchema.parse(JSON.parse(fileContents) as unknown);
 
   validateFixtureRelationships(fixture);
 

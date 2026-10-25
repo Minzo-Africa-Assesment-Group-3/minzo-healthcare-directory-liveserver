@@ -36,11 +36,11 @@ export function presentBusinessClaim(claim: BusinessClaimRecord) {
     evidenceDocument: {
       originalFileName: claim.evidenceDocumentOriginalName,
       mimeType: claim.evidenceDocumentMimeType,
-      sizeBytes: claim.evidenceDocumentSizeBytes,
+      sizeBytes: claim.evidenceDocumentSizeBytes
     },
     reviewNote: claim.reviewNote,
     reviewedAt: claim.reviewedAt?.toISOString() ?? null,
-    createdAt: claim.createdAt.toISOString(),
+    createdAt: claim.createdAt.toISOString()
   };
 }
 
@@ -48,6 +48,6 @@ export function presentAdminBusinessClaim(claim: AdminBusinessClaimRecord) {
   return {
     ...presentBusinessClaim(claim),
     claimant: claim.claimantUser,
-    reviewedByAdminId: claim.reviewedByAdminId,
+    reviewedByAdminId: claim.reviewedByAdminId
   };
 }

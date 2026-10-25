@@ -2,21 +2,15 @@ import { z } from "zod";
 
 import {
   maximumVerifiedDocumentSizeBytes,
-  verifiedDocumentMimeTypes,
+  verifiedDocumentMimeTypes
 } from "../../shared/documents/verified-document.js";
 
-export const businessRegistrationDocumentMimeTypeSchema = z.enum(
-  verifiedDocumentMimeTypes,
-);
+export const businessRegistrationDocumentMimeTypeSchema = z.enum(verifiedDocumentMimeTypes);
 
 export const requestBusinessRegistrationDocumentUploadBodySchema = z.object({
   fileName: z.string().trim().min(1).max(255),
   mimeType: businessRegistrationDocumentMimeTypeSchema,
-  sizeBytes: z
-    .number()
-    .int()
-    .positive()
-    .max(maximumVerifiedDocumentSizeBytes),
+  sizeBytes: z.number().int().positive().max(maximumVerifiedDocumentSizeBytes)
 });
 
 export const completedBusinessRegistrationDocumentSchema = z.object({
@@ -26,5 +20,5 @@ export const completedBusinessRegistrationDocumentSchema = z.object({
   mimeType: businessRegistrationDocumentMimeTypeSchema,
   sizeBytes: z.number().int().positive(),
   status: z.literal("ATTACHED"),
-  uploadedAt: z.string().datetime(),
+  uploadedAt: z.string().datetime()
 });

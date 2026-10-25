@@ -7,20 +7,21 @@ import { AppError } from "../../../../shared/errors/app-error.js";
 import { getPublicReviewCutoff } from "../../review.policy.js";
 import { presentPublicReview } from "../../review.presenter.js";
 import { publicReviewSelect } from "../../review.select.js";
+import type { ReviewModerationQueue } from "../../../customer-feedback-moderation/services/review-moderation-queue.js";
 import type { createReviewContract } from "./create-review.contract.js";
 
 function reviewConflictError(): AppError {
   return new AppError({
     code: "active_review_already_exists",
-    message:
-      "You already have an active review for this business. Update that review instead.",
+    message: "You already have an active review for this business. Update that review instead.",
     statusCode: 409,
-    title: "Active review already exists",
+    title: "Active review already exists"
   });
 }
 
 export function createCreateReviewHandler(dependencies: {
   database: DatabaseClient;
+  moderationQueue: ReviewModerationQueue;
 }): AppRouteMutationImplementation<typeof createReviewContract> {
   return async ({ body, params, req }) => {
     const userId = requireAuthenticatedPrincipal(req, "user").subjectId;
@@ -33,9 +34,9 @@ export function createCreateReviewHandler(dependencies: {
           const business = await transaction.business.findFirst({
             where: {
               id: params.businessId,
-              status: "APPROVED",
+              status: "APPROVED"
             },
-            select: { id: true },
+            select: { id: true }
           });
 
           if (!business) {
@@ -43,7 +44,7 @@ export function createCreateReviewHandler(dependencies: {
               code: "business_not_found",
               message: "The requested business does not exist.",
               statusCode: 404,
-              title: "Business not found",
+              title: "Business not found"
             });
           }
 
@@ -51,14 +52,14 @@ export function createCreateReviewHandler(dependencies: {
             where: {
               businessId_userId: {
                 businessId: business.id,
-                userId,
-              },
+                userId
+              }
             },
             select: {
               id: true,
               status: true,
-              submittedAt: true,
-            },
+              submittedAt: true
+            }
           });
 
           if (
@@ -69,42 +70,47 @@ export function createCreateReviewHandler(dependencies: {
             throw reviewConflictError();
           }
 
-          if (existingReview) {
-            return transaction.review.update({
-              where: { id: existingReview.id },
-              data: {
-                stars: body.stars,
-                text: body.text,
-                isAnonymous: body.isAnonymous,
-                status: "PUBLISHED",
-                moderationStatus: "UNREVIEWED",
-                submittedAt: now,
-                deletedAt: null,
-              },
-              select: publicReviewSelect,
-            });
-          }
+          const review = existingReview
+            ? await transaction.review.update({
+                where: { id: existingReview.id },
+                data: {
+                  stars: body.stars,
+                  text: body.text,
+                  isAnonymous: body.isAnonymous,
+                  status: "PUBLISHED",
+                  moderationStatus: "UNREVIEWED",
+                  submittedAt: now,
+                  deletedAt: null
+                },
+                select: publicReviewSelect
+              })
+            : await transaction.review.create({
+                data: {
+                  businessId: business.id,
+                  userId,
+                  stars: body.stars,
+                  text: body.text,
+                  isAnonymous: body.isAnonymous,
+                  submittedAt: now
+                },
+                select: publicReviewSelect
+              });
 
-          return transaction.review.create({
-            data: {
-              businessId: business.id,
-              userId,
-              stars: body.stars,
-              text: body.text,
-              isAnonymous: body.isAnonymous,
-              submittedAt: now,
-            },
-            select: publicReviewSelect,
+          await dependencies.moderationQueue.enqueue(transaction, {
+            reviewId: review.id,
+            reviewUpdatedAt: review.updatedAt
           });
+
+          return review;
         },
         {
-          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-        },
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable
+        }
       );
 
       return {
         status: 201,
-        body: presentPublicReview(review, true),
+        body: presentPublicReview(review, true)
       };
     } catch (error) {
       if (

@@ -11,7 +11,7 @@ export const managedBusinessFeedbackSelect = {
   submittedAt: true,
   updatedAt: true,
   author: {
-    select: { displayName: true },
+    select: { displayName: true }
   },
   moderationActions: {
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
@@ -19,9 +19,9 @@ export const managedBusinessFeedbackSelect = {
     select: {
       decision: true,
       reason: true,
-      createdAt: true,
-    },
-  },
+      createdAt: true
+    }
+  }
 } satisfies Prisma.ReviewSelect;
 
 export type ManagedBusinessFeedbackRecord = Prisma.ReviewGetPayload<{

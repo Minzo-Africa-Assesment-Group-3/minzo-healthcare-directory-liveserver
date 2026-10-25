@@ -2,10 +2,7 @@ import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
 import { problemDetailsSchema } from "../../../../shared/errors/problem-details.schema.js";
-import {
-  paginatedResponseSchema,
-  paginationQuerySchema,
-} from "../../../../shared/pagination/index.js";
+import { paginatedResponseSchema, paginationQuerySchema } from "../../../../shared/pagination/index.js";
 import { publicReviewSchema } from "../../review.schemas.js";
 
 const contract = initContract();
@@ -14,7 +11,7 @@ export const listBusinessReviewsContract = contract.query({
   method: "GET",
   path: "/api/v1/businesses/:businessId/reviews",
   pathParams: z.object({
-    businessId: z.string().uuid(),
+    businessId: z.string().uuid()
   }),
   query: paginationQuerySchema,
   strictStatusCodes: true,
@@ -24,10 +21,10 @@ export const listBusinessReviewsContract = contract.query({
   responses: {
     200: paginatedResponseSchema(publicReviewSchema),
     400: problemDetailsSchema,
-    404: problemDetailsSchema,
+    404: problemDetailsSchema
   },
   metadata: {
     authentication: "optional-user-access-token",
-    openApiTags: ["Customer Reviews"],
-  },
+    openApiTags: ["Customer Reviews"]
+  }
 });

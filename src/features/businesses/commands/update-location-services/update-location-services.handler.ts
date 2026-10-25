@@ -15,12 +15,12 @@ export function createUpdateLocationServicesHandler(dependencies: {
       businessId: params.businessId,
       locationId: params.locationId,
       serviceNames: body.services,
-      userId,
+      userId
     });
 
     return {
       status: 200,
-      body: result,
+      body: result
     };
   };
 }

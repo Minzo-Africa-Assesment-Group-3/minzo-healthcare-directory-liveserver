@@ -10,7 +10,7 @@ export const completeClaimDocumentUploadContract = contract.mutation({
   method: "POST",
   path: "/api/v1/business-claim-documents/:documentId/complete",
   pathParams: z.object({
-    documentId: z.string().uuid(),
+    documentId: z.string().uuid()
   }),
   body: contract.noBody(),
   strictStatusCodes: true,
@@ -24,10 +24,10 @@ export const completeClaimDocumentUploadContract = contract.mutation({
     404: problemDetailsSchema,
     409: problemDetailsSchema,
     422: problemDetailsSchema,
-    503: problemDetailsSchema,
+    503: problemDetailsSchema
   },
   metadata: {
     openApiTags: ["Business Claims"],
-    authentication: "user-access-token",
-  },
+    authentication: "user-access-token"
+  }
 });

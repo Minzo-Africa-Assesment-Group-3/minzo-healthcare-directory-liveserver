@@ -15,13 +15,13 @@ export async function requireCustomerFeedbackModerator(options: {
             select: {
               name: true,
               permissions: {
-                select: { permission: { select: { name: true } } },
-              },
-            },
-          },
-        },
-      },
-    },
+                select: { permission: { select: { name: true } } }
+              }
+            }
+          }
+        }
+      }
+    }
   });
 
   if (!admin || admin.status !== "ACTIVE") {
@@ -29,17 +29,14 @@ export async function requireCustomerFeedbackModerator(options: {
       code: "account_unavailable",
       message: "The authenticated account is not available.",
       statusCode: 403,
-      title: "Account unavailable",
+      title: "Account unavailable"
     });
   }
 
   const authorized = admin.roles.some(
     ({ role }) =>
       role.name === "SUPER_ADMIN" ||
-      role.permissions.some(
-        ({ permission }) =>
-          permission.name === "customer_reviews.manage",
-      ),
+      role.permissions.some(({ permission }) => permission.name === "customer_reviews.manage")
   );
 
   if (!authorized) {
@@ -47,7 +44,7 @@ export async function requireCustomerFeedbackModerator(options: {
       code: "permission_denied",
       message: "You do not have permission to moderate customer reviews.",
       statusCode: 403,
-      title: "Permission denied",
+      title: "Permission denied"
     });
   }
 }

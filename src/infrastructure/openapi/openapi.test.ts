@@ -9,7 +9,7 @@ describe("API foundation", () => {
   const app = createApp({
     ...createTestHttpDependencies(),
     logger: createLogger({ environment: "test", level: "silent" }),
-    routes: createTestRouteDependencies(),
+    routes: createTestRouteDependencies()
   });
 
   it("documents the implemented API endpoints", async () => {
@@ -21,6 +21,7 @@ describe("API foundation", () => {
       "/api/v1/admin/business-claims/{claimId}/evidence-download-url",
       "/api/v1/admin/customer-reviews",
       "/api/v1/admin/customer-reviews/{reviewId}/moderation",
+      "/api/v1/admin/dashboard/overview",
       "/api/v1/auth/login",
       "/api/v1/auth/login/verify-otp",
       "/api/v1/auth/logout",
@@ -29,6 +30,7 @@ describe("API foundation", () => {
       "/api/v1/auth/register/user",
       "/api/v1/auth/resend-verification",
       "/api/v1/auth/verify-email",
+      "/api/v1/automation/customer-reviews/{reviewId}/moderation",
       "/api/v1/business-claim-documents/upload-url",
       "/api/v1/business-claim-documents/{documentId}/complete",
       "/api/v1/business-claims/mine",
@@ -36,6 +38,8 @@ describe("API foundation", () => {
       "/api/v1/businesses",
       "/api/v1/businesses/{businessId}/claims",
       "/api/v1/businesses/{businessId}/customer-reviews",
+      "/api/v1/businesses/{businessId}/dashboard/overview",
+      "/api/v1/businesses/{businessId}/follow",
       "/api/v1/businesses/{businessId}/locations/{locationId}/services",
       "/api/v1/businesses/{businessId}/rating",
       "/api/v1/businesses/{businessId}/registration-document/upload-url",
@@ -46,7 +50,7 @@ describe("API foundation", () => {
       "/api/v1/health",
       "/api/v1/me",
       "/api/v1/me/reviews",
-      "/api/v1/reviews/{reviewId}",
+      "/api/v1/reviews/{reviewId}"
     ]);
   });
 
@@ -59,15 +63,13 @@ describe("API foundation", () => {
 
     expect(document.components.securitySchemes.userBearerAuth).toMatchObject({
       scheme: "bearer",
-      type: "http",
+      type: "http"
     });
     expect(document.components.securitySchemes.adminBearerAuth).toMatchObject({
       scheme: "bearer",
-      type: "http",
+      type: "http"
     });
-    expect(document.paths["/api/v1/me"]?.get?.security).toEqual([
-      { userBearerAuth: [] },
-    ]);
+    expect(document.paths["/api/v1/me"]?.get?.security).toEqual([{ userBearerAuth: [] }]);
   });
 
   it("serves health without caching and correlates the request", async () => {
@@ -82,21 +84,15 @@ describe("API foundation", () => {
   });
 
   it("validates login requests", async () => {
-    const response = await request(app)
-      .post("/api/v1/auth/login")
-      .send({})
-      .expect(400);
+    const response = await request(app).post("/api/v1/auth/login").send({}).expect(400);
     expect(response.body).toMatchObject({
       code: "request_validation_failed",
-      status: 400,
+      status: 400
     });
   });
 
   it.each(["user", "business"])("registers %s signup with request validation", async (kind) => {
-    const response = await request(app)
-      .post(`/api/v1/auth/register/${kind}`)
-      .send({})
-      .expect(400);
+    const response = await request(app).post(`/api/v1/auth/register/${kind}`).send({}).expect(400);
     expect(response.body).toMatchObject({ code: "request_validation_failed", status: 400 });
   });
 });

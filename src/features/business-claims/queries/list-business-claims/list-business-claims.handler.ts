@@ -15,7 +15,7 @@ export function createListBusinessClaimsHandler(dependencies: {
     const adminUserId = requireAuthenticatedPrincipal(req, "admin").subjectId;
     await requireBusinessClaimsAdmin({
       adminUserId,
-      database: dependencies.database,
+      database: dependencies.database
     });
 
     const where = { status: query.status } as const;
@@ -26,8 +26,8 @@ export function createListBusinessClaimsHandler(dependencies: {
         orderBy: { createdAt: "asc" },
         skip: (query.pageNumber - 1) * query.pageSize,
         take: query.pageSize,
-        select: adminBusinessClaimSelect,
-      }),
+        select: adminBusinessClaimSelect
+      })
     ]);
 
     return {
@@ -37,8 +37,8 @@ export function createListBusinessClaimsHandler(dependencies: {
         pageNumber: query.pageNumber,
         pageSize: query.pageSize,
         requestUrl: req.originalUrl,
-        totalItems,
-      }),
+        totalItems
+      })
     };
   };
 }

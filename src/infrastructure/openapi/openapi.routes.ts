@@ -5,11 +5,7 @@ import swaggerUi from "swagger-ui-express";
 import { applicationContract } from "../../routes.js";
 
 function getOperationSecurity(metadata: unknown) {
-  if (
-    typeof metadata !== "object" ||
-    metadata === null ||
-    !("authentication" in metadata)
-  ) {
+  if (typeof metadata !== "object" || metadata === null || !("authentication" in metadata)) {
     return undefined;
   }
 
@@ -31,18 +27,17 @@ const openApiDocument = generateOpenApi(
     info: {
       title: "Minzo Health Directory API",
       version: "1.0.0",
-      description:
-        "API documentation for the Minzo Health Directory.",
+      description: "API documentation for the Minzo Health Directory."
     },
     tags: [
       {
         name: "Authentication",
-        description: "Individual and business account registration and sign-in endpoints.",
+        description: "Individual and business account registration and sign-in endpoints."
       },
       {
         name: "System",
-        description: "Application health and system endpoints.",
-      },
+        description: "Application health and system endpoints."
+      }
     ],
     components: {
       securitySchemes: {
@@ -50,25 +45,23 @@ const openApiDocument = generateOpenApi(
           bearerFormat: "JWT",
           description: "Paste an administrator access token. Swagger adds the Bearer prefix.",
           scheme: "bearer",
-          type: "http",
+          type: "http"
         },
         userBearerAuth: {
           bearerFormat: "JWT",
           description: "Paste a user access token. Swagger adds the Bearer prefix.",
           scheme: "bearer",
-          type: "http",
-        },
-      },
-    },
+          type: "http"
+        }
+      }
+    }
   },
   {
     setOperationId: "concatenated-path",
     operationMapper: (operation, appRoute) => {
       const metadata = appRoute.metadata;
       const security = getOperationSecurity(metadata);
-      const mappedOperation = security
-        ? { ...operation, security }
-        : { ...operation };
+      const mappedOperation = security ? { ...operation, security } : { ...operation };
 
       if (
         typeof metadata === "object" &&
@@ -78,15 +71,13 @@ const openApiDocument = generateOpenApi(
       ) {
         return {
           ...mappedOperation,
-          tags: metadata.openApiTags.filter(
-            (tag): tag is string => typeof tag === "string",
-          ),
+          tags: metadata.openApiTags.filter((tag): tag is string => typeof tag === "string")
         };
       }
 
       return mappedOperation;
-    },
-  },
+    }
+  }
 );
 
 export const openApiRouter = Router();
@@ -99,6 +90,6 @@ openApiRouter.use(
   "/docs",
   swaggerUi.serve,
   swaggerUi.setup(openApiDocument, {
-    explorer: true,
-  }),
+    explorer: true
+  })
 );

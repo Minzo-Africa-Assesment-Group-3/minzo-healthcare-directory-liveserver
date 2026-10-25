@@ -1,10 +1,7 @@
 import type { AppRouteMutationImplementation } from "@ts-rest/express";
 
 import type { DatabaseClient } from "../../../../infrastructure/database/index.js";
-import {
-  hashRefreshToken,
-  type RefreshTokenCookieService,
-} from "../../../../shared/authentication/index.js";
+import { hashRefreshToken, type RefreshTokenCookieService } from "../../../../shared/authentication/index.js";
 import type { logoutContract } from "./logout.contract.js";
 
 export function createLogoutHandler(dependencies: {
@@ -17,23 +14,23 @@ export function createLogoutHandler(dependencies: {
     if (rawToken) {
       const storedToken = await dependencies.database.refreshToken.findUnique({
         where: {
-          tokenHash: hashRefreshToken(rawToken),
+          tokenHash: hashRefreshToken(rawToken)
         },
         select: {
-          familyId: true,
-        },
+          familyId: true
+        }
       });
 
       if (storedToken) {
         await dependencies.database.refreshToken.updateMany({
           where: {
             familyId: storedToken.familyId,
-            revokedAt: null,
+            revokedAt: null
           },
           data: {
             revokedAt: new Date(),
-            revocationReason: "LOGOUT",
-          },
+            revocationReason: "LOGOUT"
+          }
         });
       }
     }
@@ -42,7 +39,7 @@ export function createLogoutHandler(dependencies: {
 
     return {
       status: 204,
-      body: undefined,
+      body: undefined
     };
   };
 }

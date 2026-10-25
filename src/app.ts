@@ -1,8 +1,5 @@
 import cookieParser from "cookie-parser";
-import express, {
-  type Express,
-  type RequestHandler,
-} from "express";
+import express, { type Express, type RequestHandler } from "express";
 import type { Logger } from "pino";
 
 import { createHttpLogger } from "./infrastructure/logging/index.js";
@@ -25,7 +22,7 @@ export function createApp({
   corsMiddleware,
   logger,
   routes,
-  trustProxyHops,
+  trustProxyHops
 }: AppDependencies): Express {
   const app = express();
 

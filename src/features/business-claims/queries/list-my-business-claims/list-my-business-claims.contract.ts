@@ -11,15 +11,14 @@ export const listMyBusinessClaimsContract = contract.query({
   path: "/api/v1/business-claims/mine",
   strictStatusCodes: true,
   summary: "List my business claims",
-  description:
-    "Returns business claims submitted by the authenticated public user.",
+  description: "Returns business claims submitted by the authenticated public user.",
   responses: {
     200: z.object({ data: z.array(businessClaimResponseSchema) }),
     401: problemDetailsSchema,
-    403: problemDetailsSchema,
+    403: problemDetailsSchema
   },
   metadata: {
     openApiTags: ["Business Claims"],
-    authentication: "user-access-token",
-  },
+    authentication: "user-access-token"
+  }
 });

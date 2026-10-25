@@ -9,7 +9,7 @@ const contract = initContract();
 export const businessServiceResponseSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
-  slug: z.string(),
+  slug: z.string()
 });
 
 export const updateLocationServicesContract = contract.mutation({
@@ -17,10 +17,10 @@ export const updateLocationServicesContract = contract.mutation({
   path: "/api/v1/businesses/:businessId/locations/:locationId/services",
   pathParams: z.object({
     businessId: z.string().uuid(),
-    locationId: z.string().uuid(),
+    locationId: z.string().uuid()
   }),
   body: z.object({
-    services: businessServiceNamesSchema,
+    services: businessServiceNamesSchema
   }),
   strictStatusCodes: true,
   summary: "Replace the services offered at a business location",
@@ -30,16 +30,16 @@ export const updateLocationServicesContract = contract.mutation({
     200: z.object({
       businessId: z.string().uuid(),
       locationId: z.string().uuid(),
-      services: z.array(businessServiceResponseSchema),
+      services: z.array(businessServiceResponseSchema)
     }),
     400: problemDetailsSchema,
     401: problemDetailsSchema,
     403: problemDetailsSchema,
     404: problemDetailsSchema,
-    409: problemDetailsSchema,
+    409: problemDetailsSchema
   },
   metadata: {
     authentication: "user-access-token",
-    openApiTags: ["Businesses"],
-  },
+    openApiTags: ["Businesses"]
+  }
 });

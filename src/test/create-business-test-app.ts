@@ -38,10 +38,10 @@ export function createApp(dependencies: TestAppDependencies) {
           code: "request_validation_failed",
           detail: "The request did not satisfy the API contract.",
           statusCode: 400,
-          title: "Request validation failed",
+          title: "Request validation failed"
         });
-      },
-    },
+      }
+    }
   );
   app.use(notFoundHandler);
   app.use(errorHandler);

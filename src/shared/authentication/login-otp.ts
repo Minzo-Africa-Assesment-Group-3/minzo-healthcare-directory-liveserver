@@ -1,10 +1,4 @@
-import {
-  createHmac,
-  createSecretKey,
-  randomInt,
-  randomUUID,
-  timingSafeEqual,
-} from "node:crypto";
+import { createHmac, createSecretKey, randomInt, randomUUID, timingSafeEqual } from "node:crypto";
 
 export interface GeneratedLoginOtp {
   challengeId: string;
@@ -18,14 +12,9 @@ export interface LoginOtpService {
   verify(challengeId: string, otp: string, expectedDigest: string): boolean;
 }
 
-export function createLoginOtpService(options: {
-  secret: string;
-  ttlSeconds: number;
-}): LoginOtpService {
+export function createLoginOtpService(options: { secret: string; ttlSeconds: number }): LoginOtpService {
   if (!/^[a-fA-F0-9]{64}$/.test(options.secret)) {
-    throw new Error(
-      "The login OTP secret must be a 64-character hexadecimal value.",
-    );
+    throw new Error("The login OTP secret must be a 64-character hexadecimal value.");
   }
 
   if (!Number.isInteger(options.ttlSeconds) || options.ttlSeconds < 1) {
@@ -35,9 +24,7 @@ export function createLoginOtpService(options: {
   const key = createSecretKey(Buffer.from(options.secret, "hex"));
 
   function digest(challengeId: string, otp: string): Buffer {
-    return createHmac("sha256", key)
-      .update(`${challengeId}:${otp}`, "utf8")
-      .digest();
+    return createHmac("sha256", key).update(`${challengeId}:${otp}`, "utf8").digest();
   }
 
   return Object.freeze({
@@ -49,23 +36,16 @@ export function createLoginOtpService(options: {
         challengeId,
         otp,
         otpDigest: digest(challengeId, otp).toString("hex"),
-        expiresAt: new Date(now.getTime() + options.ttlSeconds * 1_000),
+        expiresAt: new Date(now.getTime() + options.ttlSeconds * 1_000)
       };
     },
 
-    verify(
-      challengeId: string,
-      otp: string,
-      expectedDigest: string,
-    ): boolean {
+    verify(challengeId: string, otp: string, expectedDigest: string): boolean {
       if (!/^\d{4}$/.test(otp) || !/^[a-fA-F0-9]{64}$/.test(expectedDigest)) {
         return false;
       }
 
-      return timingSafeEqual(
-        digest(challengeId, otp),
-        Buffer.from(expectedDigest, "hex"),
-      );
-    },
+      return timingSafeEqual(digest(challengeId, otp), Buffer.from(expectedDigest, "hex"));
+    }
   });
 }

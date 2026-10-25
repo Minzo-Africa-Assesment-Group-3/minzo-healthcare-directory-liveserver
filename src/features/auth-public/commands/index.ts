@@ -10,7 +10,7 @@ export { registerUserContract } from "./register-user/register-user.contract.js"
 export { createRegisterUserHandler } from "./register-user/register-user.handler.js";
 export { resendVerificationContract } from "./resend-verification/resend-verification.contract.js";
 export { createResendVerificationHandler } from "./resend-verification/resend-verification.handler.js";
-export { verifyEmailContract } from './verify-email/verify-email.contract.js';
-export { createVerifyEmailHandler } from './verify-email/verify-email.handler.js';
-export { verifyLoginOtpContract } from './verity-login-otp/verify-login-otp.contract.js'
-export { createVerifyLoginOtpHandler } from './verity-login-otp/verify-login-otp.handler.js'
+export { verifyEmailContract } from "./verify-email/verify-email.contract.js";
+export { createVerifyEmailHandler } from "./verify-email/verify-email.handler.js";
+export { verifyLoginOtpContract } from "./verity-login-otp/verify-login-otp.contract.js";
+export { createVerifyLoginOtpHandler } from "./verity-login-otp/verify-login-otp.handler.js";

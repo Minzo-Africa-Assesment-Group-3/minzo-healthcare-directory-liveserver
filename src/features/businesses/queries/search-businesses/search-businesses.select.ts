@@ -6,15 +6,11 @@ export const businessSearchResultSelect = {
   slug: true,
   verificationStatus: true,
   _count: {
-    select: { memberships: true },
+    select: { memberships: true }
   },
   locations: {
     where: { status: "ACTIVE" },
-    orderBy: [
-      { isPrimary: "desc" },
-      { name: "asc" },
-      { id: "asc" },
-    ],
+    orderBy: [{ isPrimary: "desc" }, { name: "asc" }, { id: "asc" }],
     select: {
       id: true,
       name: true,
@@ -27,20 +23,20 @@ export const businessSearchResultSelect = {
       isPrimary: true,
       services: {
         orderBy: {
-          service: { name: "asc" },
+          service: { name: "asc" }
         },
         select: {
           service: {
             select: {
               id: true,
               name: true,
-              slug: true,
-            },
-          },
-        },
-      },
-    },
-  },
+              slug: true
+            }
+          }
+        }
+      }
+    }
+  }
 } satisfies Prisma.BusinessSelect;
 
 export type BusinessSearchResultRecord = Prisma.BusinessGetPayload<{

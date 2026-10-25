@@ -1,24 +1,13 @@
 import cors, { type CorsOptions } from "cors";
 import type { RequestHandler } from "express";
 
-export function createCorsMiddleware(
-  allowedOrigins: readonly string[],
-): RequestHandler {
+export function createCorsMiddleware(allowedOrigins: readonly string[]): RequestHandler {
   const originAllowlist = new Set(allowedOrigins);
 
   const options: CorsOptions = {
-    allowedHeaders: [
-      "Authorization",
-      "Content-Type",
-      "X-Request-Id",
-    ],
+    allowedHeaders: ["Authorization", "Content-Type", "X-Request-Id"],
     credentials: true,
-    exposedHeaders: [
-      "RateLimit",
-      "RateLimit-Policy",
-      "Retry-After",
-      "X-Request-Id",
-    ],
+    exposedHeaders: ["RateLimit", "RateLimit-Policy", "Retry-After", "X-Request-Id"],
     maxAge: 86_400,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     origin(origin, callback) {
@@ -30,7 +19,7 @@ export function createCorsMiddleware(
 
       callback(null, false);
     },
-    optionsSuccessStatus: 204,
+    optionsSuccessStatus: 204
   };
 
   return cors(options);

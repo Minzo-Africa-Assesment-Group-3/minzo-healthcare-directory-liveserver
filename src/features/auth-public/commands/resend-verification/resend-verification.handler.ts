@@ -9,8 +9,8 @@ import type { resendVerificationContract } from "./resend-verification.contract.
 const acceptedResponse = {
   status: 202,
   body: {
-    message: "If the account is eligible, a verification email will be sent.",
-  },
+    message: "If the account is eligible, a verification email will be sent."
+  }
 } as const;
 
 export function createResendVerificationHandler(dependencies: {
@@ -31,47 +31,39 @@ export function createResendVerificationHandler(dependencies: {
         emailVerificationTokens: {
           orderBy: { createdAt: "desc" },
           take: 1,
-          select: { createdAt: true },
-        },
-      },
+          select: { createdAt: true }
+        }
+      }
     });
 
-    if (
-      !user ||
-      user.status !== "PENDING_VERIFICATION" ||
-      user.emailVerifiedAt
-    ) {
+    if (!user || user.status !== "PENDING_VERIFICATION" || user.emailVerifiedAt) {
       return acceptedResponse;
     }
 
     const latestToken = user.emailVerificationTokens[0];
-    const resendAvailableAt = latestToken
-      ? latestToken.createdAt.getTime() + 60_000
-      : 0;
+    const resendAvailableAt = latestToken ? latestToken.createdAt.getTime() + 60_000 : 0;
 
     if (Date.now() < resendAvailableAt) {
       return acceptedResponse;
     }
 
-    const verificationToken = generateEmailVerificationToken(
-      dependencies.verificationTokenTtlSeconds,
-    );
+    const verificationToken = generateEmailVerificationToken(dependencies.verificationTokenTtlSeconds);
 
     await dependencies.database.$transaction([
       dependencies.database.emailVerificationToken.deleteMany({
         where: {
           userId: user.id,
-          usedAt: null,
-        },
+          usedAt: null
+        }
       }),
       dependencies.database.emailVerificationToken.create({
         data: {
           id: verificationToken.id,
           userId: user.id,
           tokenHash: verificationToken.tokenHash,
-          expiresAt: verificationToken.expiresAt,
-        },
-      }),
+          expiresAt: verificationToken.expiresAt
+        }
+      })
     ]);
 
     try {
@@ -79,7 +71,7 @@ export function createResendVerificationHandler(dependencies: {
         displayName: user.displayName,
         email: user.email,
         token: verificationToken.token,
-        tokenId: verificationToken.id,
+        tokenId: verificationToken.id
       });
     } catch (cause) {
       throw new AppError({
@@ -87,7 +79,7 @@ export function createResendVerificationHandler(dependencies: {
         code: "verification_email_unavailable",
         message: "The verification email could not be sent. Please try again later.",
         statusCode: 503,
-        title: "Verification email unavailable",
+        title: "Verification email unavailable"
       });
     }
 

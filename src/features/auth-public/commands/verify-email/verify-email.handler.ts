@@ -10,17 +10,17 @@ function invalidTokenError(): AppError {
     code: "invalid_verification_token",
     message: "The email verification token is invalid or has already been used.",
     statusCode: 400,
-    title: "Invalid verification token",
+    title: "Invalid verification token"
   });
 }
 
-export function createVerifyEmailHandler(
-  dependencies: { database: DatabaseClient },
-): AppRouteMutationImplementation<typeof verifyEmailContract> {
+export function createVerifyEmailHandler(dependencies: {
+  database: DatabaseClient;
+}): AppRouteMutationImplementation<typeof verifyEmailContract> {
   return async ({ body }) => {
     const tokenRecord = await dependencies.database.emailVerificationToken.findUnique({
       where: {
-        tokenHash: hashEmailVerificationToken(body.token),
+        tokenHash: hashEmailVerificationToken(body.token)
       },
       select: {
         id: true,
@@ -29,10 +29,10 @@ export function createVerifyEmailHandler(
         usedAt: true,
         user: {
           select: {
-            email: true,
-          },
-        },
-      },
+            email: true
+          }
+        }
+      }
     });
 
     if (!tokenRecord || tokenRecord.usedAt) {
@@ -46,7 +46,7 @@ export function createVerifyEmailHandler(
         code: "verification_token_expired",
         message: "The email verification token has expired. Request a new verification email.",
         statusCode: 410,
-        title: "Verification token expired",
+        title: "Verification token expired"
       });
     }
 
@@ -55,9 +55,9 @@ export function createVerifyEmailHandler(
         where: {
           id: tokenRecord.id,
           usedAt: null,
-          expiresAt: { gt: now },
+          expiresAt: { gt: now }
         },
-        data: { usedAt: now },
+        data: { usedAt: now }
       });
 
       if (consumedToken.count !== 1) {
@@ -68,12 +68,12 @@ export function createVerifyEmailHandler(
         where: {
           id: tokenRecord.userId,
           status: "PENDING_VERIFICATION",
-          emailVerifiedAt: null,
+          emailVerifiedAt: null
         },
         data: {
           status: "ACTIVE",
-          emailVerifiedAt: now,
-        },
+          emailVerifiedAt: now
+        }
       });
 
       if (activatedUser.count !== 1) {
@@ -85,8 +85,8 @@ export function createVerifyEmailHandler(
       status: 200,
       body: {
         verified: true,
-        email: tokenRecord.user.email,
-      },
+        email: tokenRecord.user.email
+      }
     };
   };
 }

@@ -2,11 +2,7 @@ import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
 import { problemDetailsSchema } from "../../../../shared/errors/problem-details.schema.js";
-import {
-  publicReviewSchema,
-  reviewStarsSchema,
-  reviewTextSchema,
-} from "../../review.schemas.js";
+import { publicReviewSchema, reviewStarsSchema, reviewTextSchema } from "../../review.schemas.js";
 
 const contract = initContract();
 
@@ -14,12 +10,12 @@ export const createReviewContract = contract.mutation({
   method: "POST",
   path: "/api/v1/businesses/:businessId/reviews",
   pathParams: z.object({
-    businessId: z.string().uuid(),
+    businessId: z.string().uuid()
   }),
   body: z.object({
     stars: reviewStarsSchema,
     text: reviewTextSchema,
-    isAnonymous: z.boolean().default(false),
+    isAnonymous: z.boolean().default(false)
   }),
   strictStatusCodes: true,
   summary: "Submit a customer review",
@@ -31,10 +27,10 @@ export const createReviewContract = contract.mutation({
     401: problemDetailsSchema,
     403: problemDetailsSchema,
     404: problemDetailsSchema,
-    409: problemDetailsSchema,
+    409: problemDetailsSchema
   },
   metadata: {
     authentication: "user-access-token",
-    openApiTags: ["Customer Reviews"],
-  },
+    openApiTags: ["Customer Reviews"]
+  }
 });

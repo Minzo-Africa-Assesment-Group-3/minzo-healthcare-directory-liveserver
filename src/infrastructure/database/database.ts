@@ -1,16 +1,12 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../generated/prisma/client.js";
 
-export function createDatabaseClient(
-  connectionString: string,
-): PrismaClient {
+export function createDatabaseClient(connectionString: string): PrismaClient {
   const adapter = new PrismaPg({
-    connectionString,
+    connectionString
   });
 
   return new PrismaClient({ adapter });
 }
 
-export type DatabaseClient = ReturnType<
-  typeof createDatabaseClient
->;
+export type DatabaseClient = ReturnType<typeof createDatabaseClient>;

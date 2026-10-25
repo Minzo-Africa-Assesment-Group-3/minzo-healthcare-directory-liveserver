@@ -1,8 +1,6 @@
 import type { ManagedBusinessFeedbackRecord } from "./list-managed-business-feedback.select.js";
 
-export function presentManagedBusinessFeedback(
-  feedback: ManagedBusinessFeedbackRecord,
-) {
+export function presentManagedBusinessFeedback(feedback: ManagedBusinessFeedbackRecord) {
   const lastModeration = feedback.moderationActions[0];
 
   return {
@@ -19,8 +17,8 @@ export function presentManagedBusinessFeedback(
     lastModeration: lastModeration
       ? {
           ...lastModeration,
-          createdAt: lastModeration.createdAt.toISOString(),
+          createdAt: lastModeration.createdAt.toISOString()
         }
-      : null,
+      : null
   };
 }

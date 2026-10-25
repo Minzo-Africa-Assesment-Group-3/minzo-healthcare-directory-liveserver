@@ -13,15 +13,15 @@ export const customerFeedbackModerationListSelect = {
     select: {
       id: true,
       displayName: true,
-      slug: true,
-    },
+      slug: true
+    }
   },
   author: {
     select: {
       id: true,
       displayName: true,
-      email: true,
-    },
+      email: true
+    }
   },
   moderationActions: {
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
@@ -33,12 +33,11 @@ export const customerFeedbackModerationListSelect = {
       adminUserId: true,
       actorReference: true,
       reason: true,
-      createdAt: true,
-    },
-  },
+      createdAt: true
+    }
+  }
 } satisfies Prisma.ReviewSelect;
 
-export type CustomerFeedbackModerationListRecord =
-  Prisma.ReviewGetPayload<{
-    select: typeof customerFeedbackModerationListSelect;
-  }>;
+export type CustomerFeedbackModerationListRecord = Prisma.ReviewGetPayload<{
+  select: typeof customerFeedbackModerationListSelect;
+}>;

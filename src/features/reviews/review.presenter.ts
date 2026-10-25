@@ -11,10 +11,7 @@ interface PublicReviewRecord {
   };
 }
 
-export function presentPublicReview(
-  review: PublicReviewRecord,
-  mine = false,
-) {
+export function presentPublicReview(review: PublicReviewRecord, mine = false) {
   return {
     id: review.id,
     businessId: review.businessId,
@@ -22,10 +19,8 @@ export function presentPublicReview(
     text: review.text,
     isAnonymous: review.isAnonymous,
     mine,
-    author: review.isAnonymous
-      ? null
-      : { displayName: review.author.displayName },
+    author: review.isAnonymous ? null : { displayName: review.author.displayName },
     submittedAt: review.submittedAt.toISOString(),
-    updatedAt: review.updatedAt.toISOString(),
+    updatedAt: review.updatedAt.toISOString()
   };
 }

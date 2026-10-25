@@ -5,7 +5,7 @@ import {
   type AccessTokenService,
   generateRefreshToken,
   hashRefreshToken,
-  type RefreshTokenCookieService,
+  type RefreshTokenCookieService
 } from "../../../../shared/authentication/index.js";
 import { AppError } from "../../../../shared/errors/app-error.js";
 import type { refreshTokenContract } from "./refresh-token.contract.js";
@@ -15,7 +15,7 @@ function invalidRefreshTokenError(): AppError {
     code: "invalid_refresh_token",
     message: "The refresh token is invalid, expired, or has been revoked.",
     statusCode: 401,
-    title: "Invalid refresh token",
+    title: "Invalid refresh token"
   });
 }
 
@@ -36,7 +36,7 @@ export function createRefreshTokenHandler(dependencies: {
 
     const storedToken = await dependencies.database.refreshToken.findUnique({
       where: {
-        tokenHash: hashRefreshToken(rawToken),
+        tokenHash: hashRefreshToken(rawToken)
       },
       select: {
         id: true,
@@ -48,10 +48,10 @@ export function createRefreshTokenHandler(dependencies: {
         user: {
           select: {
             status: true,
-            emailVerifiedAt: true,
-          },
-        },
-      },
+            emailVerifiedAt: true
+          }
+        }
+      }
     });
 
     if (!storedToken) {
@@ -66,12 +66,12 @@ export function createRefreshTokenHandler(dependencies: {
         await dependencies.database.refreshToken.updateMany({
           where: {
             familyId: storedToken.familyId,
-            revokedAt: null,
+            revokedAt: null
           },
           data: {
             revokedAt: now,
-            revocationReason: "REUSE_DETECTED",
-          },
+            revocationReason: "REUSE_DETECTED"
+          }
         });
       }
 
@@ -84,31 +84,25 @@ export function createRefreshTokenHandler(dependencies: {
       throw invalidRefreshTokenError();
     }
 
-    if (
-      storedToken.user.status !== "ACTIVE" ||
-      !storedToken.user.emailVerifiedAt
-    ) {
+    if (storedToken.user.status !== "ACTIVE" || !storedToken.user.emailVerifiedAt) {
       await dependencies.database.refreshToken.updateMany({
         where: {
           familyId: storedToken.familyId,
-          revokedAt: null,
+          revokedAt: null
         },
         data: {
           revokedAt: now,
-          revocationReason: "ADMIN_REVOKED",
-        },
+          revocationReason: "ADMIN_REVOKED"
+        }
       });
 
       dependencies.refreshTokenCookie.clear(res);
       throw invalidRefreshTokenError();
     }
 
-    const nextRefreshToken = generateRefreshToken(
-      dependencies.refreshTokenTtlSeconds,
-      now,
-    );
+    const nextRefreshToken = generateRefreshToken(dependencies.refreshTokenTtlSeconds, now);
     const accessToken = await dependencies.accessToken.create({
-      subjectId: storedToken.userId,
+      subjectId: storedToken.userId
     });
 
     await dependencies.database.$transaction(async (transaction) => {
@@ -117,24 +111,24 @@ export function createRefreshTokenHandler(dependencies: {
           userId: storedToken.userId,
           familyId: storedToken.familyId,
           tokenHash: nextRefreshToken.tokenHash,
-          expiresAt: nextRefreshToken.expiresAt,
+          expiresAt: nextRefreshToken.expiresAt
         },
         select: {
-          id: true,
-        },
+          id: true
+        }
       });
 
       const rotatedToken = await transaction.refreshToken.updateMany({
         where: {
           id: storedToken.id,
           revokedAt: null,
-          expiresAt: { gt: now },
+          expiresAt: { gt: now }
         },
         data: {
           revokedAt: now,
           revocationReason: "ROTATED",
-          replacedByTokenId: replacement.id,
-        },
+          replacedByTokenId: replacement.id
+        }
       });
 
       if (rotatedToken.count !== 1) {
@@ -142,11 +136,7 @@ export function createRefreshTokenHandler(dependencies: {
       }
     });
 
-    dependencies.refreshTokenCookie.set(
-      res,
-      nextRefreshToken.token,
-      dependencies.refreshTokenTtlSeconds,
-    );
+    dependencies.refreshTokenCookie.set(res, nextRefreshToken.token, dependencies.refreshTokenTtlSeconds);
 
     return {
       status: 200,
@@ -154,8 +144,8 @@ export function createRefreshTokenHandler(dependencies: {
         accessToken,
         tokenType: "Bearer",
         expiresIn: dependencies.accessTokenTtlSeconds,
-        refreshTokenExpiresAt: nextRefreshToken.expiresAt.toISOString(),
-      },
+        refreshTokenExpiresAt: nextRefreshToken.expiresAt.toISOString()
+      }
     };
   };
 }

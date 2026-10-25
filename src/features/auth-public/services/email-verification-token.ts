@@ -1,8 +1,4 @@
-import {
-  createHash,
-  randomBytes,
-  randomUUID,
-} from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 
 export interface GeneratedEmailVerificationToken {
   expiresAt: Date;
@@ -17,7 +13,7 @@ export function hashEmailVerificationToken(token: string): string {
 
 export function generateEmailVerificationToken(
   ttlSeconds: number,
-  now: Date = new Date(),
+  now: Date = new Date()
 ): GeneratedEmailVerificationToken {
   if (!Number.isInteger(ttlSeconds) || ttlSeconds < 1) {
     throw new RangeError("ttlSeconds must be a positive integer.");
@@ -29,6 +25,6 @@ export function generateEmailVerificationToken(
     id: randomUUID(),
     token,
     tokenHash: hashEmailVerificationToken(token),
-    expiresAt: new Date(now.getTime() + ttlSeconds * 1_000),
+    expiresAt: new Date(now.getTime() + ttlSeconds * 1_000)
   };
 }

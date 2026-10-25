@@ -27,15 +27,7 @@ export interface ProblemDetailsOptions {
   type?: string | undefined;
 }
 
-const reservedMembers = new Set([
-  "type",
-  "title",
-  "status",
-  "detail",
-  "instance",
-  "code",
-  "requestId",
-]);
+const reservedMembers = new Set(["type", "title", "status", "detail", "instance", "code", "requestId"]);
 
 function getRequestPath(request: ProblemDetailsRequest): string {
   const [path] = request.originalUrl.split("?");
@@ -56,32 +48,25 @@ function getRequestId(request: ProblemDetailsRequest): string | undefined {
 }
 
 function getSafeExtensions(
-  extensions: Readonly<Record<string, unknown>> | undefined,
+  extensions: Readonly<Record<string, unknown>> | undefined
 ): Record<string, unknown> {
   if (!extensions) {
     return {};
   }
 
-  return Object.fromEntries(
-    Object.entries(extensions).filter(
-      ([name]) => !reservedMembers.has(name),
-    ),
-  );
+  return Object.fromEntries(Object.entries(extensions).filter(([name]) => !reservedMembers.has(name)));
 }
 
 export function createProblemDetails(
   request: ProblemDetailsRequest,
-  options: ProblemDetailsOptions,
+  options: ProblemDetailsOptions
 ): ProblemDetails {
   const problem: ProblemDetails = {
     ...getSafeExtensions(options.extensions),
     type: options.type ?? "about:blank",
-    title:
-      options.title ??
-      STATUS_CODES[options.statusCode] ??
-      "HTTP Error",
+    title: options.title ?? STATUS_CODES[options.statusCode] ?? "HTTP Error",
     status: options.statusCode,
-    instance: getRequestPath(request),
+    instance: getRequestPath(request)
   };
 
   if (options.detail !== undefined) {
@@ -104,12 +89,9 @@ export function createProblemDetails(
 export function sendProblemDetails(
   request: ProblemDetailsRequest,
   response: Response,
-  options: ProblemDetailsOptions,
+  options: ProblemDetailsOptions
 ): void {
   const problem = createProblemDetails(request, options);
 
-  response
-    .status(problem.status)
-    .type("application/problem+json")
-    .json(problem);
+  response.status(problem.status).type("application/problem+json").json(problem);
 }

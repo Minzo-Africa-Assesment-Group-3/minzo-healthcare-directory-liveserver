@@ -13,21 +13,21 @@ export const loginContract = contract.mutation({
   description: "Validates the password and sends a one-time code to the verified email address.",
   body: z.object({
     email: z.string().trim().email().max(320),
-    password: z.string().min(1).max(128),
+    password: z.string().min(1).max(128)
   }),
   responses: {
     202: z.object({
       challengeId: z.string().uuid(),
       expiresAt: z.string().datetime(),
       maskedEmail: z.string(),
-      message: z.string(),
+      message: z.string()
     }),
     401: problemDetailsSchema,
     403: problemDetailsSchema,
-    503: problemDetailsSchema,
+    503: problemDetailsSchema
   },
   metadata: {
     authentication: "public",
-    openApiTags: ["Authentication"],
-  },
+    openApiTags: ["Authentication"]
+  }
 });

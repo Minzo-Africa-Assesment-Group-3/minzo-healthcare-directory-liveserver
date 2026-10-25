@@ -2,10 +2,7 @@ import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
 import { problemDetailsSchema } from "../../../../shared/errors/problem-details.schema.js";
-import {
-  businessClaimResponseSchema,
-  businessMembershipRoleSchema,
-} from "../../business-claim.schemas.js";
+import { businessClaimResponseSchema, businessMembershipRoleSchema } from "../../business-claim.schemas.js";
 
 const contract = initContract();
 
@@ -13,12 +10,12 @@ export const submitBusinessClaimContract = contract.mutation({
   method: "POST",
   path: "/api/v1/businesses/:businessId/claims",
   pathParams: z.object({
-    businessId: z.string().uuid(),
+    businessId: z.string().uuid()
   }),
   body: z.object({
     requestedRole: businessMembershipRoleSchema,
     claimantNote: z.string().trim().min(10).max(2_000).optional(),
-    evidenceDocumentId: z.string().uuid(),
+    evidenceDocumentId: z.string().uuid()
   }),
   strictStatusCodes: true,
   summary: "Claim an existing business listing",
@@ -29,10 +26,10 @@ export const submitBusinessClaimContract = contract.mutation({
     401: problemDetailsSchema,
     403: problemDetailsSchema,
     404: problemDetailsSchema,
-    409: problemDetailsSchema,
+    409: problemDetailsSchema
   },
   metadata: {
     openApiTags: ["Business Claims"],
-    authentication: "user-access-token",
-  },
+    authentication: "user-access-token"
+  }
 });

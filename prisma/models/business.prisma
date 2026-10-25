@@ -154,6 +154,7 @@ model Business {
   updatedAt                        DateTime                   @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   memberships           BusinessMembership[]
+  followers             BusinessFollow[]
   locations             BusinessLocation[]
   claims                BusinessClaim[]
   registrationDocuments BusinessRegistrationDocument[]
@@ -235,6 +236,19 @@ model BusinessMembership {
   @@id([userId, businessId])
   @@index([businessId])
   @@map("business_memberships")
+}
+
+model BusinessFollow {
+  userId     String   @map("user_id") @db.Uuid
+  businessId String   @map("business_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@id([userId, businessId])
+  @@index([businessId, createdAt])
+  @@map("business_follows")
 }
 
 model BusinessClaim {

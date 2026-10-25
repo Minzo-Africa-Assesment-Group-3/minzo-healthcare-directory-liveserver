@@ -4,7 +4,7 @@ import type {
   ObjectStorage,
   SignedDownloadAuthorization,
   SignedUploadAuthorization,
-  StoredObjectInfo,
+  StoredObjectInfo
 } from "./object-storage.js";
 
 export interface SupabaseObjectStorageOptions {
@@ -12,32 +12,23 @@ export interface SupabaseObjectStorageOptions {
   url: string;
 }
 
-function storageOperationError(
-  operation: string,
-  cause: unknown,
-): Error {
+function storageOperationError(operation: string, cause: unknown): Error {
   return new Error(`Supabase Storage failed to ${operation}.`, {
-    cause,
+    cause
   });
 }
 
-export function createSupabaseObjectStorage({
-  secretKey,
-  url,
-}: SupabaseObjectStorageOptions): ObjectStorage {
+export function createSupabaseObjectStorage({ secretKey, url }: SupabaseObjectStorageOptions): ObjectStorage {
   const supabase = createClient(url, secretKey, {
     auth: {
       autoRefreshToken: false,
       detectSessionInUrl: false,
-      persistSession: false,
-    },
+      persistSession: false
+    }
   });
 
   return Object.freeze({
-    async createSignedUploadAuthorization(
-      bucket: string,
-      path: string,
-    ): Promise<SignedUploadAuthorization> {
+    async createSignedUploadAuthorization(bucket: string, path: string): Promise<SignedUploadAuthorization> {
       const { data, error } = await supabase.storage
         .from(bucket)
         .createSignedUploadUrl(path, { upsert: false });
@@ -48,20 +39,18 @@ export function createSupabaseObjectStorage({
 
       return {
         path: data.path,
-        token: data.token,
+        token: data.token
       };
     },
 
     async createSignedDownloadAuthorization(
       bucket: string,
       path: string,
-      expiresInSeconds: number,
+      expiresInSeconds: number
     ): Promise<SignedDownloadAuthorization> {
-      const { data, error } = await supabase.storage
-        .from(bucket)
-        .createSignedUrl(path, expiresInSeconds, {
-          download: false,
-        });
+      const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, expiresInSeconds, {
+        download: false
+      });
 
       if (error) {
         throw storageOperationError("authorize a download", error);
@@ -70,13 +59,8 @@ export function createSupabaseObjectStorage({
       return { signedUrl: data.signedUrl };
     },
 
-    async getObjectInfo(
-      bucket: string,
-      path: string,
-    ): Promise<StoredObjectInfo> {
-      const { data, error } = await supabase.storage
-        .from(bucket)
-        .info(path);
+    async getObjectInfo(bucket: string, path: string): Promise<StoredObjectInfo> {
+      const { data, error } = await supabase.storage.from(bucket).info(path);
 
       if (error) {
         throw storageOperationError("read object metadata", error);
@@ -85,23 +69,18 @@ export function createSupabaseObjectStorage({
       if (data.size === undefined) {
         throw storageOperationError(
           "read object size metadata",
-          new Error("Supabase Storage returned no object size."),
+          new Error("Supabase Storage returned no object size.")
         );
       }
 
       return {
         contentType: data.contentType ?? null,
-        sizeBytes: data.size,
+        sizeBytes: data.size
       };
     },
 
-    async downloadObject(
-      bucket: string,
-      path: string,
-    ): Promise<Uint8Array> {
-      const { data, error } = await supabase.storage
-        .from(bucket)
-        .download(path);
+    async downloadObject(bucket: string, path: string): Promise<Uint8Array> {
+      const { data, error } = await supabase.storage.from(bucket).download(path);
 
       if (error) {
         throw storageOperationError("download an object", error);
@@ -111,9 +90,7 @@ export function createSupabaseObjectStorage({
     },
 
     async objectExists(bucket: string, path: string): Promise<boolean> {
-      const { data, error } = await supabase.storage
-        .from(bucket)
-        .exists(path);
+      const { data, error } = await supabase.storage.from(bucket).exists(path);
 
       if (error) {
         throw storageOperationError("check whether an object exists", error);
@@ -123,13 +100,11 @@ export function createSupabaseObjectStorage({
     },
 
     async removeObject(bucket: string, path: string): Promise<void> {
-      const { error } = await supabase.storage
-        .from(bucket)
-        .remove([path]);
+      const { error } = await supabase.storage.from(bucket).remove([path]);
 
       if (error) {
         throw storageOperationError("remove an object", error);
       }
-    },
+    }
   });
 }

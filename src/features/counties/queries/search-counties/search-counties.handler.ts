@@ -11,28 +11,27 @@ export function createSearchCountiesHandler(dependencies: {
     const counties = await dependencies.database.county.findMany({
       where: {
         isActive: true,
-        ...(query.search ? {
-          name: {
-            contains: query.search,
-            mode: "insensitive" as const,
-          },
-        } : {}),
+        ...(query.search
+          ? {
+              name: {
+                contains: query.search,
+                mode: "insensitive" as const
+              }
+            }
+          : {})
       },
-      orderBy: [
-        { name: "asc" },
-        { id: "asc" },
-      ],
+      orderBy: [{ name: "asc" }, { id: "asc" }],
       ...(limit !== undefined ? { take: limit } : {}),
       select: {
         id: true,
         name: true,
-        slug: true,
-      },
+        slug: true
+      }
     });
 
     return {
       status: 200,
-      body: { data: counties },
+      body: { data: counties }
     };
   };
 }

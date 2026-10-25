@@ -13,16 +13,16 @@ export const publicReviewSchema = z.object({
   mine: z.boolean(),
   author: z
     .object({
-      displayName: z.string(),
+      displayName: z.string()
     })
     .nullable(),
   submittedAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+  updatedAt: z.string().datetime()
 });
 
 export const businessRatingSchema = z.object({
   businessId: z.string().uuid(),
   averageRating: z.number().min(1).max(5).nullable(),
   reviewCount: z.number().int().nonnegative(),
-  ratingWindowMonths: z.literal(12),
+  ratingWindowMonths: z.literal(12)
 });

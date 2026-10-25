@@ -7,17 +7,15 @@ import { createSearchCitiesHandler } from "./queries/search-cities/search-cities
 const contract = initContract();
 
 export const citiesContract = contract.router({
-  search: searchCitiesContract,
+  search: searchCitiesContract
 });
 
 export interface CitiesRouteDependencies {
   database: DatabaseClient;
 }
 
-export function createCitiesHandlers(
-  dependencies: CitiesRouteDependencies,
-) {
+export function createCitiesHandlers(dependencies: CitiesRouteDependencies) {
   return {
-    search: createSearchCitiesHandler(dependencies),
+    search: createSearchCitiesHandler(dependencies)
   };
 }

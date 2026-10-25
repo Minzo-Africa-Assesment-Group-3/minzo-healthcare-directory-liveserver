@@ -28,106 +28,74 @@ interface TextSearchBusinessRow {
 }
 
 function isProximityBusinessRow(
-  match: ProximityBusinessRow | TextSearchBusinessRow,
+  match: ProximityBusinessRow | TextSearchBusinessRow
 ): match is ProximityBusinessRow {
   return "locationId" in match;
 }
 
-function hasProximity(
-  query: SearchBusinessesQuery,
-): query is ProximitySearchQuery {
-  return query.latitude !== undefined &&
-    query.longitude !== undefined &&
-    query.radiusKm !== undefined;
+function hasProximity(query: SearchBusinessesQuery): query is ProximitySearchQuery {
+  return query.latitude !== undefined && query.longitude !== undefined && query.radiusKm !== undefined;
 }
 
-function hasTextSearch(
-  query: SearchBusinessesQuery,
-): query is TextSearchQuery {
+function hasTextSearch(query: SearchBusinessesQuery): query is TextSearchQuery {
   return query.search !== undefined;
 }
 
-function createLocationFilter(
-  query: SearchBusinessesQuery,
-): Prisma.BusinessLocationWhereInput {
+function createLocationFilter(query: SearchBusinessesQuery): Prisma.BusinessLocationWhereInput {
   return {
     status: "ACTIVE",
-    ...(query.county
-      ? { county: { equals: query.county, mode: "insensitive" } }
-      : {}),
-    ...(query.city
-      ? { cityOrTown: { equals: query.city, mode: "insensitive" } }
-      : {}),
+    ...(query.county ? { county: { equals: query.county, mode: "insensitive" } } : {}),
+    ...(query.city ? { cityOrTown: { equals: query.city, mode: "insensitive" } } : {}),
     ...(query.facilityType
       ? {
           facilityType: {
             equals: query.facilityType,
-            mode: "insensitive",
-          },
+            mode: "insensitive"
+          }
         }
       : {}),
     ...(query.serviceId
       ? {
           services: {
-            some: { serviceId: query.serviceId },
-          },
+            some: { serviceId: query.serviceId }
+          }
         }
-      : {}),
+      : {})
   };
 }
 
-export function createBusinessSearchWhere(
-  query: SearchBusinessesQuery,
-): Prisma.BusinessWhereInput {
+export function createBusinessSearchWhere(query: SearchBusinessesQuery): Prisma.BusinessWhereInput {
   const locationFilter = createLocationFilter(query);
 
   return {
     status: "APPROVED",
-    locations: { some: locationFilter },
+    locations: { some: locationFilter }
   };
 }
 
-function createPrismaOrderBy(
-  query: SearchBusinessesQuery,
-): Prisma.BusinessOrderByWithRelationInput[] {
+function createPrismaOrderBy(query: SearchBusinessesQuery): Prisma.BusinessOrderByWithRelationInput[] {
   return query.sort === "newest"
-    ? [
-        { approvedAt: "desc" },
-        { id: "asc" },
-      ]
-    : [
-        { displayName: "asc" },
-        { id: "asc" },
-      ];
+    ? [{ approvedAt: "desc" }, { id: "asc" }]
+    : [{ displayName: "asc" }, { id: "asc" }];
 }
 
 function escapeLikePattern(value: string): string {
   return value.replace(/[\\%_]/g, "\\$&");
 }
 
-function createEligibleLocationConditions(
-  query: SearchBusinessesQuery,
-): Prisma.Sql[] {
-  const conditions = [
-    Prisma.sql`filter_location."status" = ${"ACTIVE"}::"BusinessLocationStatus"`,
-  ];
+function createEligibleLocationConditions(query: SearchBusinessesQuery): Prisma.Sql[] {
+  const conditions = [Prisma.sql`filter_location."status" = ${"ACTIVE"}::"BusinessLocationStatus"`];
 
   if (query.county) {
-    conditions.push(
-      Prisma.sql`LOWER(filter_location."county") = LOWER(${query.county})`,
-    );
+    conditions.push(Prisma.sql`LOWER(filter_location."county") = LOWER(${query.county})`);
   }
 
   if (query.city) {
-    conditions.push(
-      Prisma.sql`LOWER(filter_location."city_or_town") = LOWER(${query.city})`,
-    );
+    conditions.push(Prisma.sql`LOWER(filter_location."city_or_town") = LOWER(${query.city})`);
   }
 
   if (query.facilityType) {
-    conditions.push(
-      Prisma.sql`LOWER(filter_location."facility_type") = LOWER(${query.facilityType})`,
-    );
+    conditions.push(Prisma.sql`LOWER(filter_location."facility_type") = LOWER(${query.facilityType})`);
   }
 
   if (query.serviceId) {
@@ -146,17 +114,18 @@ function createEligibleLocationConditions(
 
 async function findTextSearchMatches(
   transaction: Prisma.TransactionClient,
-  query: TextSearchQuery,
+  query: TextSearchQuery
 ): Promise<TextSearchBusinessRow[]> {
   const eligibleLocationConditions = createEligibleLocationConditions(query);
   const escapedSearch = escapeLikePattern(query.search);
   const containsPattern = `%${escapedSearch}%`;
   const offset = (query.pageNumber - 1) * query.pageSize;
-  const orderBy = query.sort === "name"
-    ? Prisma.sql`b."display_name" ASC, ranked."businessId" ASC`
-    : query.sort === "newest"
-    ? Prisma.sql`b."approved_at" DESC NULLS LAST, ranked."businessId" ASC`
-    : Prisma.sql`ranked."relevanceScore" DESC, b."display_name" ASC, ranked."businessId" ASC`;
+  const orderBy =
+    query.sort === "name"
+      ? Prisma.sql`b."display_name" ASC, ranked."businessId" ASC`
+      : query.sort === "newest"
+        ? Prisma.sql`b."approved_at" DESC NULLS LAST, ranked."businessId" ASC`
+        : Prisma.sql`ranked."relevanceScore" DESC, b."display_name" ASC, ranked."businessId" ASC`;
 
   return transaction.$queryRaw<TextSearchBusinessRow[]>(Prisma.sql`
     WITH "searchInput" AS (
@@ -384,15 +353,12 @@ async function findTextSearchMatches(
   `);
 }
 
-function createProximityConditions(
-  query: ProximitySearchQuery,
-  searchPoint: Prisma.Sql,
-): Prisma.Sql[] {
+function createProximityConditions(query: ProximitySearchQuery, searchPoint: Prisma.Sql): Prisma.Sql[] {
   const conditions = [
     Prisma.sql`b."status" = ${"APPROVED"}::"BusinessStatus"`,
     Prisma.sql`bl."status" = ${"ACTIVE"}::"BusinessLocationStatus"`,
     Prisma.sql`bl."location" IS NOT NULL`,
-    Prisma.sql`ST_DWithin(bl."location", ${searchPoint}, ${query.radiusKm * 1_000})`,
+    Prisma.sql`ST_DWithin(bl."location", ${searchPoint}, ${query.radiusKm * 1_000})`
   ];
 
   if (query.county) {
@@ -404,9 +370,7 @@ function createProximityConditions(
   }
 
   if (query.facilityType) {
-    conditions.push(
-      Prisma.sql`LOWER(bl."facility_type") = LOWER(${query.facilityType})`,
-    );
+    conditions.push(Prisma.sql`LOWER(bl."facility_type") = LOWER(${query.facilityType})`);
   }
 
   if (query.serviceId) {
@@ -506,7 +470,7 @@ function createProximityConditions(
 
 async function findProximityMatches(
   transaction: Prisma.TransactionClient,
-  query: ProximitySearchQuery,
+  query: ProximitySearchQuery
 ): Promise<ProximityBusinessRow[]> {
   const searchPoint = Prisma.sql`
     ST_SetSRID(
@@ -515,11 +479,12 @@ async function findProximityMatches(
     )::geography
   `;
   const conditions = createProximityConditions(query, searchPoint);
-  const orderBy = query.sort === "name"
-    ? Prisma.sql`"displayName" ASC, "businessId" ASC`
-    : query.sort === "newest"
-    ? Prisma.sql`"approvedAt" DESC NULLS LAST, "businessId" ASC`
-    : Prisma.sql`"distanceMeters" ASC, "businessId" ASC`;
+  const orderBy =
+    query.sort === "name"
+      ? Prisma.sql`"displayName" ASC, "businessId" ASC`
+      : query.sort === "newest"
+        ? Prisma.sql`"approvedAt" DESC NULLS LAST, "businessId" ASC`
+        : Prisma.sql`"distanceMeters" ASC, "businessId" ASC`;
   const offset = (query.pageNumber - 1) * query.pageSize;
 
   return transaction.$queryRaw<ProximityBusinessRow[]>(Prisma.sql`
@@ -558,10 +523,7 @@ async function findProximityMatches(
   `);
 }
 
-async function getRatingsByBusinessId(
-  transaction: Prisma.TransactionClient,
-  businessIds: string[],
-) {
+async function getRatingsByBusinessId(transaction: Prisma.TransactionClient, businessIds: string[]) {
   if (businessIds.length === 0) {
     return new Map<string, { averageRating: number | null; reviewCount: number }>();
   }
@@ -571,10 +533,10 @@ async function getRatingsByBusinessId(
     where: {
       businessId: { in: businessIds },
       status: "PUBLISHED",
-      submittedAt: { gte: getRatingCutoff() },
+      submittedAt: { gte: getRatingCutoff() }
     },
     _avg: { stars: true },
-    _count: { _all: true },
+    _count: { _all: true }
   });
 
   return new Map(
@@ -584,34 +546,26 @@ async function getRatingsByBusinessId(
       return [
         rating.businessId,
         {
-          averageRating: rawAverage === null
-            ? null
-            : Math.round(rawAverage * 100) / 100,
-          reviewCount: rating._count._all,
-        },
+          averageRating: rawAverage === null ? null : Math.round(rawAverage * 100) / 100,
+          reviewCount: rating._count._all
+        }
       ];
-    }),
+    })
   );
 }
 
-export async function searchBusinesses(
-  database: DatabaseClient,
-  query: SearchBusinessesQuery,
-) {
+export async function searchBusinesses(database: DatabaseClient, query: SearchBusinessesQuery) {
   return database.$transaction(async (transaction) => {
-    const proximityMatches = hasProximity(query)
-      ? await findProximityMatches(transaction, query)
-      : null;
-    const textSearchMatches = !proximityMatches && hasTextSearch(query)
-      ? await findTextSearchMatches(transaction, query)
-      : null;
+    const proximityMatches = hasProximity(query) ? await findProximityMatches(transaction, query) : null;
+    const textSearchMatches =
+      !proximityMatches && hasTextSearch(query) ? await findTextSearchMatches(transaction, query) : null;
     const orderedMatches = proximityMatches ?? textSearchMatches;
     const where = orderedMatches
       ? {
           id: {
-            in: orderedMatches.map((match) => match.businessId),
+            in: orderedMatches.map((match) => match.businessId)
           },
-          status: "APPROVED" as const,
+          status: "APPROVED" as const
         }
       : createBusinessSearchWhere(query);
 
@@ -625,13 +579,11 @@ export async function searchBusinesses(
         : {
             orderBy: createPrismaOrderBy(query),
             skip: (query.pageNumber - 1) * query.pageSize,
-            take: query.pageSize,
+            take: query.pageSize
           }),
-      select: businessSearchResultSelect,
+      select: businessSearchResultSelect
     });
-    const businessById = new Map(
-      businesses.map((business) => [business.id, business]),
-    );
+    const businessById = new Map(businesses.map((business) => [business.id, business]));
     const orderedBusinesses = orderedMatches
       ? orderedMatches.flatMap((match) => {
           const business = businessById.get(match.businessId);
@@ -641,7 +593,7 @@ export async function searchBusinesses(
       : businesses.map((business) => ({ business, match: undefined }));
     const ratingsByBusinessId = await getRatingsByBusinessId(
       transaction,
-      orderedBusinesses.map(({ business }) => business.id),
+      orderedBusinesses.map(({ business }) => business.id)
     );
 
     return {
@@ -651,16 +603,16 @@ export async function searchBusinesses(
           query,
           rating: ratingsByBusinessId.get(business.id) ?? {
             averageRating: null,
-            reviewCount: 0,
+            reviewCount: 0
           },
           ...(match && isProximityBusinessRow(match)
             ? {
                 distanceMeters: match.distanceMeters,
-                nearestLocationId: match.locationId,
+                nearestLocationId: match.locationId
               }
-            : {}),
-        }),
-      ),
+            : {})
+        })
+      )
     };
   });
 }

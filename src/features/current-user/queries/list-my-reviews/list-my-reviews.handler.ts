@@ -6,7 +6,9 @@ import { requireAuthenticatedPrincipal } from "../../../../shared/authentication
 import { createPaginatedResponse } from "../../../../shared/pagination/index.js";
 import type { listMyReviewsContract } from "./list-my-reviews.contract.js";
 
-export function createListMyReviewsHandler({ database }: {
+export function createListMyReviewsHandler({
+  database
+}: {
   database: DatabaseClient;
 }): AppRouteQueryImplementation<typeof listMyReviewsContract> {
   return async ({ req, res, query }) => {
@@ -21,11 +23,17 @@ export function createListMyReviewsHandler({ database }: {
         skip: (query.pageNumber - 1) * query.pageSize,
         take: query.pageSize,
         select: {
-          id: true, stars: true, text: true, isAnonymous: true,
-          status: true, moderationStatus: true, submittedAt: true, updatedAt: true,
-          business: { select: { id: true, displayName: true, slug: true } },
-        },
-      }),
+          id: true,
+          stars: true,
+          text: true,
+          isAnonymous: true,
+          status: true,
+          moderationStatus: true,
+          submittedAt: true,
+          updatedAt: true,
+          business: { select: { id: true, displayName: true, slug: true } }
+        }
+      })
     ]);
     return {
       status: 200,
@@ -34,13 +42,13 @@ export function createListMyReviewsHandler({ database }: {
           ...review,
           publicationStatus: status as "PUBLISHED" | "HIDDEN",
           submittedAt: submittedAt.toISOString(),
-          updatedAt: updatedAt.toISOString(),
+          updatedAt: updatedAt.toISOString()
         })),
         pageNumber: query.pageNumber,
         pageSize: query.pageSize,
         requestUrl: req.originalUrl,
-        totalItems,
-      }),
+        totalItems
+      })
     };
   };
 }

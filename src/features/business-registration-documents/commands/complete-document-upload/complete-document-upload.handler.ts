@@ -7,7 +7,7 @@ import { requireAuthenticatedPrincipal } from "../../../../shared/authentication
 import {
   detectVerifiedDocumentMimeType,
   maximumVerifiedDocumentSizeBytes,
-  type VerifiedDocumentMimeType,
+  type VerifiedDocumentMimeType
 } from "../../../../shared/documents/verified-document.js";
 import { AppError } from "../../../../shared/errors/app-error.js";
 import type { completeBusinessRegistrationDocumentUploadContract } from "./complete-document-upload.contract.js";
@@ -43,7 +43,7 @@ function presentAttachedDocument(document: RegistrationDocument) {
     mimeType: document.verifiedMimeType as VerifiedDocumentMimeType,
     sizeBytes: document.verifiedSizeBytes,
     status: "ATTACHED" as const,
-    uploadedAt: document.uploadedAt.toISOString(),
+    uploadedAt: document.uploadedAt.toISOString()
   };
 }
 
@@ -52,7 +52,7 @@ function documentConflictError(message: string): AppError {
     code: "business_registration_document_conflict",
     message,
     statusCode: 409,
-    title: "Business registration document conflict",
+    title: "Business registration document conflict"
   });
 }
 
@@ -61,51 +61,44 @@ function invalidDocumentError(reason: string): AppError {
     code: "invalid_business_registration_document",
     message: reason,
     statusCode: 422,
-    title: "Invalid business registration document",
+    title: "Invalid business registration document"
   });
 }
 
-export function createCompleteBusinessRegistrationDocumentUploadHandler(
-  dependencies: {
-    database: DatabaseClient;
-    objectStorage: ObjectStorage;
-  },
-): AppRouteMutationImplementation<
-  typeof completeBusinessRegistrationDocumentUploadContract
-> {
+export function createCompleteBusinessRegistrationDocumentUploadHandler(dependencies: {
+  database: DatabaseClient;
+  objectStorage: ObjectStorage;
+}): AppRouteMutationImplementation<typeof completeBusinessRegistrationDocumentUploadContract> {
   return async ({ params, req }) => {
     const ownerUserId = requireAuthenticatedPrincipal(req, "user").subjectId;
-    const document =
-      await dependencies.database.businessRegistrationDocument.findFirst({
-        where: {
-          id: params.documentId,
-          ownerUserId,
-          business: {
-            memberships: { some: { userId: ownerUserId } },
-          },
-        },
-      });
+    const document = await dependencies.database.businessRegistrationDocument.findFirst({
+      where: {
+        id: params.documentId,
+        ownerUserId,
+        business: {
+          memberships: { some: { userId: ownerUserId } }
+        }
+      }
+    });
 
     if (!document) {
       throw new AppError({
         code: "business_registration_document_not_found",
         message: "The requested registration document does not exist.",
         statusCode: 404,
-        title: "Business registration document not found",
+        title: "Business registration document not found"
       });
     }
 
     if (document.status === "ATTACHED") {
       return {
         status: 200,
-        body: presentAttachedDocument(document),
+        body: presentAttachedDocument(document)
       };
     }
 
     if (document.status === "REJECTED") {
-      throw documentConflictError(
-        "This registration document was rejected and cannot be reused.",
-      );
+      throw documentConflictError("This registration document was rejected and cannot be reused.");
     }
 
     const verified = await verifyStoredDocument(dependencies, document);
@@ -117,48 +110,43 @@ export function createCompleteBusinessRegistrationDocumentUploadHandler(
           const updatedBusiness = await transaction.business.updateMany({
             where: {
               id: document.businessId,
-              registrationDocumentKey: null,
+              registrationDocumentKey: null
             },
             data: {
               registrationDocumentKey: document.objectKey,
               registrationDocumentOriginalName: document.originalFileName,
               registrationDocumentMimeType: verified.mimeType,
               registrationDocumentSizeBytes: verified.sizeBytes,
-              registrationDocumentUploadedAt: uploadedAt,
-            },
+              registrationDocumentUploadedAt: uploadedAt
+            }
           });
 
           if (updatedBusiness.count !== 1) {
-            throw documentConflictError(
-              "The business already has a registration document.",
-            );
+            throw documentConflictError("The business already has a registration document.");
           }
 
-          const attachedDocument =
-            await transaction.businessRegistrationDocument.updateMany({
-              where: {
-                id: document.id,
-                ownerUserId,
-                status: "PENDING_UPLOAD",
-              },
-              data: {
-                status: "ATTACHED",
-                verifiedMimeType: verified.mimeType,
-                verifiedSizeBytes: verified.sizeBytes,
-                uploadedAt,
-                attachedAt: uploadedAt,
-              },
-            });
+          const attachedDocument = await transaction.businessRegistrationDocument.updateMany({
+            where: {
+              id: document.id,
+              ownerUserId,
+              status: "PENDING_UPLOAD"
+            },
+            data: {
+              status: "ATTACHED",
+              verifiedMimeType: verified.mimeType,
+              verifiedSizeBytes: verified.sizeBytes,
+              uploadedAt,
+              attachedAt: uploadedAt
+            }
+          });
 
           if (attachedDocument.count !== 1) {
-            throw documentConflictError(
-              "The registration document changed while it was being verified.",
-            );
+            throw documentConflictError("The registration document changed while it was being verified.");
           }
         },
         {
-          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-        },
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable
+        }
       );
     } catch (error) {
       if (error instanceof AppError) {
@@ -170,7 +158,7 @@ export function createCompleteBusinessRegistrationDocumentUploadHandler(
         (error.code === "P2002" || error.code === "P2034")
       ) {
         throw documentConflictError(
-          "The business or registration document changed while it was being processed.",
+          "The business or registration document changed while it was being processed."
         );
       }
 
@@ -186,8 +174,8 @@ export function createCompleteBusinessRegistrationDocumentUploadHandler(
         mimeType: verified.mimeType,
         sizeBytes: verified.sizeBytes,
         status: "ATTACHED",
-        uploadedAt: uploadedAt.toISOString(),
-      },
+        uploadedAt: uploadedAt.toISOString()
+      }
     };
   };
 }
@@ -197,27 +185,19 @@ async function verifyStoredDocument(
     database: DatabaseClient;
     objectStorage: ObjectStorage;
   },
-  document: RegistrationDocument,
+  document: RegistrationDocument
 ): Promise<{
   mimeType: VerifiedDocumentMimeType;
   sizeBytes: number;
 }> {
   try {
-    const exists = await dependencies.objectStorage.objectExists(
-      document.bucket,
-      document.objectKey,
-    );
+    const exists = await dependencies.objectStorage.objectExists(document.bucket, document.objectKey);
 
     if (!exists) {
-      throw documentConflictError(
-        "The registration document has not been uploaded yet.",
-      );
+      throw documentConflictError("The registration document has not been uploaded yet.");
     }
 
-    const objectInfo = await dependencies.objectStorage.getObjectInfo(
-      document.bucket,
-      document.objectKey,
-    );
+    const objectInfo = await dependencies.objectStorage.getObjectInfo(document.bucket, document.objectKey);
 
     if (
       objectInfo.sizeBytes > maximumVerifiedDocumentSizeBytes ||
@@ -226,21 +206,18 @@ async function verifyStoredDocument(
       await rejectUploadedDocument(
         dependencies,
         document,
-        "The uploaded file size does not match the authorized upload.",
+        "The uploaded file size does not match the authorized upload."
       );
     }
 
-    const fileBytes = await dependencies.objectStorage.downloadObject(
-      document.bucket,
-      document.objectKey,
-    );
+    const fileBytes = await dependencies.objectStorage.downloadObject(document.bucket, document.objectKey);
     const detectedMimeType = detectVerifiedDocumentMimeType(fileBytes);
 
     if (detectedMimeType === null) {
       await rejectUploadedDocument(
         dependencies,
         document,
-        "The uploaded file content does not match a supported document type.",
+        "The uploaded file content does not match a supported document type."
       );
 
       throw new Error("Rejected document validation unexpectedly returned.");
@@ -253,13 +230,13 @@ async function verifyStoredDocument(
       await rejectUploadedDocument(
         dependencies,
         document,
-        "The uploaded file content does not match its declared type or size.",
+        "The uploaded file content does not match its declared type or size."
       );
     }
 
     return {
       mimeType: detectedMimeType,
-      sizeBytes: fileBytes.byteLength,
+      sizeBytes: fileBytes.byteLength
     };
   } catch (error) {
     if (error instanceof AppError) {
@@ -271,7 +248,7 @@ async function verifyStoredDocument(
       code: "document_storage_unavailable",
       message: "The uploaded registration document could not be verified.",
       statusCode: 503,
-      title: "Document storage unavailable",
+      title: "Document storage unavailable"
     });
   }
 }
@@ -282,19 +259,16 @@ async function rejectUploadedDocument(
     objectStorage: ObjectStorage;
   },
   document: RegistrationDocument,
-  reason: string,
+  reason: string
 ): Promise<never> {
   await dependencies.database.businessRegistrationDocument.update({
     where: { id: document.id },
     data: {
       status: "REJECTED",
-      rejectionReason: reason,
-    },
+      rejectionReason: reason
+    }
   });
-  await dependencies.objectStorage.removeObject(
-    document.bucket,
-    document.objectKey,
-  );
+  await dependencies.objectStorage.removeObject(document.bucket, document.objectKey);
 
   throw invalidDocumentError(reason);
 }

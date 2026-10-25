@@ -9,7 +9,7 @@ export const deleteReviewContract = contract.mutation({
   method: "DELETE",
   path: "/api/v1/reviews/:reviewId",
   pathParams: z.object({
-    reviewId: z.string().uuid(),
+    reviewId: z.string().uuid()
   }),
   body: contract.noBody(),
   strictStatusCodes: true,
@@ -20,10 +20,10 @@ export const deleteReviewContract = contract.mutation({
     204: contract.noBody(),
     401: problemDetailsSchema,
     403: problemDetailsSchema,
-    404: problemDetailsSchema,
+    404: problemDetailsSchema
   },
   metadata: {
     authentication: "user-access-token",
-    openApiTags: ["Customer Reviews"],
-  },
+    openApiTags: ["Customer Reviews"]
+  }
 });

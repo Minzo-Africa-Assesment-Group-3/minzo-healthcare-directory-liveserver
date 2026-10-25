@@ -22,8 +22,8 @@ function createTestApp(database: DatabaseClient) {
     app: createApp({
       ...createTestHttpDependencies(),
       logger: createLogger({ environment: "test", level: "silent" }),
-      routes,
-    }),
+      routes
+    })
   };
 }
 
@@ -32,7 +32,7 @@ describe("managed business feedback", () => {
     expect(listManagedBusinessFeedbackContract.query.parse({})).toEqual({
       pageNumber: 1,
       pageSize: 20,
-      sort: "NEWEST",
+      sort: "NEWEST"
     });
   });
 
@@ -40,17 +40,15 @@ describe("managed business feedback", () => {
     const app = createApp({
       ...createTestHttpDependencies(),
       logger: createLogger({ environment: "test", level: "silent" }),
-      routes: createTestRouteDependencies(),
+      routes: createTestRouteDependencies()
     });
 
-    const response = await request(app).get(
-      `/api/v1/businesses/${businessId}/customer-reviews`,
-    );
+    const response = await request(app).get(`/api/v1/businesses/${businessId}/customer-reviews`);
 
     expect(response.status).toBe(401);
     expect(response.body).toMatchObject({
       code: "authentication_required",
-      status: 401,
+      status: 401
     });
   });
 
@@ -59,13 +57,13 @@ describe("managed business feedback", () => {
       user: {
         async findUnique() {
           return { id: userId, status: "ACTIVE", deletedAt: null };
-        },
+        }
       },
       businessMembership: {
         async findUnique() {
           return null;
-        },
-      },
+        }
+      }
     } as unknown as DatabaseClient;
     const { accessToken, app } = createTestApp(database);
 
@@ -76,7 +74,7 @@ describe("managed business feedback", () => {
     expect(response.status).toBe(403);
     expect(response.body).toMatchObject({
       code: "permission_denied",
-      status: 403,
+      status: 403
     });
   });
 
@@ -87,12 +85,12 @@ describe("managed business feedback", () => {
       user: {
         async findUnique() {
           return { id: userId, status: "ACTIVE", deletedAt: null };
-        },
+        }
       },
       businessMembership: {
         async findUnique() {
           return { role: "OWNER" };
-        },
+        }
       },
       review: {
         async count() {
@@ -116,16 +114,16 @@ describe("managed business feedback", () => {
                 {
                   decision: "REJECTED",
                   reason: "Contains personal information.",
-                  createdAt: now,
-                },
-              ],
-            },
+                  createdAt: now
+                }
+              ]
+            }
           ];
-        },
+        }
       },
       async $transaction(values: Promise<unknown>[]) {
         return Promise.all(values);
-      },
+      }
     } as unknown as DatabaseClient;
     const { accessToken, app } = createTestApp(database);
 
@@ -136,12 +134,10 @@ describe("managed business feedback", () => {
         publicationStatus: "HIDDEN",
         stars: 2,
         search: "waiting",
-        sort: "RATING_LOW",
+        sort: "RATING_LOW"
       })
       .set("Authorization", `Bearer ${await accessToken}`);
-    const body = listManagedBusinessFeedbackContract.responses[200].parse(
-      response.body,
-    );
+    const body = listManagedBusinessFeedbackContract.responses[200].parse(response.body);
 
     expect(response.status).toBe(200);
     expect(body.data).toHaveLength(1);
@@ -149,12 +145,10 @@ describe("managed business feedback", () => {
       id: feedbackId,
       author: null,
       publicationStatus: "HIDDEN",
-      moderationStatus: "REJECTED",
+      moderationStatus: "REJECTED"
     });
     expect(body.data[0]?.lastModeration?.decision).toBe("REJECTED");
-    expect(body.data[0]?.lastModeration?.reason).toBe(
-      "Contains personal information.",
-    );
+    expect(body.data[0]?.lastModeration?.reason).toBe("Contains personal information.");
     expect(JSON.stringify(body)).not.toContain("Private Customer");
     expect(findManyArguments).toMatchObject({
       where: {
@@ -162,13 +156,9 @@ describe("managed business feedback", () => {
         moderationStatus: "REJECTED",
         status: "HIDDEN",
         stars: 2,
-        text: { contains: "waiting", mode: "insensitive" },
+        text: { contains: "waiting", mode: "insensitive" }
       },
-      orderBy: [
-        { stars: "asc" },
-        { submittedAt: "desc" },
-        { id: "desc" },
-      ],
+      orderBy: [{ stars: "asc" }, { submittedAt: "desc" }, { id: "desc" }]
     });
   });
 });

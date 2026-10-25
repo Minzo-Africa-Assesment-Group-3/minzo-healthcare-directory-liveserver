@@ -11,14 +11,12 @@ import type { listCustomerFeedbackForModerationContract } from "./list-customer-
 
 export function createListCustomerFeedbackForModerationHandler(dependencies: {
   database: DatabaseClient;
-}): AppRouteQueryImplementation<
-  typeof listCustomerFeedbackForModerationContract
-> {
+}): AppRouteQueryImplementation<typeof listCustomerFeedbackForModerationContract> {
   return async ({ query, req }) => {
     const adminUserId = requireAuthenticatedPrincipal(req, "admin").subjectId;
     await requireCustomerFeedbackModerator({
       adminUserId,
-      database: dependencies.database,
+      database: dependencies.database
     });
 
     const search = query.search?.trim();
@@ -35,12 +33,12 @@ export function createListCustomerFeedbackForModerationHandler(dependencies: {
                     {
                       displayName: {
                         contains: search,
-                        mode: "insensitive",
-                      },
+                        mode: "insensitive"
+                      }
                     },
-                    { slug: { contains: search, mode: "insensitive" } },
-                  ],
-                },
+                    { slug: { contains: search, mode: "insensitive" } }
+                  ]
+                }
               },
               {
                 author: {
@@ -48,16 +46,16 @@ export function createListCustomerFeedbackForModerationHandler(dependencies: {
                     {
                       displayName: {
                         contains: search,
-                        mode: "insensitive",
-                      },
+                        mode: "insensitive"
+                      }
                     },
-                    { email: { contains: search, mode: "insensitive" } },
-                  ],
-                },
-              },
-            ],
+                    { email: { contains: search, mode: "insensitive" } }
+                  ]
+                }
+              }
+            ]
           }
-        : {}),
+        : {})
     };
     const [totalItems, feedback] = await dependencies.database.$transaction([
       dependencies.database.review.count({ where }),
@@ -66,8 +64,8 @@ export function createListCustomerFeedbackForModerationHandler(dependencies: {
         orderBy: [{ submittedAt: "asc" }, { id: "asc" }],
         skip: (query.pageNumber - 1) * query.pageSize,
         take: query.pageSize,
-        select: customerFeedbackModerationListSelect,
-      }),
+        select: customerFeedbackModerationListSelect
+      })
     ]);
 
     return {
@@ -77,8 +75,8 @@ export function createListCustomerFeedbackForModerationHandler(dependencies: {
         pageNumber: query.pageNumber,
         pageSize: query.pageSize,
         requestUrl: req.originalUrl,
-        totalItems,
-      }),
+        totalItems
+      })
     };
   };
 }

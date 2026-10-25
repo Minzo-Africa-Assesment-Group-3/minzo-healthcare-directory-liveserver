@@ -8,7 +8,7 @@ const contract = initContract();
 export const countySuggestionSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
-  slug: z.string(),
+  slug: z.string()
 });
 
 export const searchCountiesContract = contract.query({
@@ -16,10 +16,10 @@ export const searchCountiesContract = contract.query({
   path: "/api/v1/counties",
   query: z.object({
     search: z.preprocess(
-      (value) => typeof value === "string" && value.trim() === "" ? undefined : value,
-      z.string().trim().min(2).max(100).optional(),
+      (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+      z.string().trim().min(2).max(100).optional()
     ),
-    limit: z.coerce.number().int().min(1).max(20).optional(),
+    limit: z.coerce.number().int().min(1).max(20).optional()
   }),
   strictStatusCodes: true,
   summary: "List or search the county catalogue",
@@ -29,12 +29,12 @@ export const searchCountiesContract = contract.query({
     "An explicit limit (1-20) applies to either mode.",
   responses: {
     200: z.object({
-      data: z.array(countySuggestionSchema),
+      data: z.array(countySuggestionSchema)
     }),
-    400: problemDetailsSchema,
+    400: problemDetailsSchema
   },
   metadata: {
     authentication: "public",
-    openApiTags: ["Counties"],
-  },
+    openApiTags: ["Counties"]
+  }
 });

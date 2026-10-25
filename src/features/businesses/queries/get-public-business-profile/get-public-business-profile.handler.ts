@@ -14,74 +14,64 @@ export function createGetPublicBusinessProfileHandler(dependencies: {
   objectStorage: ObjectStorage;
 }): AppRouteQueryImplementation<typeof getPublicBusinessProfileContract> {
   return async ({ params }) => {
-    const result = await dependencies.database.$transaction(
-      async (transaction) => {
-        const business = await transaction.business.findFirst({
-          where: {
-            slug: params.slug,
-            status: "APPROVED",
-          },
-          select: publicBusinessProfileSelect,
-        });
+    const result = await dependencies.database.$transaction(async (transaction) => {
+      const business = await transaction.business.findFirst({
+        where: {
+          slug: params.slug,
+          status: "APPROVED"
+        },
+        select: publicBusinessProfileSelect
+      });
 
-        if (!business) {
-          return null;
+      if (!business) {
+        return null;
+      }
+
+      const rating = await transaction.review.aggregate({
+        where: {
+          businessId: business.id,
+          status: "PUBLISHED",
+          submittedAt: { gte: getRatingCutoff() }
+        },
+        _avg: { stars: true },
+        _count: { _all: true }
+      });
+      const rawAverage = rating._avg.stars;
+
+      return {
+        business,
+        rating: {
+          averageRating: rawAverage === null ? null : Math.round(rawAverage * 100) / 100,
+          reviewCount: rating._count._all
         }
-
-        const rating = await transaction.review.aggregate({
-          where: {
-            businessId: business.id,
-            status: "PUBLISHED",
-            submittedAt: { gte: getRatingCutoff() },
-          },
-          _avg: { stars: true },
-          _count: { _all: true },
-        });
-        const rawAverage = rating._avg.stars;
-
-        return {
-          business,
-          rating: {
-            averageRating:
-              rawAverage === null
-                ? null
-                : Math.round(rawAverage * 100) / 100,
-            reviewCount: rating._count._all,
-          },
-        };
-      },
-    );
+      };
+    });
 
     if (!result) {
       throw new AppError({
         code: "business_not_found",
         message: "The requested business does not exist.",
         statusCode: 404,
-        title: "Business not found",
+        title: "Business not found"
       });
     }
 
     try {
       const mediaUrls = await Promise.all(
         result.business.media.map(async (media) => {
-          const { signedUrl } =
-            await dependencies.objectStorage.createSignedDownloadAuthorization(
-              media.bucket,
-              media.objectKey,
-              signedMediaDownloadLifetimeSeconds,
-            );
+          const { signedUrl } = await dependencies.objectStorage.createSignedDownloadAuthorization(
+            media.bucket,
+            media.objectKey,
+            signedMediaDownloadLifetimeSeconds
+          );
 
           return { id: media.id, url: signedUrl };
-        }),
+        })
       );
 
       return {
         status: 200,
-        body: presentPublicBusinessProfile(
-          result.business,
-          result.rating,
-          mediaUrls,
-        ),
+        body: presentPublicBusinessProfile(result.business, result.rating, mediaUrls)
       };
     } catch (cause) {
       throw new AppError({
@@ -89,7 +79,7 @@ export function createGetPublicBusinessProfileHandler(dependencies: {
         code: "media_storage_unavailable",
         message: "The business gallery could not be loaded.",
         statusCode: 503,
-        title: "Media storage unavailable",
+        title: "Media storage unavailable"
       });
     }
   };

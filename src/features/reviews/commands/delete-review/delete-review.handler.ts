@@ -15,8 +15,8 @@ export function createDeleteReviewHandler(dependencies: {
       select: {
         id: true,
         userId: true,
-        status: true,
-      },
+        status: true
+      }
     });
 
     if (!review || review.status === "DELETED") {
@@ -24,7 +24,7 @@ export function createDeleteReviewHandler(dependencies: {
         code: "review_not_found",
         message: "The requested review does not exist.",
         statusCode: 404,
-        title: "Review not found",
+        title: "Review not found"
       });
     }
 
@@ -33,7 +33,7 @@ export function createDeleteReviewHandler(dependencies: {
         code: "permission_denied",
         message: "You cannot delete another user's review.",
         statusCode: 403,
-        title: "Permission denied",
+        title: "Permission denied"
       });
     }
 
@@ -41,14 +41,14 @@ export function createDeleteReviewHandler(dependencies: {
       where: { id: review.id },
       data: {
         status: "DELETED",
-        deletedAt: new Date(),
+        deletedAt: new Date()
       },
-      select: { id: true },
+      select: { id: true }
     });
 
     return {
       status: 204,
-      body: undefined,
+      body: undefined
     };
   };
 }

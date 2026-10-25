@@ -9,14 +9,14 @@ const contract = initContract();
 const reviewBusinessClaimBodySchema = z
   .object({
     decision: z.enum(["APPROVED", "REJECTED"]),
-    reviewNote: z.string().trim().min(3).max(2_000).optional(),
+    reviewNote: z.string().trim().min(3).max(2_000).optional()
   })
   .superRefine((body, context) => {
     if (body.decision === "REJECTED" && !body.reviewNote) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
         message: "A review note is required when rejecting a claim.",
-        path: ["reviewNote"],
+        path: ["reviewNote"]
       });
     }
   });
@@ -25,7 +25,7 @@ export const reviewBusinessClaimContract = contract.mutation({
   method: "PATCH",
   path: "/api/v1/admin/business-claims/:claimId",
   pathParams: z.object({
-    claimId: z.string().uuid(),
+    claimId: z.string().uuid()
   }),
   body: reviewBusinessClaimBodySchema,
   strictStatusCodes: true,
@@ -37,10 +37,10 @@ export const reviewBusinessClaimContract = contract.mutation({
     401: problemDetailsSchema,
     403: problemDetailsSchema,
     404: problemDetailsSchema,
-    409: problemDetailsSchema,
+    409: problemDetailsSchema
   },
   metadata: {
     openApiTags: ["Admin Business Claims"],
-    authentication: "admin-access-token",
-  },
+    authentication: "admin-access-token"
+  }
 });

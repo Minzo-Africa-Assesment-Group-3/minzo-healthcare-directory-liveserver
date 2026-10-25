@@ -3,19 +3,16 @@ import {
   maximumVerifiedDocumentSizeBytes,
   verifiedDocumentExtension,
   verifiedDocumentMimeTypes,
-  type VerifiedDocumentMimeType,
+  type VerifiedDocumentMimeType
 } from "../../shared/documents/verified-document.js";
 
-export const maximumClaimDocumentSizeBytes =
-  maximumVerifiedDocumentSizeBytes;
+export const maximumClaimDocumentSizeBytes = maximumVerifiedDocumentSizeBytes;
 
 export const claimDocumentMimeTypes = verifiedDocumentMimeTypes;
 
 export type ClaimDocumentMimeType = VerifiedDocumentMimeType;
 
-export function detectClaimDocumentMimeType(
-  bytes: Uint8Array,
-): ClaimDocumentMimeType | null {
+export function detectClaimDocumentMimeType(bytes: Uint8Array): ClaimDocumentMimeType | null {
   return detectVerifiedDocumentMimeType(bytes);
 }
 
@@ -27,6 +24,6 @@ export function createClaimDocumentObjectKey(options: {
   return [
     "business-claims",
     options.userId,
-    `${options.documentId}.${verifiedDocumentExtension(options.mimeType)}`,
+    `${options.documentId}.${verifiedDocumentExtension(options.mimeType)}`
   ].join("/");
 }

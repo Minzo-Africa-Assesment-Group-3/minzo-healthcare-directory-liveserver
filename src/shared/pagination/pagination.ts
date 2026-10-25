@@ -25,11 +25,7 @@ function assertNonNegativeInteger(value: number, name: string): void {
   }
 }
 
-function createPageUrl(
-  requestUrl: string,
-  pageNumber: number,
-  pageSize: number,
-): string {
+function createPageUrl(requestUrl: string, pageNumber: number, pageSize: number): string {
   const url = new URL(requestUrl, "http://localhost");
 
   url.searchParams.set("pageNumber", String(pageNumber));
@@ -43,7 +39,7 @@ export function createPaginatedResponse<T>({
   pageNumber,
   pageSize,
   requestUrl,
-  totalItems,
+  totalItems
 }: CreatePaginatedResponseOptions<T>): PaginatedResponse<T> {
   assertPositiveInteger(pageNumber, "pageNumber");
   assertPositiveInteger(pageSize, "pageSize");
@@ -62,12 +58,8 @@ export function createPaginatedResponse<T>({
       pageSize,
       hasNextPage,
       hasPreviousPage,
-      nextPageUrl: hasNextPage
-        ? createPageUrl(requestUrl, pageNumber + 1, pageSize)
-        : null,
-      previousPageUrl: hasPreviousPage
-        ? createPageUrl(requestUrl, pageNumber - 1, pageSize)
-        : null,
-    },
+      nextPageUrl: hasNextPage ? createPageUrl(requestUrl, pageNumber + 1, pageSize) : null,
+      previousPageUrl: hasPreviousPage ? createPageUrl(requestUrl, pageNumber - 1, pageSize) : null
+    }
   };
 }

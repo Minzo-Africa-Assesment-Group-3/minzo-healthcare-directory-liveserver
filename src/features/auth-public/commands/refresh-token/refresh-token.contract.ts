@@ -17,12 +17,12 @@ export const refreshTokenContract = contract.mutation({
       accessToken: z.string(),
       tokenType: z.literal("Bearer"),
       expiresIn: z.number().int().positive(),
-      refreshTokenExpiresAt: z.string().datetime(),
+      refreshTokenExpiresAt: z.string().datetime()
     }),
-    401: problemDetailsSchema,
+    401: problemDetailsSchema
   },
   metadata: {
     authentication: "user-refresh-token",
-    openApiTags: ["Authentication"],
-  },
+    openApiTags: ["Authentication"]
+  }
 });

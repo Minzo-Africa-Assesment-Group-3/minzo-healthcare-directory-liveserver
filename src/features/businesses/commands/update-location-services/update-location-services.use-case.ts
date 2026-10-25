@@ -17,7 +17,7 @@ function locationNotFoundError(): AppError {
     code: "business_location_not_found",
     message: "The requested business location does not exist.",
     statusCode: 404,
-    title: "Business location not found",
+    title: "Business location not found"
   });
 }
 
@@ -26,13 +26,13 @@ function permissionDeniedError(): AppError {
     code: "permission_denied",
     message: "You are not allowed to manage this business location.",
     statusCode: 403,
-    title: "Permission denied",
+    title: "Permission denied"
   });
 }
 
 export async function updateLocationServices(
   database: DatabaseClient,
-  command: UpdateLocationServicesCommand,
+  command: UpdateLocationServicesCommand
 ) {
   const serviceInputs = normalizeBusinessServices(command.serviceNames);
 
@@ -42,7 +42,7 @@ export async function updateLocationServices(
         const location = await transaction.businessLocation.findUnique({
           where: {
             id: command.locationId,
-            businessId: command.businessId,
+            businessId: command.businessId
           },
           select: {
             id: true,
@@ -52,11 +52,11 @@ export async function updateLocationServices(
                 memberships: {
                   where: { userId: command.userId },
                   select: { role: true },
-                  take: 1,
-                },
-              },
-            },
-          },
+                  take: 1
+                }
+              }
+            }
+          }
         });
 
         if (!location) {
@@ -72,7 +72,7 @@ export async function updateLocationServices(
             code: "business_suspended",
             message: "A suspended business cannot update its services.",
             statusCode: 403,
-            title: "Business suspended",
+            title: "Business suspended"
           });
         }
 
@@ -85,42 +85,40 @@ export async function updateLocationServices(
             create: {
               id: randomUUID(),
               name: serviceInput.name,
-              slug: serviceInput.slug,
+              slug: serviceInput.slug
             },
             select: {
               id: true,
               name: true,
-              slug: true,
-            },
+              slug: true
+            }
           });
 
           services.push(service);
         }
 
         await transaction.businessLocationService.deleteMany({
-          where: { businessLocationId: location.id },
+          where: { businessLocationId: location.id }
         });
 
         if (services.length > 0) {
           await transaction.businessLocationService.createMany({
             data: services.map((service) => ({
               businessLocationId: location.id,
-              serviceId: service.id,
-            })),
+              serviceId: service.id
+            }))
           });
         }
 
         return {
           businessId: command.businessId,
           locationId: location.id,
-          services: services.sort((left, right) =>
-            left.name.localeCompare(right.name),
-          ),
+          services: services.sort((left, right) => left.name.localeCompare(right.name))
         };
       },
       {
-        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-      },
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable
+      }
     );
   } catch (error) {
     if (
@@ -129,10 +127,9 @@ export async function updateLocationServices(
     ) {
       throw new AppError({
         code: "business_services_update_conflict",
-        message:
-          "The service list changed during this request. Please try again.",
+        message: "The service list changed during this request. Please try again.",
         statusCode: 409,
-        title: "Business services update conflict",
+        title: "Business services update conflict"
       });
     }
 

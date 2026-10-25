@@ -10,19 +10,18 @@ export function createListMyBusinessClaimsHandler(dependencies: {
   database: DatabaseClient;
 }): AppRouteQueryImplementation<typeof listMyBusinessClaimsContract> {
   return async ({ req }) => {
-    const claimantUserId =
-      requireAuthenticatedPrincipal(req, "user").subjectId;
+    const claimantUserId = requireAuthenticatedPrincipal(req, "user").subjectId;
     const claims = await dependencies.database.businessClaim.findMany({
       where: { claimantUserId },
       orderBy: { createdAt: "desc" },
-      select: businessClaimSelect,
+      select: businessClaimSelect
     });
 
     return {
       status: 200,
       body: {
-        data: claims.map(presentBusinessClaim),
-      },
+        data: claims.map(presentBusinessClaim)
+      }
     };
   };
 }

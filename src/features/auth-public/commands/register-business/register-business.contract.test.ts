@@ -7,12 +7,12 @@ function validRegistrationBody() {
     user: {
       email: "owner@example.com",
       password: "a-production-password",
-      displayName: "Ama Owner",
+      displayName: "Ama Owner"
     },
     business: {
       displayName: "Minzo Healthcare",
       legalName: "Minzo Healthcare Limited",
-      membershipRole: "OWNER" as const,
+      membershipRole: "OWNER" as const
     },
     primaryLocation: {
       name: "Minzo Medical Centre - Accra",
@@ -23,18 +23,18 @@ function validRegistrationBody() {
         county: "Greater Accra",
         cityOrTown: "Monrovia",
         latitude: 5.6037,
-        longitude: -0.187,
+        longitude: -0.187
       },
       services: ["General Practice", "Pharmacy"],
       openingHours: [
         {
           dayOfWeek: "MONDAY" as const,
-          periods: [{ opensAt: "08:00", closesAt: "17:00" }],
+          periods: [{ opensAt: "08:00", closesAt: "17:00" }]
         },
         {
           dayOfWeek: "SUNDAY" as const,
-          is24Hours: true,
-        },
+          is24Hours: true
+        }
       ],
       staffMembers: [
         {
@@ -42,18 +42,16 @@ function validRegistrationBody() {
           profession: "GENERAL_PRACTITIONER" as const,
           professionalTitle: "Medical Officer",
           email: "efua.mensah@example.com",
-          yearsExperience: 12,
-        },
-      ],
-    },
+          yearsExperience: 12
+        }
+      ]
+    }
   };
 }
 
 describe("business registration contract", () => {
   it("accepts a facility with services, staff, and coordinates", () => {
-    const result = registerBusinessBodySchema.safeParse(
-      validRegistrationBody(),
-    );
+    const result = registerBusinessBodySchema.safeParse(validRegistrationBody());
 
     expect(result.success).toBe(true);
   });
@@ -68,9 +66,9 @@ describe("business registration contract", () => {
           objectKey: "client-controlled/path.pdf",
           originalFileName: "registration.pdf",
           mimeType: "application/pdf",
-          sizeBytes: 25_000,
-        },
-      },
+          sizeBytes: 25_000
+        }
+      }
     });
 
     expect(result.success).toBe(false);
@@ -82,15 +80,15 @@ describe("business registration contract", () => {
       addressLine: body.primaryLocation.location.addressLine,
       county: body.primaryLocation.location.county,
       cityOrTown: body.primaryLocation.location.cityOrTown,
-      latitude: body.primaryLocation.location.latitude,
+      latitude: body.primaryLocation.location.latitude
     };
 
     const result = registerBusinessBodySchema.safeParse({
       ...body,
       primaryLocation: {
         ...body.primaryLocation,
-        location: incompleteLocation,
-      },
+        location: incompleteLocation
+      }
     });
 
     expect(result.success).toBe(false);
@@ -105,9 +103,9 @@ describe("business registration contract", () => {
         location: {
           addressLine: body.primaryLocation.location.addressLine,
           county: body.primaryLocation.location.county,
-          cityOrTown: body.primaryLocation.location.cityOrTown,
-        },
-      },
+          cityOrTown: body.primaryLocation.location.cityOrTown
+        }
+      }
     });
 
     expect(result.success).toBe(true);
@@ -119,8 +117,8 @@ describe("business registration contract", () => {
       ...body,
       primaryLocation: {
         ...body.primaryLocation,
-        services: ["Pharmacy", "pharmacy"],
-      },
+        services: ["Pharmacy", "pharmacy"]
+      }
     });
 
     expect(result.success).toBe(false);
@@ -133,8 +131,8 @@ describe("business registration contract", () => {
       ...body,
       primaryLocation: {
         ...body.primaryLocation,
-        openingHours: [monday, monday],
-      },
+        openingHours: [monday, monday]
+      }
     });
 
     expect(result.success).toBe(false);
@@ -151,11 +149,11 @@ describe("business registration contract", () => {
             dayOfWeek: "MONDAY",
             periods: [
               { opensAt: "08:00", closesAt: "12:00" },
-              { opensAt: "11:00", closesAt: "17:00" },
-            ],
-          },
-        ],
-      },
+              { opensAt: "11:00", closesAt: "17:00" }
+            ]
+          }
+        ]
+      }
     });
 
     expect(result.success).toBe(false);

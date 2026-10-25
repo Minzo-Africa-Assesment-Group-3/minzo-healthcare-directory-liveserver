@@ -20,14 +20,14 @@ export const requestClaimDocumentUploadContract = contract.mutation({
       bucket: z.string(),
       path: z.string(),
       token: z.string(),
-      expiresAt: z.string().datetime(),
+      expiresAt: z.string().datetime()
     }),
     401: problemDetailsSchema,
     403: problemDetailsSchema,
-    503: problemDetailsSchema,
+    503: problemDetailsSchema
   },
   metadata: {
     openApiTags: ["Business Claims"],
-    authentication: "user-access-token",
-  },
+    authentication: "user-access-token"
+  }
 });

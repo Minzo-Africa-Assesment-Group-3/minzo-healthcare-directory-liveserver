@@ -7,17 +7,15 @@ import { createSearchCountiesHandler } from "./queries/search-counties/search-co
 const contract = initContract();
 
 export const countiesContract = contract.router({
-  search: searchCountiesContract,
+  search: searchCountiesContract
 });
 
 export interface CountiesRouteDependencies {
   database: DatabaseClient;
 }
 
-export function createCountiesHandlers(
-  dependencies: CountiesRouteDependencies,
-) {
+export function createCountiesHandlers(dependencies: CountiesRouteDependencies) {
   return {
-    search: createSearchCountiesHandler(dependencies),
+    search: createSearchCountiesHandler(dependencies)
   };
 }

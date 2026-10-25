@@ -1,4 +1,1 @@
-export {
-  createDatabaseClient,
-  type DatabaseClient,
-} from "./database.js";
+export { createDatabaseClient, type DatabaseClient } from "./database.js";

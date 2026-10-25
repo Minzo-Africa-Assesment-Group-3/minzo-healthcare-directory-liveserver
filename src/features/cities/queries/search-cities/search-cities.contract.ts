@@ -9,7 +9,7 @@ export const citySuggestionSchema = z.object({
   id: z.string().uuid(),
   countyId: z.string().uuid(),
   name: z.string(),
-  slug: z.string(),
+  slug: z.string()
 });
 
 export const searchCitiesContract = contract.query({
@@ -18,7 +18,7 @@ export const searchCitiesContract = contract.query({
   query: z.object({
     countyId: z.string().uuid(),
     search: z.string().trim().min(2).max(100),
-    limit: z.coerce.number().int().min(1).max(20).default(10),
+    limit: z.coerce.number().int().min(1).max(20).default(10)
   }),
   strictStatusCodes: true,
   summary: "Search the city catalogue",
@@ -26,12 +26,12 @@ export const searchCitiesContract = contract.query({
     "Returns a small, alphabetically ordered list of active cities or towns belonging to the selected Liberian county.",
   responses: {
     200: z.object({
-      data: z.array(citySuggestionSchema),
+      data: z.array(citySuggestionSchema)
     }),
-    400: problemDetailsSchema,
+    400: problemDetailsSchema
   },
   metadata: {
     authentication: "public",
-    openApiTags: ["Cities"],
-  },
+    openApiTags: ["Cities"]
+  }
 });

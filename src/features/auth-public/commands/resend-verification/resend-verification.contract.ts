@@ -12,16 +12,16 @@ export const resendVerificationContract = contract.mutation({
   summary: "Resend an email verification link",
   description: "Creates a replacement verification token for an eligible unverified account.",
   body: z.object({
-    email: z.string().trim().email().max(320),
+    email: z.string().trim().email().max(320)
   }),
   responses: {
     202: z.object({
-      message: z.string(),
+      message: z.string()
     }),
-    503: problemDetailsSchema,
+    503: problemDetailsSchema
   },
   metadata: {
     authentication: "public",
-    openApiTags: ["Authentication"],
-  },
+    openApiTags: ["Authentication"]
+  }
 });

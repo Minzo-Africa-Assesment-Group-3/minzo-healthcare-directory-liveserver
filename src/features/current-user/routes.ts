@@ -7,19 +7,21 @@ import { createGetMyProfileHandler } from "./queries/get-my-profile/get-my-profi
 import { listMyReviewsContract } from "./queries/list-my-reviews/list-my-reviews.contract.js";
 import { createListMyReviewsHandler } from "./queries/list-my-reviews/list-my-reviews.handler.js";
 
-export interface CurrentUserRouteDependencies { database: DatabaseClient }
+export interface CurrentUserRouteDependencies {
+  database: DatabaseClient;
+}
 
 export const currentUserContract = initContract().router({
   profile: getMyProfileContract,
-  reviews: listMyReviewsContract,
+  reviews: listMyReviewsContract
 });
 
 export function createCurrentUserHandlers(
   dependencies: CurrentUserRouteDependencies,
-  authentication: AuthenticationMiddlewares,
+  authentication: AuthenticationMiddlewares
 ) {
   return {
     profile: { middleware: [authentication.user], handler: createGetMyProfileHandler(dependencies) },
-    reviews: { middleware: [authentication.user], handler: createListMyReviewsHandler(dependencies) },
+    reviews: { middleware: [authentication.user], handler: createListMyReviewsHandler(dependencies) }
   };
 }

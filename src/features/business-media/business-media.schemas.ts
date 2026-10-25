@@ -1,9 +1,6 @@
 import { z } from "zod";
 
-import {
-  maximumVerifiedImageSizeBytes,
-  verifiedImageMimeTypes,
-} from "../../shared/images/verified-image.js";
+import { maximumVerifiedImageSizeBytes, verifiedImageMimeTypes } from "../../shared/images/verified-image.js";
 import { maximumBusinessMediaItems } from "./business-media.js";
 
 export const businessMediaStatusSchema = z.enum([
@@ -12,28 +9,25 @@ export const businessMediaStatusSchema = z.enum([
   "PENDING_REVIEW",
   "APPROVED",
   "REJECTED",
-  "DELETED",
+  "DELETED"
 ]);
 
 export const businessMediaBatchStatusSchema = z.enum([
   "UPLOADING",
   "PENDING_REVIEW",
   "REVIEWED",
-  "CANCELLED",
+  "CANCELLED"
 ]);
 
 export const requestedBusinessMediaSchema = z.object({
   fileName: z.string().trim().min(1).max(255),
   mimeType: z.enum(verifiedImageMimeTypes),
   sizeBytes: z.number().int().positive().max(maximumVerifiedImageSizeBytes),
-  altText: z.string().trim().min(1).max(255).optional(),
+  altText: z.string().trim().min(1).max(255).optional()
 });
 
 export const createBusinessMediaBatchBodySchema = z.object({
-  files: z
-    .array(requestedBusinessMediaSchema)
-    .min(1)
-    .max(maximumBusinessMediaItems),
+  files: z.array(requestedBusinessMediaSchema).min(1).max(maximumBusinessMediaItems)
 });
 
 export const businessMediaSchema = z.object({
@@ -48,7 +42,7 @@ export const businessMediaSchema = z.object({
   isCover: z.boolean(),
   rejectionReason: z.string().nullable(),
   uploadedAt: z.string().datetime().nullable(),
-  reviewedAt: z.string().datetime().nullable(),
+  reviewedAt: z.string().datetime().nullable()
 });
 
 export const publicBusinessMediaSchema = z.object({
@@ -56,5 +50,5 @@ export const publicBusinessMediaSchema = z.object({
   url: z.string().url(),
   altText: z.string().nullable(),
   isCover: z.boolean(),
-  sortOrder: z.number().int().nonnegative(),
+  sortOrder: z.number().int().nonnegative()
 });

@@ -13,15 +13,12 @@ function createEmailAlreadyRegisteredError(): AppError {
     code: "email_already_registered",
     message: "An account with this email address already exists.",
     statusCode: 409,
-    title: "Email already registered",
+    title: "Email already registered"
   });
 }
 
 function isUniqueConstraintViolation(error: unknown): boolean {
-  return (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === "P2002"
-  );
+  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002";
 }
 
 export function createRegisterUserHandler(dependencies: {
@@ -33,7 +30,7 @@ export function createRegisterUserHandler(dependencies: {
     const email = body.email.trim().toLowerCase();
     const existingUser = await dependencies.database.user.findUnique({
       where: { email },
-      select: { id: true },
+      select: { id: true }
     });
 
     if (existingUser) {
@@ -41,9 +38,7 @@ export function createRegisterUserHandler(dependencies: {
     }
 
     const passwordHash = await hashPassword(body.password);
-    const verificationToken = generateEmailVerificationToken(
-      dependencies.verificationTokenTtlSeconds,
-    );
+    const verificationToken = generateEmailVerificationToken(dependencies.verificationTokenTtlSeconds);
 
     try {
       const user = await dependencies.database.user.create({
@@ -57,17 +52,17 @@ export function createRegisterUserHandler(dependencies: {
             create: {
               id: verificationToken.id,
               tokenHash: verificationToken.tokenHash,
-              expiresAt: verificationToken.expiresAt,
-            },
-          },
+              expiresAt: verificationToken.expiresAt
+            }
+          }
         },
         select: {
           id: true,
           email: true,
           displayName: true,
           phone: true,
-          createdAt: true,
-        },
+          createdAt: true
+        }
       });
 
       try {
@@ -75,7 +70,7 @@ export function createRegisterUserHandler(dependencies: {
           displayName: user.displayName,
           email: user.email,
           token: verificationToken.token,
-          tokenId: verificationToken.id,
+          tokenId: verificationToken.id
         });
       } catch (cause) {
         throw new AppError({
@@ -84,7 +79,7 @@ export function createRegisterUserHandler(dependencies: {
           message:
             "Your account was created, but the verification email could not be sent. Please request another verification email.",
           statusCode: 503,
-          title: "Verification email unavailable",
+          title: "Verification email unavailable"
         });
       }
 
@@ -98,9 +93,9 @@ export function createRegisterUserHandler(dependencies: {
             displayName: user.displayName,
             phone: user.phone,
             status: "PENDING_VERIFICATION",
-            createdAt: user.createdAt.toISOString(),
-          },
-        },
+            createdAt: user.createdAt.toISOString()
+          }
+        }
       };
     } catch (error) {
       if (isUniqueConstraintViolation(error)) {

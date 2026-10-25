@@ -4,10 +4,7 @@ import type { DatabaseClient } from "../../../../infrastructure/database/index.j
 import type { ObjectStorage } from "../../../../infrastructure/storage/index.js";
 import { requireAuthenticatedPrincipal } from "../../../../shared/authentication/route-authentication.js";
 import { AppError } from "../../../../shared/errors/app-error.js";
-import {
-  detectClaimDocumentMimeType,
-  maximumClaimDocumentSizeBytes,
-} from "../../business-claim-document.js";
+import { detectClaimDocumentMimeType, maximumClaimDocumentSizeBytes } from "../../business-claim-document.js";
 import type { completeClaimDocumentUploadContract } from "./complete-claim-document-upload.contract.js";
 
 interface CompletedDocument {
@@ -32,13 +29,10 @@ function presentCompletedDocument(document: CompletedDocument) {
   return {
     id: document.id,
     originalFileName: document.originalFileName,
-    mimeType: document.verifiedMimeType as
-      | "application/pdf"
-      | "image/jpeg"
-      | "image/png",
+    mimeType: document.verifiedMimeType as "application/pdf" | "image/jpeg" | "image/png",
     sizeBytes: document.verifiedSizeBytes,
     status: document.status,
-    uploadedAt: document.uploadedAt.toISOString(),
+    uploadedAt: document.uploadedAt.toISOString()
   };
 }
 
@@ -47,39 +41,36 @@ function invalidDocumentError(reason: string): AppError {
     code: "invalid_claim_document",
     message: reason,
     statusCode: 422,
-    title: "Invalid claim document",
+    title: "Invalid claim document"
   });
 }
 
 export function createCompleteClaimDocumentUploadHandler(dependencies: {
   database: DatabaseClient;
   objectStorage: ObjectStorage;
-}): AppRouteMutationImplementation<
-  typeof completeClaimDocumentUploadContract
-> {
+}): AppRouteMutationImplementation<typeof completeClaimDocumentUploadContract> {
   return async ({ params, req }) => {
     const ownerUserId = requireAuthenticatedPrincipal(req, "user").subjectId;
-    const document =
-      await dependencies.database.businessClaimDocument.findFirst({
-        where: {
-          id: params.documentId,
-          ownerUserId,
-        },
-      });
+    const document = await dependencies.database.businessClaimDocument.findFirst({
+      where: {
+        id: params.documentId,
+        ownerUserId
+      }
+    });
 
     if (!document) {
       throw new AppError({
         code: "claim_document_not_found",
         message: "The requested claim document does not exist.",
         statusCode: 404,
-        title: "Claim document not found",
+        title: "Claim document not found"
       });
     }
 
     if (document.status === "UPLOADED" || document.status === "ATTACHED") {
       return {
         status: 200,
-        body: presentCompletedDocument(document),
+        body: presentCompletedDocument(document)
       };
     }
 
@@ -88,29 +79,23 @@ export function createCompleteClaimDocumentUploadHandler(dependencies: {
         code: "claim_document_rejected",
         message: "This claim document was rejected and cannot be reused.",
         statusCode: 409,
-        title: "Claim document rejected",
+        title: "Claim document rejected"
       });
     }
 
     try {
-      const exists = await dependencies.objectStorage.objectExists(
-        document.bucket,
-        document.objectKey,
-      );
+      const exists = await dependencies.objectStorage.objectExists(document.bucket, document.objectKey);
 
       if (!exists) {
         throw new AppError({
           code: "claim_document_upload_incomplete",
           message: "The claim document has not been uploaded yet.",
           statusCode: 409,
-          title: "Claim document upload incomplete",
+          title: "Claim document upload incomplete"
         });
       }
 
-      const objectInfo = await dependencies.objectStorage.getObjectInfo(
-        document.bucket,
-        document.objectKey,
-      );
+      const objectInfo = await dependencies.objectStorage.getObjectInfo(document.bucket, document.objectKey);
 
       if (
         objectInfo.sizeBytes > maximumClaimDocumentSizeBytes ||
@@ -119,14 +104,11 @@ export function createCompleteClaimDocumentUploadHandler(dependencies: {
         await rejectUploadedDocument(
           dependencies,
           document,
-          "The uploaded file size does not match the authorized upload.",
+          "The uploaded file size does not match the authorized upload."
         );
       }
 
-      const fileBytes = await dependencies.objectStorage.downloadObject(
-        document.bucket,
-        document.objectKey,
-      );
+      const fileBytes = await dependencies.objectStorage.downloadObject(document.bucket, document.objectKey);
       const detectedMimeType = detectClaimDocumentMimeType(fileBytes);
 
       if (
@@ -136,25 +118,24 @@ export function createCompleteClaimDocumentUploadHandler(dependencies: {
         await rejectUploadedDocument(
           dependencies,
           document,
-          "The uploaded file content does not match its declared type or size.",
+          "The uploaded file content does not match its declared type or size."
         );
       }
 
       const uploadedAt = new Date();
-      const completed =
-        await dependencies.database.businessClaimDocument.update({
-          where: { id: document.id },
-          data: {
-            status: "UPLOADED",
-            verifiedMimeType: detectedMimeType,
-            verifiedSizeBytes: fileBytes.byteLength,
-            uploadedAt,
-          },
-        });
+      const completed = await dependencies.database.businessClaimDocument.update({
+        where: { id: document.id },
+        data: {
+          status: "UPLOADED",
+          verifiedMimeType: detectedMimeType,
+          verifiedSizeBytes: fileBytes.byteLength,
+          uploadedAt
+        }
+      });
 
       return {
         status: 200,
-        body: presentCompletedDocument(completed),
+        body: presentCompletedDocument(completed)
       };
     } catch (error) {
       if (error instanceof AppError) {
@@ -166,7 +147,7 @@ export function createCompleteClaimDocumentUploadHandler(dependencies: {
         code: "document_storage_unavailable",
         message: "The uploaded document could not be verified.",
         statusCode: 503,
-        title: "Document storage unavailable",
+        title: "Document storage unavailable"
       });
     }
   };
@@ -182,19 +163,16 @@ async function rejectUploadedDocument(
     bucket: string;
     objectKey: string;
   },
-  reason: string,
+  reason: string
 ): Promise<never> {
   await dependencies.database.businessClaimDocument.update({
     where: { id: document.id },
     data: {
       status: "REJECTED",
-      rejectionReason: reason,
-    },
+      rejectionReason: reason
+    }
   });
-  await dependencies.objectStorage.removeObject(
-    document.bucket,
-    document.objectKey,
-  );
+  await dependencies.objectStorage.removeObject(document.bucket, document.objectKey);
 
   throw invalidDocumentError(reason);
 }

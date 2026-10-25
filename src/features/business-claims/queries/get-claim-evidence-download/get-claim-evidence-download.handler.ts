@@ -12,14 +12,12 @@ const signedDownloadLifetimeSeconds = 5 * 60;
 export function createGetClaimEvidenceDownloadHandler(dependencies: {
   database: DatabaseClient;
   objectStorage: ObjectStorage;
-}): AppRouteQueryImplementation<
-  typeof getClaimEvidenceDownloadContract
-> {
+}): AppRouteQueryImplementation<typeof getClaimEvidenceDownloadContract> {
   return async ({ params, req }) => {
     const adminUserId = requireAuthenticatedPrincipal(req, "admin").subjectId;
     await requireBusinessClaimsAdmin({
       adminUserId,
-      database: dependencies.database,
+      database: dependencies.database
     });
     const claim = await dependencies.database.businessClaim.findUnique({
       where: { id: params.claimId },
@@ -28,10 +26,10 @@ export function createGetClaimEvidenceDownloadHandler(dependencies: {
           select: {
             bucket: true,
             objectKey: true,
-            status: true,
-          },
-        },
-      },
+            status: true
+          }
+        }
+      }
     });
 
     if (!claim) {
@@ -39,7 +37,7 @@ export function createGetClaimEvidenceDownloadHandler(dependencies: {
         code: "business_claim_not_found",
         message: "The requested business claim does not exist.",
         statusCode: 404,
-        title: "Business claim not found",
+        title: "Business claim not found"
       });
     }
 
@@ -48,27 +46,24 @@ export function createGetClaimEvidenceDownloadHandler(dependencies: {
         code: "claim_evidence_unavailable",
         message: "Verified evidence is not available for this claim.",
         statusCode: 409,
-        title: "Claim evidence unavailable",
+        title: "Claim evidence unavailable"
       });
     }
 
     try {
-      const authorization =
-        await dependencies.objectStorage.createSignedDownloadAuthorization(
-          claim.evidenceDocument.bucket,
-          claim.evidenceDocument.objectKey,
-          signedDownloadLifetimeSeconds,
-        );
-      const expiresAt = new Date(
-        Date.now() + signedDownloadLifetimeSeconds * 1_000,
+      const authorization = await dependencies.objectStorage.createSignedDownloadAuthorization(
+        claim.evidenceDocument.bucket,
+        claim.evidenceDocument.objectKey,
+        signedDownloadLifetimeSeconds
       );
+      const expiresAt = new Date(Date.now() + signedDownloadLifetimeSeconds * 1_000);
 
       return {
         status: 200,
         body: {
           url: authorization.signedUrl,
-          expiresAt: expiresAt.toISOString(),
-        },
+          expiresAt: expiresAt.toISOString()
+        }
       };
     } catch (cause) {
       throw new AppError({
@@ -76,7 +71,7 @@ export function createGetClaimEvidenceDownloadHandler(dependencies: {
         code: "document_storage_unavailable",
         message: "A document download URL could not be created.",
         statusCode: 503,
-        title: "Document storage unavailable",
+        title: "Document storage unavailable"
       });
     }
   };

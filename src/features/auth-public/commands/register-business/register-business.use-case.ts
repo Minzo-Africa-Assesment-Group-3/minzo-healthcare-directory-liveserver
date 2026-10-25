@@ -29,10 +29,7 @@ export interface RegisterBusinessCommand {
   verificationToken: GeneratedEmailVerificationToken;
 }
 
-export async function registerBusiness(
-  database: DatabaseClient,
-  command: RegisterBusinessCommand,
-) {
+export async function registerBusiness(database: DatabaseClient, command: RegisterBusinessCommand) {
   const { body, email, passwordHash, verificationToken } = command;
   const businessId = randomUUID();
   const primaryLocationId = randomUUID();
@@ -51,8 +48,8 @@ export async function registerBusiness(
             dayOfWeek: schedule.dayOfWeek,
             opensAtMinutes: 0,
             closesAtMinutes: 24 * 60,
-            closesNextDay: false,
-          },
+            closesNextDay: false
+          }
         ];
       }
 
@@ -60,12 +57,10 @@ export async function registerBusiness(
         dayOfWeek: schedule.dayOfWeek,
         opensAtMinutes: timeToMinutes(period.opensAt),
         closesAtMinutes: timeToMinutes(period.closesAt),
-        closesNextDay: period.closesNextDay,
+        closesNextDay: period.closesNextDay
       }));
     }) ?? [];
-  const services = normalizeBusinessServices(
-    primaryLocation.services ?? [],
-  );
+  const services = normalizeBusinessServices(primaryLocation.services ?? []);
 
   return database.$transaction(async (transaction) => {
     const user = await transaction.user.create({
@@ -79,11 +74,11 @@ export async function registerBusiness(
           create: {
             id: verificationToken.id,
             tokenHash: verificationToken.tokenHash,
-            expiresAt: verificationToken.expiresAt,
-          },
-        },
+            expiresAt: verificationToken.expiresAt
+          }
+        }
       },
-      select: { id: true, email: true, displayName: true },
+      select: { id: true, email: true, displayName: true }
     });
 
     const business = await transaction.business.create({
@@ -92,19 +87,18 @@ export async function registerBusiness(
         displayName: body.business.displayName.trim(),
         legalName: body.business.legalName.trim(),
         slug: createSlug(body.business.displayName, businessId),
-        registrationNumber:
-          body.business.registrationNumber?.trim() ?? null,
+        registrationNumber: body.business.registrationNumber?.trim() ?? null,
         source: "SELF_REGISTERED",
         status: "PENDING_APPROVAL",
         submittedAt,
         memberships: {
           create: {
             userId: user.id,
-            role: body.business.membershipRole,
-          },
-        },
+            role: body.business.membershipRole
+          }
+        }
       },
-      select: { id: true, displayName: true, slug: true },
+      select: { id: true, displayName: true, slug: true }
     });
 
     const createdPrimaryLocation = await transaction.businessLocation.create({
@@ -114,8 +108,7 @@ export async function registerBusiness(
         name: primaryLocation.name.trim(),
         slug: createSlug(primaryLocation.name, primaryLocationId),
         facilityType: primaryLocation.facilityType.trim(),
-        contactEmail:
-          primaryLocation.contactEmail?.trim().toLowerCase() ?? email,
+        contactEmail: primaryLocation.contactEmail?.trim().toLowerCase() ?? email,
         contactPhone: primaryLocation.contactPhone?.trim() ?? null,
         websiteUrl: primaryLocation.websiteUrl?.trim() ?? null,
         description: primaryLocation.description?.trim() ?? null,
@@ -130,8 +123,8 @@ export async function registerBusiness(
         ...(openingPeriods.length
           ? {
               openingPeriods: {
-                create: openingPeriods,
-              },
+                create: openingPeriods
+              }
             }
           : {}),
         ...(primaryLocation.staffMembers?.length
@@ -140,19 +133,18 @@ export async function registerBusiness(
                 create: primaryLocation.staffMembers.map((staffMember) => ({
                   displayName: staffMember.displayName.trim(),
                   profession: staffMember.profession,
-                  professionalTitle:
-                    staffMember.professionalTitle?.trim() ?? null,
+                  professionalTitle: staffMember.professionalTitle?.trim() ?? null,
                   phone: staffMember.phone?.trim() ?? null,
                   email: staffMember.email?.trim().toLowerCase() ?? null,
                   yearsExperience: staffMember.yearsExperience ?? null,
                   isPublic: staffMember.isPublic,
-                  source: "SELF_REGISTERED" as const,
-                })),
-              },
+                  source: "SELF_REGISTERED" as const
+                }))
+              }
             }
-          : {}),
+          : {})
       },
-      select: { id: true, name: true, slug: true },
+      select: { id: true, name: true, slug: true }
     });
 
     for (const serviceInput of services) {
@@ -162,16 +154,16 @@ export async function registerBusiness(
         create: {
           id: randomUUID(),
           name: serviceInput.name,
-          slug: serviceInput.slug,
+          slug: serviceInput.slug
         },
-        select: { id: true },
+        select: { id: true }
       });
 
       await transaction.businessLocationService.create({
         data: {
           businessLocationId: createdPrimaryLocation.id,
-          serviceId: service.id,
-        },
+          serviceId: service.id
+        }
       });
     }
 
@@ -179,9 +171,9 @@ export async function registerBusiness(
       user,
       business: {
         ...business,
-        legalName: body.business.legalName.trim(),
+        legalName: body.business.legalName.trim()
       },
-      primaryLocation: createdPrimaryLocation,
+      primaryLocation: createdPrimaryLocation
     };
   });
 }

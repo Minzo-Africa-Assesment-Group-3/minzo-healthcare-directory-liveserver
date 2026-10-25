@@ -2,13 +2,11 @@ import { initContract } from "@ts-rest/core";
 
 import type { DatabaseClient } from "../../infrastructure/database/index.js";
 import * as commands from "./commands/index.js";
-import type {
-  AuthEmailService,
-} from "./services/index.js";
+import type { AuthEmailService } from "./services/index.js";
 import type {
   AccessTokenService,
   LoginOtpService,
-  RefreshTokenCookieService,
+  RefreshTokenCookieService
 } from "../../shared/authentication/index.js";
 import type { AuthPublicRateLimitMiddlewares } from "../../shared/middleware/rate-limit.middleware.js";
 
@@ -22,7 +20,7 @@ export const authPublicContract = contract.router({
   logout: commands.logoutContract,
   resendVerification: commands.resendVerificationContract,
   verifyEmail: commands.verifyEmailContract,
-  verifyLoginOtp: commands.verifyLoginOtpContract,
+  verifyLoginOtp: commands.verifyLoginOtpContract
 });
 
 export interface AuthPublicRouteDependencies {
@@ -38,32 +36,30 @@ export interface AuthPublicRouteDependencies {
   verificationTokenTtlSeconds: number;
 }
 
-export function createAuthPublicHandlers(
-  dependencies: AuthPublicRouteDependencies,
-) {
+export function createAuthPublicHandlers(dependencies: AuthPublicRouteDependencies) {
   return {
     registerUser: {
       middleware: [dependencies.rateLimiters.registration],
-      handler: commands.createRegisterUserHandler(dependencies),
+      handler: commands.createRegisterUserHandler(dependencies)
     },
     registerBusiness: {
       middleware: [dependencies.rateLimiters.registration],
-      handler: commands.createRegisterBusinessHandler(dependencies),
+      handler: commands.createRegisterBusinessHandler(dependencies)
     },
     login: {
       middleware: [dependencies.rateLimiters.credential],
-      handler: commands.createLoginHandler(dependencies),
+      handler: commands.createLoginHandler(dependencies)
     },
     refreshToken: commands.createRefreshTokenHandler(dependencies),
     logout: commands.createLogoutHandler(dependencies),
     verifyEmail: commands.createVerifyEmailHandler(dependencies),
     resendVerification: {
       middleware: [dependencies.rateLimiters.registration],
-      handler: commands.createResendVerificationHandler(dependencies),
+      handler: commands.createResendVerificationHandler(dependencies)
     },
     verifyLoginOtp: {
       middleware: [dependencies.rateLimiters.credential],
-      handler: commands.createVerifyLoginOtpHandler(dependencies),
-    },
+      handler: commands.createVerifyLoginOtpHandler(dependencies)
+    }
   };
 }

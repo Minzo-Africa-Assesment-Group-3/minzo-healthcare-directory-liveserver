@@ -6,8 +6,7 @@ import type { LiberiaHealthcareSeedFixture } from "./liberia-healthcare-seed-fix
 
 type Facility = LiberiaHealthcareSeedFixture["facilities"][number];
 type Professional = LiberiaHealthcareSeedFixture["professionals"][number];
-type OpeningSchedule =
-  LiberiaHealthcareSeedFixture["catalogs"]["openingHourSchedules"][number];
+type OpeningSchedule = LiberiaHealthcareSeedFixture["catalogs"]["openingHourSchedules"][number];
 
 const importedFacilityEntityType = "BUSINESS_LOCATION";
 const importedProfessionalEntityType = "BUSINESS_STAFF_MEMBER";
@@ -40,11 +39,7 @@ function createSlug(value: string): string {
     .replace(/^-|-$/g, "");
 }
 
-function createStableResourceSlug(
-  name: string,
-  sourceKey: string,
-  maximumLength = 220,
-): string {
+function createStableResourceSlug(name: string, sourceKey: string, maximumLength = 220): string {
   const suffix = createHash("sha256").update(sourceKey).digest("hex").slice(0, 8);
   const nameLimit = maximumLength - suffix.length - 1;
   const namePart = createSlug(name).slice(0, nameLimit) || "healthcare-facility";
@@ -66,11 +61,7 @@ function selectPrimaryPhone(phone: string | null): string | null {
   return phone?.split("/")[0]?.trim() || null;
 }
 
-function requireMapValue<T>(
-  values: ReadonlyMap<string, T>,
-  key: string,
-  description: string,
-): T {
+function requireMapValue<T>(values: ReadonlyMap<string, T>, key: string, description: string): T {
   const value = values.get(key);
 
   if (value === undefined) {
@@ -84,28 +75,24 @@ function createOpeningPeriods(schedule: OpeningSchedule) {
   return schedule.openingPeriods.map((period) => {
     const opensAtMinutes = timeToMinutes(period.opensAt);
     const closesAtMinutes = timeToMinutes(period.closesAt);
-    const isFullDay =
-      period.closesNextDay && opensAtMinutes === closesAtMinutes;
+    const isFullDay = period.closesNextDay && opensAtMinutes === closesAtMinutes;
 
     return {
       dayOfWeek: period.dayOfWeek,
       opensAtMinutes,
       closesAtMinutes: isFullDay ? 24 * 60 : closesAtMinutes,
-      closesNextDay: isFullDay ? false : period.closesNextDay,
+      closesNextDay: isFullDay ? false : period.closesNextDay
     };
   });
 }
 
-async function startImportBatch(
-  database: DatabaseClient,
-  fixture: LiberiaHealthcareSeedFixture,
-) {
+async function startImportBatch(database: DatabaseClient, fixture: LiberiaHealthcareSeedFixture) {
   const existingBatch = await database.importBatch.findFirst({
     where: {
       source: fixture.source.name,
-      sourceFileName: fixture.source.fileName,
+      sourceFileName: fixture.source.fileName
     },
-    orderBy: { createdAt: "asc" },
+    orderBy: { createdAt: "asc" }
   });
 
   if (existingBatch) {
@@ -114,22 +101,22 @@ async function startImportBatch(
       data: {
         status: "PENDING",
         startedAt: new Date(),
-        completedAt: null,
-      },
+        completedAt: null
+      }
     });
   }
 
   return database.importBatch.create({
     data: {
       source: fixture.source.name,
-      sourceFileName: fixture.source.fileName,
-    },
+      sourceFileName: fixture.source.fileName
+    }
   });
 }
 
 async function seedGeography(
   database: DatabaseClient,
-  fixture: LiberiaHealthcareSeedFixture,
+  fixture: LiberiaHealthcareSeedFixture
 ): Promise<{ cities: number; counties: number }> {
   const citiesByCounty = new Map<string, Set<string>>();
 
@@ -148,8 +135,8 @@ async function seedGeography(
       update: { name: countyName },
       create: {
         name: countyName,
-        slug: createSlug(countyName),
-      },
+        slug: createSlug(countyName)
+      }
     });
 
     for (const cityName of cities) {
@@ -159,15 +146,15 @@ async function seedGeography(
         where: {
           countyId_slug: {
             countyId: county.id,
-            slug,
-          },
+            slug
+          }
         },
         update: { name: cityName },
         create: {
           countyId: county.id,
           name: cityName,
-          slug,
-        },
+          slug
+        }
       });
       cityCount += 1;
     }
@@ -175,13 +162,13 @@ async function seedGeography(
 
   return {
     cities: cityCount,
-    counties: citiesByCounty.size,
+    counties: citiesByCounty.size
   };
 }
 
 async function seedServices(
   database: DatabaseClient,
-  fixture: LiberiaHealthcareSeedFixture,
+  fixture: LiberiaHealthcareSeedFixture
 ): Promise<Map<string, string>> {
   const serviceIdBySlug = new Map<string, string>();
 
@@ -189,7 +176,7 @@ async function seedServices(
     const service = await database.service.upsert({
       where: { slug: serviceFixture.slug },
       update: { name: serviceFixture.name },
-      create: serviceFixture,
+      create: serviceFixture
     });
     serviceIdBySlug.set(service.slug, service.id);
   }
@@ -200,37 +187,29 @@ async function seedServices(
 function createLocationServiceRows(
   locationId: string,
   serviceSlugs: readonly string[],
-  serviceIdBySlug: ReadonlyMap<string, string>,
+  serviceIdBySlug: ReadonlyMap<string, string>
 ) {
   return serviceSlugs.map((serviceSlug) => ({
     businessLocationId: locationId,
-    serviceId: requireMapValue(
-      serviceIdBySlug,
-      serviceSlug,
-      "service ID for slug",
-    ),
+    serviceId: requireMapValue(serviceIdBySlug, serviceSlug, "service ID for slug")
   }));
 }
 
-async function findImportedRecord(
-  database: DatabaseClient,
-  source: string,
-  sourceKey: string,
-) {
+async function findImportedRecord(database: DatabaseClient, source: string, sourceKey: string) {
   return database.importedRecord.findUnique({
     where: {
       source_sourceKey: {
         source,
-        sourceKey,
-      },
-    },
+        sourceKey
+      }
+    }
   });
 }
 
 async function createFacility(
   context: SeedContext,
   facility: Facility,
-  payloadHash: string,
+  payloadHash: string
 ): Promise<string> {
   const { batchId, database, fixture, scheduleByCode, serviceIdBySlug } = context;
   const businessId = randomUUID();
@@ -239,7 +218,7 @@ async function createFacility(
   const schedule = requireMapValue(
     scheduleByCode,
     primaryLocation.openingHoursScheduleCode,
-    "opening schedule",
+    "opening schedule"
   );
 
   await database.$transaction(async (transaction) => {
@@ -252,8 +231,8 @@ async function createFacility(
         source: business.source,
         status: business.status,
         verificationStatus: business.verificationStatus,
-        approvedAt: new Date(),
-      },
+        approvedAt: new Date()
+      }
     });
 
     await transaction.businessLocation.create({
@@ -273,16 +252,14 @@ async function createFacility(
         status: primaryLocation.status,
         isPrimary: primaryLocation.isPrimary,
         openingPeriods: {
-          create: createOpeningPeriods(schedule),
+          create: createOpeningPeriods(schedule)
         },
         services: {
-          create: createLocationServiceRows(
-            locationId,
-            primaryLocation.serviceSlugs,
-            serviceIdBySlug,
-          ).map(({ serviceId }) => ({ serviceId })),
-        },
-      },
+          create: createLocationServiceRows(locationId, primaryLocation.serviceSlugs, serviceIdBySlug).map(
+            ({ serviceId }) => ({ serviceId })
+          )
+        }
+      }
     });
 
     await transaction.importedRecord.create({
@@ -294,8 +271,8 @@ async function createFacility(
         sourceRow: facility.sourceRow,
         payloadHash,
         entityType: importedFacilityEntityType,
-        entityId: locationId,
-      },
+        entityId: locationId
+      }
     });
   });
 
@@ -307,14 +284,14 @@ async function updateFacility(
   facility: Facility,
   location: { businessId: string; id: string },
   importedRecordId: string,
-  payloadHash: string,
+  payloadHash: string
 ): Promise<void> {
   const { batchId, database, scheduleByCode, serviceIdBySlug } = context;
   const { business, primaryLocation } = facility;
   const schedule = requireMapValue(
     scheduleByCode,
     primaryLocation.openingHoursScheduleCode,
-    "opening schedule",
+    "opening schedule"
   );
 
   await database.$transaction(async (transaction) => {
@@ -323,16 +300,16 @@ async function updateFacility(
       data: {
         displayName: business.displayName,
         source: business.source,
-        verificationStatus: business.verificationStatus,
-      },
+        verificationStatus: business.verificationStatus
+      }
     });
 
     await transaction.business.updateMany({
       where: {
         id: location.businessId,
-        legalName: null,
+        legalName: null
       },
-      data: { legalName: business.legalName },
+      data: { legalName: business.legalName }
     });
 
     await transaction.businessLocation.update({
@@ -347,29 +324,25 @@ async function updateFacility(
         county: primaryLocation.county,
         cityOrTown: primaryLocation.cityOrTown,
         timezone: primaryLocation.timezone,
-        isPrimary: primaryLocation.isPrimary,
-      },
+        isPrimary: primaryLocation.isPrimary
+      }
     });
 
     await transaction.businessLocationOpeningPeriod.deleteMany({
-      where: { businessLocationId: location.id },
+      where: { businessLocationId: location.id }
     });
     await transaction.businessLocationOpeningPeriod.createMany({
       data: createOpeningPeriods(schedule).map((period) => ({
         businessLocationId: location.id,
-        ...period,
-      })),
+        ...period
+      }))
     });
 
     await transaction.businessLocationService.deleteMany({
-      where: { businessLocationId: location.id },
+      where: { businessLocationId: location.id }
     });
     await transaction.businessLocationService.createMany({
-      data: createLocationServiceRows(
-        location.id,
-        primaryLocation.serviceSlugs,
-        serviceIdBySlug,
-      ),
+      data: createLocationServiceRows(location.id, primaryLocation.serviceSlugs, serviceIdBySlug)
     });
 
     await transaction.importedRecord.update({
@@ -379,15 +352,13 @@ async function updateFacility(
         sourceSheet: facility.sourceSheet,
         sourceRow: facility.sourceRow,
         payloadHash,
-        entityId: location.id,
-      },
+        entityId: location.id
+      }
     });
   });
 }
 
-async function seedFacilities(
-  context: SeedContext,
-): Promise<{
+async function seedFacilities(context: SeedContext): Promise<{
   created: number;
   locationIdBySourceKey: Map<string, string>;
   unchanged: number;
@@ -401,11 +372,7 @@ async function seedFacilities(
 
   for (const facility of fixture.facilities) {
     const payloadHash = createPayloadHash(facility);
-    const importedRecord = await findImportedRecord(
-      database,
-      fixture.source.name,
-      facility.sourceKey,
-    );
+    const importedRecord = await findImportedRecord(database, fixture.source.name, facility.sourceKey);
 
     if (!importedRecord) {
       const locationId = await createFacility(context, facility, payloadHash);
@@ -415,20 +382,16 @@ async function seedFacilities(
     }
 
     if (importedRecord.entityType !== importedFacilityEntityType) {
-      throw new Error(
-        `${facility.sourceKey} is not mapped to a business location.`,
-      );
+      throw new Error(`${facility.sourceKey} is not mapped to a business location.`);
     }
 
     const location = await database.businessLocation.findUnique({
       where: { id: importedRecord.entityId },
-      select: { id: true, businessId: true },
+      select: { id: true, businessId: true }
     });
 
     if (!location) {
-      throw new Error(
-        `Imported facility ${facility.sourceKey} points to a missing location.`,
-      );
+      throw new Error(`Imported facility ${facility.sourceKey} points to a missing location.`);
     }
 
     locationIdBySourceKey.set(facility.sourceKey, location.id);
@@ -438,13 +401,7 @@ async function seedFacilities(
       continue;
     }
 
-    await updateFacility(
-      context,
-      facility,
-      location,
-      importedRecord.id,
-      payloadHash,
-    );
+    await updateFacility(context, facility, location, importedRecord.id, payloadHash);
     updated += 1;
   }
 
@@ -454,7 +411,7 @@ async function seedFacilities(
 async function createProfessional(
   transaction: Prisma.TransactionClient,
   professional: Professional,
-  businessLocationId: string,
+  businessLocationId: string
 ) {
   return transaction.businessStaffMember.create({
     data: {
@@ -467,14 +424,14 @@ async function createProfessional(
       yearsExperience: professional.yearsExperience,
       isPublic: professional.isPublic,
       verificationStatus: professional.verificationStatus,
-      source: professional.source,
-    },
+      source: professional.source
+    }
   });
 }
 
 async function seedProfessionals(
   context: SeedContext,
-  locationIdBySourceKey: ReadonlyMap<string, string>,
+  locationIdBySourceKey: ReadonlyMap<string, string>
 ): Promise<{ created: number; unchanged: number; updated: number }> {
   const { batchId, database, fixture } = context;
   let created = 0;
@@ -485,22 +442,14 @@ async function seedProfessionals(
     const businessLocationId = requireMapValue(
       locationIdBySourceKey,
       professional.facilitySourceKey,
-      "business location for professional",
+      "business location for professional"
     );
     const payloadHash = createPayloadHash(professional);
-    const importedRecord = await findImportedRecord(
-      database,
-      fixture.source.name,
-      professional.sourceKey,
-    );
+    const importedRecord = await findImportedRecord(database, fixture.source.name, professional.sourceKey);
 
     if (!importedRecord) {
       await database.$transaction(async (transaction) => {
-        const staffMember = await createProfessional(
-          transaction,
-          professional,
-          businessLocationId,
-        );
+        const staffMember = await createProfessional(transaction, professional, businessLocationId);
 
         await transaction.importedRecord.create({
           data: {
@@ -511,8 +460,8 @@ async function seedProfessionals(
             sourceRow: professional.sourceRow,
             payloadHash,
             entityType: importedProfessionalEntityType,
-            entityId: staffMember.id,
-          },
+            entityId: staffMember.id
+          }
         });
       });
       created += 1;
@@ -520,20 +469,16 @@ async function seedProfessionals(
     }
 
     if (importedRecord.entityType !== importedProfessionalEntityType) {
-      throw new Error(
-        `${professional.sourceKey} is not mapped to a staff member.`,
-      );
+      throw new Error(`${professional.sourceKey} is not mapped to a staff member.`);
     }
 
     const staffMember = await database.businessStaffMember.findUnique({
       where: { id: importedRecord.entityId },
-      select: { id: true },
+      select: { id: true }
     });
 
     if (!staffMember) {
-      throw new Error(
-        `Imported professional ${professional.sourceKey} points to missing staff.`,
-      );
+      throw new Error(`Imported professional ${professional.sourceKey} points to missing staff.`);
     }
 
     if (importedRecord.payloadHash === payloadHash) {
@@ -552,8 +497,8 @@ async function seedProfessionals(
           phone: professional.phone,
           email: professional.email,
           yearsExperience: professional.yearsExperience,
-          source: professional.source,
-        },
+          source: professional.source
+        }
       });
 
       await transaction.importedRecord.update({
@@ -563,8 +508,8 @@ async function seedProfessionals(
           sourceSheet: professional.sourceSheet,
           sourceRow: professional.sourceRow,
           payloadHash,
-          entityId: staffMember.id,
-        },
+          entityId: staffMember.id
+        }
       });
     });
     updated += 1;
@@ -575,7 +520,7 @@ async function seedProfessionals(
 
 export async function seedLiberiaHealthcareDirectory(
   database: DatabaseClient,
-  fixture: LiberiaHealthcareSeedFixture,
+  fixture: LiberiaHealthcareSeedFixture
 ): Promise<LiberiaHealthcareSeedResult> {
   const batch = await startImportBatch(database, fixture);
 
@@ -587,25 +532,19 @@ export async function seedLiberiaHealthcareDirectory(
       database,
       fixture,
       scheduleByCode: new Map(
-        fixture.catalogs.openingHourSchedules.map((schedule) => [
-          schedule.code,
-          schedule,
-        ]),
+        fixture.catalogs.openingHourSchedules.map((schedule) => [schedule.code, schedule])
       ),
-      serviceIdBySlug,
+      serviceIdBySlug
     };
     const facilities = await seedFacilities(context);
-    const professionals = await seedProfessionals(
-      context,
-      facilities.locationIdBySourceKey,
-    );
+    const professionals = await seedProfessionals(context, facilities.locationIdBySourceKey);
 
     await database.importBatch.update({
       where: { id: batch.id },
       data: {
         status: "COMPLETED",
-        completedAt: new Date(),
-      },
+        completedAt: new Date()
+      }
     });
 
     return {
@@ -617,15 +556,15 @@ export async function seedLiberiaHealthcareDirectory(
       facilitiesUnchanged: facilities.unchanged,
       professionalsCreated: professionals.created,
       professionalsUpdated: professionals.updated,
-      professionalsUnchanged: professionals.unchanged,
+      professionalsUnchanged: professionals.unchanged
     };
   } catch (error) {
     await database.importBatch.update({
       where: { id: batch.id },
       data: {
         status: "FAILED",
-        completedAt: new Date(),
-      },
+        completedAt: new Date()
+      }
     });
     throw error;
   }

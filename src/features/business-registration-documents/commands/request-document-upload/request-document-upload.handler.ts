@@ -11,15 +11,11 @@ import type { requestBusinessRegistrationDocumentUploadContract } from "./reques
 
 const signedUploadLifetimeMilliseconds = 2 * 60 * 60 * 1_000;
 
-export function createRequestBusinessRegistrationDocumentUploadHandler(
-  dependencies: {
-    businessRegistrationsBucket: string;
-    database: DatabaseClient;
-    objectStorage: ObjectStorage;
-  },
-): AppRouteMutationImplementation<
-  typeof requestBusinessRegistrationDocumentUploadContract
-> {
+export function createRequestBusinessRegistrationDocumentUploadHandler(dependencies: {
+  businessRegistrationsBucket: string;
+  database: DatabaseClient;
+  objectStorage: ObjectStorage;
+}): AppRouteMutationImplementation<typeof requestBusinessRegistrationDocumentUploadContract> {
   return async ({ body, params, req }) => {
     const ownerUserId = requireAuthenticatedPrincipal(req, "user").subjectId;
 
@@ -30,10 +26,10 @@ export function createRequestBusinessRegistrationDocumentUploadHandler(
         status: "PENDING_APPROVAL",
         registrationDocumentKey: null,
         memberships: {
-          some: { userId: ownerUserId },
-        },
+          some: { userId: ownerUserId }
+        }
       },
-      select: { id: true },
+      select: { id: true }
     });
 
     if (!business) {
@@ -42,7 +38,7 @@ export function createRequestBusinessRegistrationDocumentUploadHandler(
         message:
           "The business does not exist, is not managed by you, or already has a registration document.",
         statusCode: 404,
-        title: "Business registration document unavailable",
+        title: "Business registration document unavailable"
       });
     }
 
@@ -51,11 +47,9 @@ export function createRequestBusinessRegistrationDocumentUploadHandler(
       businessId: business.id,
       documentId,
       mimeType: body.mimeType,
-      userId: ownerUserId,
+      userId: ownerUserId
     });
-    const uploadExpiresAt = new Date(
-      Date.now() + signedUploadLifetimeMilliseconds,
-    );
+    const uploadExpiresAt = new Date(Date.now() + signedUploadLifetimeMilliseconds);
 
     await dependencies.database.businessRegistrationDocument.create({
       data: {
@@ -67,16 +61,15 @@ export function createRequestBusinessRegistrationDocumentUploadHandler(
         originalFileName: body.fileName.trim(),
         declaredMimeType: body.mimeType,
         declaredSizeBytes: body.sizeBytes,
-        uploadExpiresAt,
-      },
+        uploadExpiresAt
+      }
     });
 
     try {
-      const authorization =
-        await dependencies.objectStorage.createSignedUploadAuthorization(
-          dependencies.businessRegistrationsBucket,
-          objectKey,
-        );
+      const authorization = await dependencies.objectStorage.createSignedUploadAuthorization(
+        dependencies.businessRegistrationsBucket,
+        objectKey
+      );
 
       return {
         status: 201,
@@ -85,12 +78,12 @@ export function createRequestBusinessRegistrationDocumentUploadHandler(
           bucket: dependencies.businessRegistrationsBucket,
           path: authorization.path,
           token: authorization.token,
-          expiresAt: uploadExpiresAt.toISOString(),
-        },
+          expiresAt: uploadExpiresAt.toISOString()
+        }
       };
     } catch (cause) {
       await dependencies.database.businessRegistrationDocument.delete({
-        where: { id: documentId },
+        where: { id: documentId }
       });
 
       throw new AppError({
@@ -98,7 +91,7 @@ export function createRequestBusinessRegistrationDocumentUploadHandler(
         code: "document_storage_unavailable",
         message: "The registration-document upload could not be authorized.",
         statusCode: 503,
-        title: "Document storage unavailable",
+        title: "Document storage unavailable"
       });
     }
   };

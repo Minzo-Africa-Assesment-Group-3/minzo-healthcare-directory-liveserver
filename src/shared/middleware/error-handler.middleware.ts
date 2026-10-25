@@ -8,9 +8,7 @@ interface RequestParsingError extends Error {
   type: string;
 }
 
-function isRequestParsingError(
-  error: unknown,
-): error is RequestParsingError {
+function isRequestParsingError(error: unknown): error is RequestParsingError {
   return (
     error instanceof Error &&
     "status" in error &&
@@ -20,12 +18,7 @@ function isRequestParsingError(
   );
 }
 
-export const errorHandler: ErrorRequestHandler = (
-  error: unknown,
-  request,
-  response,
-  next,
-) => {
+export const errorHandler: ErrorRequestHandler = (error: unknown, request, response, next) => {
   if (response.headersSent) {
     next(error);
 
@@ -37,47 +30,35 @@ export const errorHandler: ErrorRequestHandler = (
       response.err = error;
     }
 
-    sendProblemDetails(
-      request,
-      response,
-      {
-        code: error.code,
-        detail: error.message,
-        extensions: error.extensions,
-        statusCode: error.statusCode,
-        title: error.title,
-        type: error.type,
-      },
-    );
+    sendProblemDetails(request, response, {
+      code: error.code,
+      detail: error.message,
+      extensions: error.extensions,
+      statusCode: error.statusCode,
+      title: error.title,
+      type: error.type
+    });
 
     return;
   }
 
   if (isRequestParsingError(error)) {
     if (error.type === "entity.parse.failed") {
-      sendProblemDetails(
-        request,
-        response,
-        {
-          code: "invalid_json",
-          detail: "Request body contains invalid JSON",
-          statusCode: 400,
-        },
-      );
+      sendProblemDetails(request, response, {
+        code: "invalid_json",
+        detail: "Request body contains invalid JSON",
+        statusCode: 400
+      });
 
       return;
     }
 
     if (error.type === "entity.too.large") {
-      sendProblemDetails(
-        request,
-        response,
-        {
-          code: "payload_too_large",
-          detail: "Request body exceeds the allowed size",
-          statusCode: 413,
-        },
-      );
+      sendProblemDetails(request, response, {
+        code: "payload_too_large",
+        detail: "Request body exceeds the allowed size",
+        statusCode: 413
+      });
 
       return;
     }
@@ -87,18 +68,14 @@ export const errorHandler: ErrorRequestHandler = (
     error instanceof Error
       ? error
       : new Error("A non-Error value was thrown", {
-          cause: error,
+          cause: error
         });
 
   response.err = unexpectedError;
 
-  sendProblemDetails(
-    request,
-    response,
-    {
-      code: "internal_server_error",
-      detail: "An unexpected error occurred",
-      statusCode: 500,
-    },
-  );
+  sendProblemDetails(request, response, {
+    code: "internal_server_error",
+    detail: "An unexpected error occurred",
+    statusCode: 500
+  });
 };

@@ -12,16 +12,12 @@ const businessLocationSchema = z
     county: z.string().trim().min(2).max(100),
     cityOrTown: z.string().trim().min(2).max(100),
     latitude: z.number().min(-90).max(90).optional(),
-    longitude: z.number().min(-180).max(180).optional(),
+    longitude: z.number().min(-180).max(180).optional()
   })
-  .refine(
-    ({ latitude, longitude }) =>
-      (latitude === undefined) === (longitude === undefined),
-    {
-      message: "Latitude and longitude must be provided together.",
-      path: ["latitude"],
-    },
-  );
+  .refine(({ latitude, longitude }) => (latitude === undefined) === (longitude === undefined), {
+    message: "Latitude and longitude must be provided together.",
+    path: ["latitude"]
+  });
 
 const dayOfWeekSchema = z.enum([
   "MONDAY",
@@ -30,17 +26,15 @@ const dayOfWeekSchema = z.enum([
   "THURSDAY",
   "FRIDAY",
   "SATURDAY",
-  "SUNDAY",
+  "SUNDAY"
 ]);
 
-const localTimeSchema = z
-  .string()
-  .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Time must use HH:mm format.");
+const localTimeSchema = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Time must use HH:mm format.");
 
 const openingPeriodSchema = z.object({
   opensAt: localTimeSchema,
   closesAt: localTimeSchema,
-  closesNextDay: z.boolean().default(false),
+  closesNextDay: z.boolean().default(false)
 });
 
 function timeToMinutes(time: string): number {
@@ -63,13 +57,13 @@ const dailyOpeningHoursSchema = z
     dayOfWeek: dayOfWeekSchema,
     isClosed: z.boolean().default(false),
     is24Hours: z.boolean().default(false),
-    periods: z.array(openingPeriodSchema).max(4).default([]),
+    periods: z.array(openingPeriodSchema).max(4).default([])
   })
   .superRefine((schedule, context) => {
     if (schedule.isClosed && schedule.is24Hours) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "A day cannot be both closed and open for 24 hours.",
+        message: "A day cannot be both closed and open for 24 hours."
       });
     }
 
@@ -77,7 +71,7 @@ const dailyOpeningHoursSchema = z
       context.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Closed and 24-hour days must not include time periods.",
-        path: ["periods"],
+        path: ["periods"]
       });
     }
 
@@ -85,22 +79,20 @@ const dailyOpeningHoursSchema = z
       context.addIssue({
         code: z.ZodIssueCode.custom,
         message: "An operating day must include at least one time period.",
-        path: ["periods"],
+        path: ["periods"]
       });
     }
 
     const periods = schedule.periods
       .map((period, index) => {
         const opensAt = timeToMinutes(period.opensAt);
-        const closesAt =
-          timeToMinutes(period.closesAt) +
-          (period.closesNextDay ? 24 * 60 : 0);
+        const closesAt = timeToMinutes(period.closesAt) + (period.closesNextDay ? 24 * 60 : 0);
 
         if (closesAt <= opensAt) {
           context.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Closing time must be after opening time.",
-            path: ["periods", index, "closesAt"],
+            path: ["periods", index, "closesAt"]
           });
         }
 
@@ -120,7 +112,7 @@ const dailyOpeningHoursSchema = z
         context.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Opening periods for the same day must not overlap.",
-          path: ["periods", currentPeriod.index],
+          path: ["periods", currentPeriod.index]
         });
       }
     }
@@ -131,7 +123,7 @@ const weeklyOpeningHoursSchema = z
   .max(7)
   .refine(
     (days) => new Set(days.map((day) => day.dayOfWeek)).size === days.length,
-    "Opening hours must not contain duplicate days.",
+    "Opening hours must not contain duplicate days."
   )
   .optional();
 
@@ -144,13 +136,13 @@ const businessStaffMemberSchema = z.object({
     "PHARMACIST",
     "PEDIATRICIAN",
     "OPHTHALMOLOGIST",
-    "OTHER",
+    "OTHER"
   ]),
   professionalTitle: z.string().trim().min(2).max(100).optional(),
   phone: z.string().trim().min(7).max(30).optional(),
   email: z.string().trim().email().max(320).optional(),
   yearsExperience: z.number().int().min(0).max(100).optional(),
-  isPublic: z.boolean().default(true),
+  isPublic: z.boolean().default(true)
 });
 
 export const registerBusinessBodySchema = z.object({
@@ -158,14 +150,14 @@ export const registerBusinessBodySchema = z.object({
     email: z.string().trim().email().max(320),
     password: z.string().min(12).max(128),
     displayName: z.string().trim().min(2).max(100),
-    phone: z.string().trim().min(7).max(30).optional(),
+    phone: z.string().trim().min(7).max(30).optional()
   }),
   business: z
     .object({
       displayName: z.string().trim().min(2).max(200),
       legalName: z.string().trim().min(2).max(200),
       registrationNumber: z.string().trim().min(2).max(100).optional(),
-      membershipRole: z.enum(["OWNER", "MANAGER"]),
+      membershipRole: z.enum(["OWNER", "MANAGER"])
     })
     .strict(),
   primaryLocation: z.object({
@@ -185,13 +177,11 @@ export const registerBusinessBodySchema = z.object({
     location: businessLocationSchema,
     openingHours: weeklyOpeningHoursSchema,
     services: businessServiceNamesSchema.optional(),
-    staffMembers: z.array(businessStaffMemberSchema).max(100).optional(),
-  }),
+    staffMembers: z.array(businessStaffMemberSchema).max(100).optional()
+  })
 });
 
-export type RegisterBusinessBody = z.infer<
-  typeof registerBusinessBodySchema
->;
+export type RegisterBusinessBody = z.infer<typeof registerBusinessBodySchema>;
 
 export const registerBusinessContract = contract.mutation({
   method: "POST",
@@ -208,7 +198,7 @@ export const registerBusinessContract = contract.mutation({
         id: z.string().uuid(),
         email: z.string().email(),
         displayName: z.string(),
-        status: z.literal("PENDING_VERIFICATION"),
+        status: z.literal("PENDING_VERIFICATION")
       }),
       business: z.object({
         id: z.string().uuid(),
@@ -216,21 +206,21 @@ export const registerBusinessContract = contract.mutation({
         legalName: z.string(),
         slug: z.string(),
         status: z.literal("PENDING_APPROVAL"),
-        membershipRole: z.enum(["OWNER", "MANAGER"]),
+        membershipRole: z.enum(["OWNER", "MANAGER"])
       }),
       primaryLocation: z.object({
         id: z.string().uuid(),
         name: z.string(),
         slug: z.string(),
         status: z.literal("DRAFT"),
-        isPrimary: z.literal(true),
-      }),
+        isPrimary: z.literal(true)
+      })
     }),
     409: problemDetailsSchema,
-    503: problemDetailsSchema,
+    503: problemDetailsSchema
   },
   metadata: {
     authentication: "public",
-    openApiTags: ["Authentication"],
-  },
+    openApiTags: ["Authentication"]
+  }
 });

@@ -1,7 +1,4 @@
-import {
-  verifiedImageExtension,
-  type VerifiedImageMimeType,
-} from "../../shared/images/verified-image.js";
+import { verifiedImageExtension, type VerifiedImageMimeType } from "../../shared/images/verified-image.js";
 
 export const maximumBusinessMediaItems = 10;
 export const signedMediaUploadLifetimeMilliseconds = 2 * 60 * 60 * 1_000;
@@ -17,6 +14,6 @@ export function createBusinessMediaObjectKey(options: {
     "business-media",
     options.businessId,
     options.batchId,
-    `${options.mediaId}.${verifiedImageExtension(options.mimeType)}`,
+    `${options.mediaId}.${verifiedImageExtension(options.mimeType)}`
   ].join("/");
 }

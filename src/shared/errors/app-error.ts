@@ -17,7 +17,7 @@ export class AppError extends Error {
 
   constructor(options: AppErrorOptions) {
     super(options.message, {
-      cause: options.cause,
+      cause: options.cause
     });
 
     this.name = "AppError";

@@ -10,21 +10,18 @@ export async function requireBusinessFeedbackViewer(options: {
     where: {
       userId_businessId: {
         businessId: options.businessId,
-        userId: options.userId,
-      },
+        userId: options.userId
+      }
     },
-    select: { role: true },
+    select: { role: true }
   });
 
-  if (
-    !membership ||
-    (membership.role !== "OWNER" && membership.role !== "MANAGER")
-  ) {
+  if (!membership || (membership.role !== "OWNER" && membership.role !== "MANAGER")) {
     throw new AppError({
       code: "permission_denied",
       message: "You are not allowed to view this business's review dashboard.",
       statusCode: 403,
-      title: "Permission denied",
+      title: "Permission denied"
     });
   }
 }

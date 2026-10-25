@@ -1,4 +1,1 @@
-export {
-  createApplicationDependencies,
-  type ApplicationDependencies,
-} from "./application-dependencies.js";
+export { createApplicationDependencies, type ApplicationDependencies } from "./application-dependencies.js";

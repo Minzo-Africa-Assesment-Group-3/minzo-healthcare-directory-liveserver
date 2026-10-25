@@ -6,7 +6,7 @@ import type { EmailSender } from "../infrastructure/email/index.js";
 import {
   createAccessTokenService,
   createLoginOtpService,
-  createRefreshTokenCookieService,
+  createRefreshTokenCookieService
 } from "../shared/authentication/index.js";
 
 interface CreateAuthPublicDependenciesOptions {
@@ -15,15 +15,12 @@ interface CreateAuthPublicDependenciesOptions {
   env: Environment;
 }
 
-type AuthPublicServiceDependencies = Omit<
-  AuthPublicRouteDependencies,
-  "rateLimiters"
->;
+type AuthPublicServiceDependencies = Omit<AuthPublicRouteDependencies, "rateLimiters">;
 
 export function createAuthPublicDependencies({
   database,
   emailSender,
-  env,
+  env
 }: CreateAuthPublicDependenciesOptions): AuthPublicServiceDependencies {
   const authEmail = createAuthEmailService(emailSender, env.FRONTEND_URL);
   const accessToken = createAccessTokenService({
@@ -31,16 +28,16 @@ export function createAuthPublicDependencies({
     issuer: env.JWT_ISSUER,
     realm: "user",
     secret: env.JWT_ACCESS_SECRET,
-    ttlSeconds: env.JWT_ACCESS_TOKEN_TTL_SECONDS,
+    ttlSeconds: env.JWT_ACCESS_TOKEN_TTL_SECONDS
   });
   const loginOtp = createLoginOtpService({
     secret: env.LOGIN_OTP_HMAC_SECRET,
-    ttlSeconds: env.LOGIN_OTP_TTL_SECONDS,
+    ttlSeconds: env.LOGIN_OTP_TTL_SECONDS
   });
   const refreshTokenCookie = createRefreshTokenCookieService({
     name: "refresh_token",
     path: "/api/v1/auth",
-    secure: env.NODE_ENV === "production",
+    secure: env.NODE_ENV === "production"
   });
 
   return {
@@ -52,6 +49,6 @@ export function createAuthPublicDependencies({
     maxOtpAttempts: env.LOGIN_OTP_MAX_ATTEMPTS,
     refreshTokenCookie,
     refreshTokenTtlSeconds: env.REFRESH_TOKEN_TTL_SECONDS,
-    verificationTokenTtlSeconds: env.EMAIL_VERIFICATION_TOKEN_TTL_SECONDS,
+    verificationTokenTtlSeconds: env.EMAIL_VERIFICATION_TOKEN_TTL_SECONDS
   };
 }

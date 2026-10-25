@@ -13,7 +13,7 @@ export function createModerateCustomerFeedbackHandler(dependencies: {
     const adminUserId = requireAuthenticatedPrincipal(req, "admin").subjectId;
     await requireCustomerFeedbackModerator({
       adminUserId,
-      database: dependencies.database,
+      database: dependencies.database
     });
 
     const result = await moderateCustomerFeedback({
@@ -21,7 +21,7 @@ export function createModerateCustomerFeedbackHandler(dependencies: {
       database: dependencies.database,
       decision: body.decision,
       reviewId: params.reviewId,
-      ...(body.reason !== undefined ? { reason: body.reason } : {}),
+      ...(body.reason !== undefined ? { reason: body.reason } : {})
     });
 
     return { status: 200, body: result };

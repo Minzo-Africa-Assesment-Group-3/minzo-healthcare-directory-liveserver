@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const paginationQuerySchema = z.object({
   pageNumber: z.coerce.number().int().min(1).default(1),
-  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  pageSize: z.coerce.number().int().min(1).max(100).default(20)
 });
 
 export const paginationMetadataSchema = z.object({
@@ -13,19 +13,15 @@ export const paginationMetadataSchema = z.object({
   hasNextPage: z.boolean(),
   hasPreviousPage: z.boolean(),
   nextPageUrl: z.string().nullable(),
-  previousPageUrl: z.string().nullable(),
+  previousPageUrl: z.string().nullable()
 });
 
-export function paginatedResponseSchema<TSchema extends z.ZodTypeAny>(
-  itemSchema: TSchema,
-) {
+export function paginatedResponseSchema<TSchema extends z.ZodTypeAny>(itemSchema: TSchema) {
   return z.object({
     data: z.array(itemSchema),
-    pagination: paginationMetadataSchema,
+    pagination: paginationMetadataSchema
   });
 }
 
 export type PaginationQuery = z.infer<typeof paginationQuerySchema>;
-export type PaginationMetadata = z.infer<
-  typeof paginationMetadataSchema
->;
+export type PaginationMetadata = z.infer<typeof paginationMetadataSchema>;

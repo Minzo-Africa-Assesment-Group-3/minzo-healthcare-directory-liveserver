@@ -27,7 +27,7 @@ export const businessClaimsContract = contract.router({
   listMine: listMyBusinessClaimsContract,
   listForAdmin: listBusinessClaimsContract,
   getEvidenceDownload: getClaimEvidenceDownloadContract,
-  moderate: reviewBusinessClaimContract,
+  moderate: reviewBusinessClaimContract
 });
 
 export interface BusinessClaimsRouteDependencies {
@@ -38,39 +38,36 @@ export interface BusinessClaimsRouteDependencies {
 
 export function createBusinessClaimsHandlers(
   dependencies: BusinessClaimsRouteDependencies,
-  {
-    admin: authenticateAdmin,
-    user: authenticateUser,
-  }: AuthenticationMiddlewares,
+  { admin: authenticateAdmin, user: authenticateUser }: AuthenticationMiddlewares
 ) {
   return {
     requestDocumentUpload: {
       middleware: [authenticateUser],
-      handler: createRequestClaimDocumentUploadHandler(dependencies),
+      handler: createRequestClaimDocumentUploadHandler(dependencies)
     },
     completeDocumentUpload: {
       middleware: [authenticateUser],
-      handler: createCompleteClaimDocumentUploadHandler(dependencies),
+      handler: createCompleteClaimDocumentUploadHandler(dependencies)
     },
     submit: {
       middleware: [authenticateUser],
-      handler: createSubmitBusinessClaimHandler(dependencies),
+      handler: createSubmitBusinessClaimHandler(dependencies)
     },
     listMine: {
       middleware: [authenticateUser],
-      handler: createListMyBusinessClaimsHandler(dependencies),
+      handler: createListMyBusinessClaimsHandler(dependencies)
     },
     listForAdmin: {
       middleware: [authenticateAdmin],
-      handler: createListBusinessClaimsHandler(dependencies),
+      handler: createListBusinessClaimsHandler(dependencies)
     },
     getEvidenceDownload: {
       middleware: [authenticateAdmin],
-      handler: createGetClaimEvidenceDownloadHandler(dependencies),
+      handler: createGetClaimEvidenceDownloadHandler(dependencies)
     },
     moderate: {
       middleware: [authenticateAdmin],
-      handler: createReviewBusinessClaimHandler(dependencies),
-    },
+      handler: createReviewBusinessClaimHandler(dependencies)
+    }
   };
 }

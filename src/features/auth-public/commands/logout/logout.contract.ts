@@ -10,10 +10,10 @@ export const logoutContract = contract.mutation({
   description: "Revokes the current refresh-token family and clears its cookie.",
   body: contract.noBody(),
   responses: {
-    204: contract.noBody(),
+    204: contract.noBody()
   },
   metadata: {
     authentication: "public",
-    openApiTags: ["Authentication"],
-  },
+    openApiTags: ["Authentication"]
+  }
 });

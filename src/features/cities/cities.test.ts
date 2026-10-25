@@ -16,22 +16,18 @@ describe("city search contract", () => {
     expect(
       searchCitiesContract.query.parse({
         countyId,
-        search: "mon",
-      }),
+        search: "mon"
+      })
     ).toEqual({
       countyId,
       search: "mon",
-      limit: 10,
+      limit: 10
     });
   });
 
   it("requires a county and at least two search characters", () => {
-    expect(() =>
-      searchCitiesContract.query.parse({ search: "mon" })
-    ).toThrow();
-    expect(() =>
-      searchCitiesContract.query.parse({ countyId, search: "m" })
-    ).toThrow();
+    expect(() => searchCitiesContract.query.parse({ search: "mon" })).toThrow();
+    expect(() => searchCitiesContract.query.parse({ countyId, search: "m" })).toThrow();
   });
 });
 
@@ -48,23 +44,21 @@ describe("public city search endpoint", () => {
               id: cityId,
               countyId,
               name: "Monrovia",
-              slug: "monrovia",
-            },
+              slug: "monrovia"
+            }
           ];
-        },
-      },
+        }
+      }
     } as unknown as DatabaseClient;
     const routes = createTestRouteDependencies();
     routes.cities.database = database;
     const app = createApp({
       ...createTestHttpDependencies(),
       logger: createLogger({ environment: "test", level: "silent" }),
-      routes,
+      routes
     });
 
-    const response = await request(app).get(
-      `/api/v1/cities?countyId=${countyId}&search=mon&limit=5`,
-    );
+    const response = await request(app).get(`/api/v1/cities?countyId=${countyId}&search=mon&limit=5`);
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
@@ -73,9 +67,9 @@ describe("public city search endpoint", () => {
           id: cityId,
           countyId,
           name: "Monrovia",
-          slug: "monrovia",
-        },
-      ],
+          slug: "monrovia"
+        }
+      ]
     });
     expect(findManyQuery).toMatchObject({
       take: 5,
@@ -83,8 +77,8 @@ describe("public city search endpoint", () => {
         countyId,
         county: { isActive: true },
         isActive: true,
-        name: { contains: "mon", mode: "insensitive" },
-      },
+        name: { contains: "mon", mode: "insensitive" }
+      }
     });
   });
 
@@ -92,17 +86,15 @@ describe("public city search endpoint", () => {
     const app = createApp({
       ...createTestHttpDependencies(),
       logger: createLogger({ environment: "test", level: "silent" }),
-      routes: createTestRouteDependencies(),
+      routes: createTestRouteDependencies()
     });
 
-    const response = await request(app).get(
-      "/api/v1/cities?search=mon",
-    );
+    const response = await request(app).get("/api/v1/cities?search=mon");
 
     expect(response.status).toBe(400);
     expect(response.body).toMatchObject({
       code: "request_validation_failed",
-      status: 400,
+      status: 400
     });
   });
 });

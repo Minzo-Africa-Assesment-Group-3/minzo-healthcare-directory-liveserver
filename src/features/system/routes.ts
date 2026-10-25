@@ -6,9 +6,9 @@ import { getHealthHandler } from "./queries/get-health/get-health.handler.js";
 const contract = initContract();
 
 export const systemContract = contract.router({
-  getHealth: getHealthContract,
+  getHealth: getHealthContract
 });
 
 export const systemHandlers = {
-  getHealth: getHealthHandler,
+  getHealth: getHealthHandler
 };

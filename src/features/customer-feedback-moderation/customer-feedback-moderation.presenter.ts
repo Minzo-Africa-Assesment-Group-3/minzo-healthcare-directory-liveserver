@@ -1,8 +1,6 @@
 import type { CustomerFeedbackModerationListRecord } from "./customer-feedback-moderation.select.js";
 
-export function presentCustomerFeedbackModerationListItem(
-  feedback: CustomerFeedbackModerationListRecord,
-) {
+export function presentCustomerFeedbackModerationListItem(feedback: CustomerFeedbackModerationListRecord) {
   const lastModeration = feedback.moderationActions[0];
 
   return {
@@ -20,7 +18,8 @@ export function presentCustomerFeedbackModerationListItem(
       ? {
           ...lastModeration,
           createdAt: lastModeration.createdAt.toISOString(),
+          moderatedBy: lastModeration.actorType === "ADMIN" ? ("MINZO_ADMIN" as const) : ("AI" as const)
         }
-      : null,
+      : null
   };
 }

@@ -14,25 +14,22 @@ export function createSearchCitiesHandler(dependencies: {
         county: { isActive: true },
         name: {
           contains: query.search,
-          mode: "insensitive",
-        },
+          mode: "insensitive"
+        }
       },
-      orderBy: [
-        { name: "asc" },
-        { id: "asc" },
-      ],
+      orderBy: [{ name: "asc" }, { id: "asc" }],
       take: query.limit,
       select: {
         id: true,
         countyId: true,
         name: true,
-        slug: true,
-      },
+        slug: true
+      }
     });
 
     return {
       status: 200,
-      body: { data: cities },
+      body: { data: cities }
     };
   };
 }

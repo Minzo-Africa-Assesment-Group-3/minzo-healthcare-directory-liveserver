@@ -12,7 +12,7 @@ export interface PublicBusinessMediaUrl {
 }
 
 function coordinateToNumber(
-  coordinate: PublicBusinessProfileRecord["locations"][number]["latitude"],
+  coordinate: PublicBusinessProfileRecord["locations"][number]["latitude"]
 ): number | null {
   return coordinate === null ? null : Number(coordinate);
 }
@@ -29,17 +29,15 @@ function minutesAfterMidnightToTime(minutes: number): string {
 export function presentPublicBusinessProfile(
   business: PublicBusinessProfileRecord,
   rating: PublicBusinessRating,
-  mediaUrls: readonly PublicBusinessMediaUrl[],
+  mediaUrls: readonly PublicBusinessMediaUrl[]
 ) {
-  const urlByMediaId = new Map(
-    mediaUrls.map(({ id, url }) => [id, url] as const),
-  );
+  const urlByMediaId = new Map(mediaUrls.map(({ id, url }) => [id, url] as const));
   const images = business.media.map((media) => ({
     id: media.id,
     url: urlByMediaId.get(media.id)!,
     altText: media.altText,
     isCover: media.isCover,
-    sortOrder: media.sortOrder,
+    sortOrder: media.sortOrder
   }));
 
   return {
@@ -52,12 +50,11 @@ export function presentPublicBusinessProfile(
     approvedAt: business.approvedAt?.toISOString() ?? null,
     rating: {
       ...rating,
-      ratingWindowMonths:
-        RATING_WINDOW_MONTHS as typeof RATING_WINDOW_MONTHS,
+      ratingWindowMonths: RATING_WINDOW_MONTHS as typeof RATING_WINDOW_MONTHS
     },
     gallery: {
       coverImage: images.find(({ isCover }) => isCover) ?? null,
-      images,
+      images
     },
     locations: business.locations.map((location) => ({
       id: location.id,
@@ -80,10 +77,10 @@ export function presentPublicBusinessProfile(
         dayOfWeek: period.dayOfWeek,
         opensAt: minutesAfterMidnightToTime(period.opensAtMinutes),
         closesAt: minutesAfterMidnightToTime(period.closesAtMinutes),
-        closesNextDay: period.closesNextDay,
+        closesNextDay: period.closesNextDay
       })),
       services: location.services.map(({ service }) => service),
-      professionals: location.staffMembers,
-    })),
+      professionals: location.staffMembers
+    }))
   };
 }
