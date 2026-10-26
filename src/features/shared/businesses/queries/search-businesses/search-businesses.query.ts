@@ -44,8 +44,8 @@ function hasTextSearch(query: SearchBusinessesQuery): query is TextSearchQuery {
 function createLocationFilter(query: SearchBusinessesQuery): Prisma.BusinessLocationWhereInput {
   return {
     status: "ACTIVE",
-    ...(query.county ? { county: { equals: query.county, mode: "insensitive" } } : {}),
-    ...(query.city ? { cityOrTown: { equals: query.city, mode: "insensitive" } } : {}),
+    ...(query.county ? { county: { contains: query.county, mode: "insensitive" } } : {}),
+    ...(query.city ? { cityOrTown: { contains: query.city, mode: "insensitive" } } : {}),
     ...(query.facilityType
       ? {
           facilityType: {
@@ -87,11 +87,15 @@ function createEligibleLocationConditions(query: SearchBusinessesQuery): Prisma.
   const conditions = [Prisma.sql`filter_location."status" = ${"ACTIVE"}::"BusinessLocationStatus"`];
 
   if (query.county) {
-    conditions.push(Prisma.sql`LOWER(filter_location."county") = LOWER(${query.county})`);
+    conditions.push(
+      Prisma.sql`filter_location."county" ILIKE ${`%${escapeLikePattern(query.county)}%`} ESCAPE '\\'`
+    );
   }
 
   if (query.city) {
-    conditions.push(Prisma.sql`LOWER(filter_location."city_or_town") = LOWER(${query.city})`);
+    conditions.push(
+      Prisma.sql`filter_location."city_or_town" ILIKE ${`%${escapeLikePattern(query.city)}%`} ESCAPE '\\'`
+    );
   }
 
   if (query.facilityType) {
@@ -362,11 +366,11 @@ function createProximityConditions(query: ProximitySearchQuery, searchPoint: Pri
   ];
 
   if (query.county) {
-    conditions.push(Prisma.sql`bl."county" ILIKE ${query.county}`);
+    conditions.push(Prisma.sql`bl."county" ILIKE ${`%${escapeLikePattern(query.county)}%`} ESCAPE '\\'`);
   }
 
   if (query.city) {
-    conditions.push(Prisma.sql`bl."city_or_town" ILIKE ${query.city}`);
+    conditions.push(Prisma.sql`bl."city_or_town" ILIKE ${`%${escapeLikePattern(query.city)}%`} ESCAPE '\\'`);
   }
 
   if (query.facilityType) {

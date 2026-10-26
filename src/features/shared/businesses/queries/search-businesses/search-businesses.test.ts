@@ -106,11 +106,11 @@ describe("business search contract", () => {
     );
   });
 
-  it("builds approved-business and active-location filters", () => {
+  it("builds partial county and city filters", () => {
     const query = searchBusinessesQuerySchema.parse({
       search: "clinic",
-      county: "Montserrado",
-      city: "Monrovia",
+      county: "Monts",
+      city: "Monro",
       facilityType: "Clinic",
       serviceId
     });
@@ -121,11 +121,11 @@ describe("business search contract", () => {
         some: {
           status: "ACTIVE",
           county: {
-            equals: "Montserrado",
+            contains: "Monts",
             mode: "insensitive"
           },
           cityOrTown: {
-            equals: "Monrovia",
+            contains: "Monro",
             mode: "insensitive"
           },
           facilityType: {

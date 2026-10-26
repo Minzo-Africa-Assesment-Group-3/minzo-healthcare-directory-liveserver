@@ -17,19 +17,17 @@ interface BusinessSearchPresentationOptions {
 
 type SearchLocation = BusinessSearchResultRecord["locations"][number];
 
-function normalizedEquals(value: string | null, expected: string | undefined): boolean {
+function normalizedContains(value: string | null, expected: string | undefined): boolean {
   return (
     expected === undefined ||
-    value?.localeCompare(expected, undefined, {
-      sensitivity: "accent"
-    }) === 0
+    value?.toLocaleLowerCase().includes(expected.toLocaleLowerCase()) === true
   );
 }
 
 function locationMatchesFilters(location: SearchLocation, query: SearchBusinessesQuery): boolean {
   return (
-    normalizedEquals(location.county, query.county) &&
-    normalizedEquals(location.cityOrTown, query.city) &&
+    normalizedContains(location.county, query.county) &&
+    normalizedContains(location.cityOrTown, query.city) &&
     (query.serviceId === undefined || location.services.some(({ service }) => service.id === query.serviceId))
   );
 }
