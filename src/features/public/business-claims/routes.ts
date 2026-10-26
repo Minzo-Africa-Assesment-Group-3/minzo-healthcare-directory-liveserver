@@ -13,6 +13,8 @@ import { submitBusinessClaimContract } from "./commands/submit-business-claim/su
 import { createSubmitBusinessClaimHandler } from "./commands/submit-business-claim/submit-business-claim.handler.js";
 import { getClaimEvidenceDownloadContract } from "./queries/get-claim-evidence-download/get-claim-evidence-download.contract.js";
 import { createGetClaimEvidenceDownloadHandler } from "./queries/get-claim-evidence-download/get-claim-evidence-download.handler.js";
+import { getBusinessClaimContract } from "./queries/get-business-claim/get-business-claim.contract.js";
+import { createGetBusinessClaimHandler } from "./queries/get-business-claim/get-business-claim.handler.js";
 import { listBusinessClaimsContract } from "./queries/list-business-claims/list-business-claims.contract.js";
 import { createListBusinessClaimsHandler } from "./queries/list-business-claims/list-business-claims.handler.js";
 import { listMyBusinessClaimsContract } from "./queries/list-my-business-claims/list-my-business-claims.contract.js";
@@ -26,6 +28,7 @@ export const businessClaimsContract = contract.router({
   submit: submitBusinessClaimContract,
   listMine: listMyBusinessClaimsContract,
   listForAdmin: listBusinessClaimsContract,
+  getForAdmin: getBusinessClaimContract,
   getEvidenceDownload: getClaimEvidenceDownloadContract,
   moderate: reviewBusinessClaimContract
 });
@@ -60,6 +63,10 @@ export function createBusinessClaimsHandlers(
     listForAdmin: {
       middleware: [authenticateAdmin],
       handler: createListBusinessClaimsHandler(dependencies)
+    },
+    getForAdmin: {
+      middleware: [authenticateAdmin],
+      handler: createGetBusinessClaimHandler(dependencies)
     },
     getEvidenceDownload: {
       middleware: [authenticateAdmin],
