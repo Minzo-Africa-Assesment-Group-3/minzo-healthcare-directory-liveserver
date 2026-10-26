@@ -12,7 +12,6 @@ import type { createTestRouteDependencies } from "./create-test-route-dependenci
 interface TestAppDependencies {
   routes: ReturnType<typeof createTestRouteDependencies>;
   logger: Logger;
-  apiRateLimiter: RequestHandler;
   corsMiddleware: RequestHandler;
   trustProxyHops: number;
 }
@@ -24,7 +23,6 @@ export function createApp(dependencies: TestAppDependencies) {
   app.set("trust proxy", dependencies.trustProxyHops);
   app.use(createHttpLogger(dependencies.logger));
   app.use(dependencies.corsMiddleware);
-  app.use("/api", dependencies.apiRateLimiter);
   app.use(express.json({ limit: "1mb" }));
   createExpressEndpoints(
     businessesContract,

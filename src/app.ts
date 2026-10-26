@@ -10,7 +10,6 @@ import { errorHandler } from "./shared/middleware/error-handler.middleware.js";
 import { notFoundHandler } from "./shared/middleware/not-found.middleware.js";
 
 interface AppDependencies {
-  apiRateLimiter: RequestHandler;
   corsMiddleware: RequestHandler;
   routes: ApplicationRouteDependencies;
   logger: Logger;
@@ -18,7 +17,6 @@ interface AppDependencies {
 }
 
 export function createApp({
-  apiRateLimiter,
   corsMiddleware,
   logger,
   routes,
@@ -34,7 +32,6 @@ export function createApp({
 
   app.use(createHttpLogger(logger));
   app.use(corsMiddleware);
-  app.use("/api", apiRateLimiter);
   app.use(express.json({ limit: "1mb" }));
   app.use(cookieParser());
 

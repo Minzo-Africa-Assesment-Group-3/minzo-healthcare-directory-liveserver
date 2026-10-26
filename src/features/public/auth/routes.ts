@@ -8,7 +8,6 @@ import type {
   LoginOtpService,
   RefreshTokenCookieService
 } from "../../../shared/authentication/index.js";
-import type { AuthPublicRateLimitMiddlewares } from "../../../shared/middleware/rate-limit.middleware.js";
 
 const contract = initContract();
 
@@ -35,42 +34,20 @@ export interface AuthPublicRouteDependencies {
   passwordResetTokenTtlSeconds: number;
   refreshTokenCookie: RefreshTokenCookieService;
   refreshTokenTtlSeconds: number;
-  rateLimiters: AuthPublicRateLimitMiddlewares;
   verificationTokenTtlSeconds: number;
 }
 
 export function createAuthPublicHandlers(dependencies: AuthPublicRouteDependencies) {
   return {
-    registerUser: {
-      middleware: [dependencies.rateLimiters.registration],
-      handler: commands.createRegisterUserHandler(dependencies)
-    },
-    registerBusiness: {
-      middleware: [dependencies.rateLimiters.registration],
-      handler: commands.createRegisterBusinessHandler(dependencies)
-    },
-    login: {
-      middleware: [dependencies.rateLimiters.credential],
-      handler: commands.createLoginHandler(dependencies)
-    },
+    registerUser: commands.createRegisterUserHandler(dependencies),
+    registerBusiness: commands.createRegisterBusinessHandler(dependencies),
+    login: commands.createLoginHandler(dependencies),
     refreshToken: commands.createRefreshTokenHandler(dependencies),
     logout: commands.createLogoutHandler(dependencies),
-    requestPasswordReset: {
-      middleware: [dependencies.rateLimiters.credential],
-      handler: commands.createRequestPasswordResetHandler(dependencies)
-    },
-    resetPassword: {
-      middleware: [dependencies.rateLimiters.credential],
-      handler: commands.createResetPasswordHandler(dependencies)
-    },
+    requestPasswordReset: commands.createRequestPasswordResetHandler(dependencies),
+    resetPassword: commands.createResetPasswordHandler(dependencies),
     verifyEmail: commands.createVerifyEmailHandler(dependencies),
-    resendVerification: {
-      middleware: [dependencies.rateLimiters.registration],
-      handler: commands.createResendVerificationHandler(dependencies)
-    },
-    verifyLoginOtp: {
-      middleware: [dependencies.rateLimiters.credential],
-      handler: commands.createVerifyLoginOtpHandler(dependencies)
-    }
+    resendVerification: commands.createResendVerificationHandler(dependencies),
+    verifyLoginOtp: commands.createVerifyLoginOtpHandler(dependencies)
   };
 }

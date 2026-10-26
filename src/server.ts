@@ -21,7 +21,6 @@ async function startServer(): Promise<void> {
   logger.info("Background job queue started");
 
   const app = createApp({
-    apiRateLimiter: dependencies.apiRateLimiter,
     corsMiddleware: dependencies.corsMiddleware,
     logger,
     routes: dependencies.routes,

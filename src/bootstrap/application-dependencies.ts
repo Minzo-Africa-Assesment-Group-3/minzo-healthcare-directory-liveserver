@@ -13,13 +13,11 @@ import { createJobQueue } from "../infrastructure/queue/index.js";
 import { createSupabaseObjectStorage } from "../infrastructure/storage/index.js";
 import type { ApplicationRouteDependencies } from "../routes.js";
 import { createCorsMiddleware } from "../shared/middleware/cors.middleware.js";
-import { createRateLimitMiddlewares } from "../shared/middleware/rate-limit.middleware.js";
 import { createAuthPublicDependencies } from "./auth-public-dependencies.js";
 import { createAuthAdminDependencies } from "./auth-admin-dependencies.js";
 import { createBackgroundJobs, type BackgroundJobs } from "./background-jobs.js";
 
 export interface ApplicationDependencies {
-  apiRateLimiter: ReturnType<typeof createRateLimitMiddlewares>["api"];
   backgroundJobs: BackgroundJobs;
   corsMiddleware: ReturnType<typeof createCorsMiddleware>;
   database: DatabaseClient;
@@ -38,7 +36,6 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
     databaseUrl: env.DATABASE_URL,
     logger
   });
-  const rateLimiters = createRateLimitMiddlewares(env.RATE_LIMIT_MAX_REQUESTS, env.RATE_LIMIT_WINDOW_MS);
   const emailSender = createResendEmailSender({
     apiKey: env.RESEND_API_KEY,
     from: env.EMAIL_FROM
@@ -88,7 +85,6 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
   });
 
   return {
-    apiRateLimiter: rateLimiters.api,
     backgroundJobs: createBackgroundJobs({
       jobQueue,
       reviewModerationQueue,
@@ -109,14 +105,8 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
         database,
         userAccessToken: authPublic.accessToken
       },
-      authAdmin: {
-        ...authAdmin,
-        rateLimiters: rateLimiters.authAdmin
-      },
-      authPublic: {
-        ...authPublic,
-        rateLimiters: rateLimiters.authPublic
-      },
+      authAdmin,
+      authPublic,
       businessFollows: { database },
       businessModeration: {
         database,
@@ -147,8 +137,7 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
       },
       reviews: {
         database,
-        moderationQueue: reviewModerationQueue,
-        rateLimiters: rateLimiters.reviews
+        moderationQueue: reviewModerationQueue
       },
       services: { database }
     },

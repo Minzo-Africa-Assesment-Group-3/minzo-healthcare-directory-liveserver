@@ -15,13 +15,11 @@ interface CreateAuthAdminDependenciesOptions {
   env: Environment;
 }
 
-type AuthAdminServiceDependencies = Omit<AuthAdminRouteDependencies, "rateLimiters">;
-
 export function createAuthAdminDependencies({
   database,
   emailSender,
   env
-}: CreateAuthAdminDependenciesOptions): AuthAdminServiceDependencies {
+}: CreateAuthAdminDependenciesOptions): AuthAdminRouteDependencies {
   return {
     accessToken: createAccessTokenService({
       audience: env.ADMIN_JWT_AUDIENCE,

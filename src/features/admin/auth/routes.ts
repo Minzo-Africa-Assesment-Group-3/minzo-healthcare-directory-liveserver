@@ -8,7 +8,6 @@ import type {
 } from "../../../shared/authentication/index.js";
 import * as commands from "./commands/index.js";
 import type { AdminAuthEmailService } from "./services/index.js";
-import type { AuthAdminRateLimitMiddlewares } from "../../../shared/middleware/rate-limit.middleware.js";
 import type { AuthenticationMiddlewares } from "../../../shared/authentication/authentication.middleware.js";
 
 const contract = initContract();
@@ -32,7 +31,6 @@ export interface AuthAdminRouteDependencies {
   maxOtpAttempts: number;
   refreshTokenCookie: RefreshTokenCookieService;
   refreshTokenTtlSeconds: number;
-  rateLimiters: AuthAdminRateLimitMiddlewares;
 }
 
 export function createAuthAdminHandlers(
@@ -40,22 +38,13 @@ export function createAuthAdminHandlers(
   { admin: authenticateAdmin }: AuthenticationMiddlewares
 ) {
   return {
-    acceptInvitation: {
-      middleware: [dependencies.rateLimiters.credential],
-      handler: commands.createAcceptAdminInvitationHandler(dependencies)
-    },
+    acceptInvitation: commands.createAcceptAdminInvitationHandler(dependencies),
     invite: {
-      middleware: [authenticateAdmin, dependencies.rateLimiters.credential],
+      middleware: [authenticateAdmin],
       handler: commands.createInviteAdminHandler(dependencies)
     },
-    login: {
-      middleware: [dependencies.rateLimiters.credential],
-      handler: commands.createLoginAdminHandler(dependencies)
-    },
-    verifyLoginOtp: {
-      middleware: [dependencies.rateLimiters.credential],
-      handler: commands.createVerifyAdminLoginOtpHandler(dependencies)
-    },
+    login: commands.createLoginAdminHandler(dependencies),
+    verifyLoginOtp: commands.createVerifyAdminLoginOtpHandler(dependencies),
     refreshSession: commands.createRefreshAdminSessionHandler(dependencies),
     logout: commands.createLogoutAdminHandler(dependencies)
   };
