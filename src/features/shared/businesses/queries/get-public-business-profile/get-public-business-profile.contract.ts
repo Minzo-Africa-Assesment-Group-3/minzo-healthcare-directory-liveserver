@@ -66,6 +66,7 @@ export const publicBusinessProfileSchema = z.object({
   slug: z.string(),
   verificationStatus: z.enum(["UNVERIFIED", "VERIFIED"]),
   isClaimed: z.boolean(),
+  isFollowedByCurrentUser: z.boolean(),
   approvedAt: z.string().datetime().nullable(),
   rating: z.object({
     averageRating: z.number().min(1).max(5).nullable(),
@@ -96,7 +97,7 @@ export const getPublicBusinessProfileContract = contract.query({
     503: problemDetailsSchema
   },
   metadata: {
-    authentication: "public",
+    authentication: "optional-user-access-token",
     openApiTags: ["Businesses"]
   }
 });

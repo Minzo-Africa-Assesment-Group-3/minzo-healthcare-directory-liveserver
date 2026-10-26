@@ -66,6 +66,7 @@ export const businessSearchResultSchema = z.object({
   slug: z.string(),
   verificationStatus: z.enum(["UNVERIFIED", "VERIFIED"]),
   isClaimed: z.boolean(),
+  isFollowedByCurrentUser: z.boolean(),
   location: businessSearchLocationSchema,
   services: z.array(
     z.object({
@@ -95,7 +96,7 @@ export const searchBusinessesContract = contract.query({
     400: problemDetailsSchema
   },
   metadata: {
-    authentication: "public",
+    authentication: "optional-user-access-token",
     openApiTags: ["Businesses"]
   }
 });

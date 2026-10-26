@@ -34,11 +34,17 @@ export interface BusinessesRouteDependencies {
 
 export function createBusinessesHandlers(
   dependencies: BusinessesRouteDependencies,
-  { user: authenticateUser }: AuthenticationMiddlewares
+  { optionalUser: optionallyAuthenticateUser, user: authenticateUser }: AuthenticationMiddlewares
 ) {
   return {
-    getPublicProfile: createGetPublicBusinessProfileHandler(dependencies),
-    search: createSearchBusinessesHandler(dependencies),
+    getPublicProfile: {
+      middleware: [optionallyAuthenticateUser],
+      handler: createGetPublicBusinessProfileHandler(dependencies)
+    },
+    search: {
+      middleware: [optionallyAuthenticateUser],
+      handler: createSearchBusinessesHandler(dependencies)
+    },
     follow: {
       middleware: [authenticateUser],
       handler: createFollowBusinessHandler(dependencies)

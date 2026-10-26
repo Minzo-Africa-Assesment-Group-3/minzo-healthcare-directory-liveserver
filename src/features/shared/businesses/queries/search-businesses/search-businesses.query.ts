@@ -554,7 +554,11 @@ async function getRatingsByBusinessId(transaction: Prisma.TransactionClient, bus
   );
 }
 
-export async function searchBusinesses(database: DatabaseClient, query: SearchBusinessesQuery) {
+export async function searchBusinesses(
+  database: DatabaseClient,
+  query: SearchBusinessesQuery,
+  viewerUserId?: string
+) {
   return database.$transaction(async (transaction) => {
     const proximityMatches = hasProximity(query) ? await findProximityMatches(transaction, query) : null;
     const textSearchMatches =
@@ -595,6 +599,19 @@ export async function searchBusinesses(database: DatabaseClient, query: SearchBu
       transaction,
       orderedBusinesses.map(({ business }) => business.id)
     );
+    const followedBusinessIds = viewerUserId
+      ? new Set(
+          (
+            await transaction.businessFollow.findMany({
+              where: {
+                businessId: { in: orderedBusinesses.map(({ business }) => business.id) },
+                userId: viewerUserId
+              },
+              select: { businessId: true }
+            })
+          ).map(({ businessId }) => businessId)
+        )
+      : new Set<string>();
 
     return {
       totalItems,
@@ -605,6 +622,7 @@ export async function searchBusinesses(database: DatabaseClient, query: SearchBu
             averageRating: null,
             reviewCount: 0
           },
+          isFollowedByCurrentUser: followedBusinessIds.has(business.id),
           ...(match && isProximityBusinessRow(match)
             ? {
                 distanceMeters: match.distanceMeters,

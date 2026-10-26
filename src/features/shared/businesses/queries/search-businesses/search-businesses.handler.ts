@@ -9,7 +9,8 @@ export function createSearchBusinessesHandler(dependencies: {
   database: DatabaseClient;
 }): AppRouteQueryImplementation<typeof searchBusinessesContract> {
   return async ({ query, req }) => {
-    const result = await searchBusinesses(dependencies.database, query);
+    const viewerUserId = req.auth?.realm === "user" ? req.auth.subjectId : undefined;
+    const result = await searchBusinesses(dependencies.database, query, viewerUserId);
 
     return {
       status: 200,

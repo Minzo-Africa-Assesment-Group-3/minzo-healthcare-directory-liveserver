@@ -13,7 +13,8 @@ export function createGetPublicBusinessProfileHandler(dependencies: {
   database: DatabaseClient;
   objectStorage: ObjectStorage;
 }): AppRouteQueryImplementation<typeof getPublicBusinessProfileContract> {
-  return async ({ params }) => {
+  return async ({ params, req }) => {
+    const viewerUserId = req.auth?.realm === "user" ? req.auth.subjectId : undefined;
     const result = await dependencies.database.$transaction(async (transaction) => {
       const business = await transaction.business.findFirst({
         where: {
@@ -37,9 +38,21 @@ export function createGetPublicBusinessProfileHandler(dependencies: {
         _count: { _all: true }
       });
       const rawAverage = rating._avg.stars;
+      const follow = viewerUserId
+        ? await transaction.businessFollow.findUnique({
+            where: {
+              userId_businessId: {
+                businessId: business.id,
+                userId: viewerUserId
+              }
+            },
+            select: { businessId: true }
+          })
+        : null;
 
       return {
         business,
+        isFollowedByCurrentUser: follow !== null,
         rating: {
           averageRating: rawAverage === null ? null : Math.round(rawAverage * 100) / 100,
           reviewCount: rating._count._all
@@ -71,7 +84,12 @@ export function createGetPublicBusinessProfileHandler(dependencies: {
 
       return {
         status: 200,
-        body: presentPublicBusinessProfile(result.business, result.rating, mediaUrls)
+        body: presentPublicBusinessProfile(
+          result.business,
+          result.rating,
+          mediaUrls,
+          result.isFollowedByCurrentUser
+        )
       };
     } catch (cause) {
       throw new AppError({

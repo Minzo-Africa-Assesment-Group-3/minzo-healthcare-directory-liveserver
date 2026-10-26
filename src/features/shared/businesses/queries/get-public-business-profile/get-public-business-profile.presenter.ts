@@ -29,7 +29,8 @@ function minutesAfterMidnightToTime(minutes: number): string {
 export function presentPublicBusinessProfile(
   business: PublicBusinessProfileRecord,
   rating: PublicBusinessRating,
-  mediaUrls: readonly PublicBusinessMediaUrl[]
+  mediaUrls: readonly PublicBusinessMediaUrl[],
+  isFollowedByCurrentUser: boolean
 ) {
   const urlByMediaId = new Map(mediaUrls.map(({ id, url }) => [id, url] as const));
   const images = business.media.map((media) => ({
@@ -47,6 +48,7 @@ export function presentPublicBusinessProfile(
     slug: business.slug,
     verificationStatus: business.verificationStatus,
     isClaimed: business._count.memberships > 0,
+    isFollowedByCurrentUser,
     approvedAt: business.approvedAt?.toISOString() ?? null,
     rating: {
       ...rating,

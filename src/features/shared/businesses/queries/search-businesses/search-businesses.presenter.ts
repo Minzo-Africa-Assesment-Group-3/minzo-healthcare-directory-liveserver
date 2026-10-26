@@ -9,6 +9,7 @@ interface BusinessSearchRating {
 
 interface BusinessSearchPresentationOptions {
   distanceMeters?: number | undefined;
+  isFollowedByCurrentUser: boolean;
   nearestLocationId?: string | undefined;
   query: SearchBusinessesQuery;
   rating: BusinessSearchRating;
@@ -67,6 +68,7 @@ export function presentBusinessSearchResult(
     slug: business.slug,
     verificationStatus: business.verificationStatus,
     isClaimed: business._count.memberships > 0,
+    isFollowedByCurrentUser: options.isFollowedByCurrentUser,
     location: {
       id: location.id,
       name: location.name,
