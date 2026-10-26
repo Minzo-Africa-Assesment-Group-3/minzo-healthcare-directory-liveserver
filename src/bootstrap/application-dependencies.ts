@@ -101,6 +101,7 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
     routes: {
       adminAccessControl: { database },
       adminDashboard: { database },
+      adminDirectoryManagement: { database },
       assistant: { assistantClient },
       auditLogs: { database },
       authentication: {

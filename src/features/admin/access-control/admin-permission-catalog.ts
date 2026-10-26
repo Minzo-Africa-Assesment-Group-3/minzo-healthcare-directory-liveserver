@@ -24,6 +24,10 @@ export const adminPermissionCatalog = [
     description: "Review and moderate customer reviews."
   },
   {
+    name: "directory.manage",
+    description: "Manage the county and city directory catalogue."
+  },
+  {
     name: "dashboard.view",
     description: "View administration dashboard statistics."
   }

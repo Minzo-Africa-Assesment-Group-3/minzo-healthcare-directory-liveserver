@@ -44,6 +44,7 @@ export function createTestRouteDependencies() {
   return {
     adminAccessControl: { database: {} as DatabaseClient },
     adminDashboard: { database: {} as DatabaseClient },
+    adminDirectoryManagement: { database: {} as DatabaseClient },
     assistant: {
       assistantClient: {
         async sendMessage() {

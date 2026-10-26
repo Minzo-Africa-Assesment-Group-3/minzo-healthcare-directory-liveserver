@@ -23,6 +23,11 @@ import {
   type AdminAccessControlRouteDependencies
 } from "./features/admin/access-control/routes.js";
 import {
+  adminDirectoryManagementContract,
+  createAdminDirectoryManagementHandlers,
+  type AdminDirectoryManagementRouteDependencies
+} from "./features/admin/directory-management/routes.js";
+import {
   auditLogsContract,
   createAuditLogsHandlers,
   type AuditLogsRouteDependencies
@@ -100,6 +105,7 @@ const server = initServer();
 export const applicationContract = contract.router({
   adminAccessControl: adminAccessControlContract,
   adminDashboard: adminDashboardContract,
+  adminDirectoryManagement: adminDirectoryManagementContract,
   auditLogs: auditLogsContract,
   authAdmin: authAdminContract,
   authPublic: authPublicContract,
@@ -121,6 +127,7 @@ export const applicationContract = contract.router({
 export interface ApplicationRouteDependencies {
   adminAccessControl: AdminAccessControlRouteDependencies;
   adminDashboard: AdminDashboardRouteDependencies;
+  adminDirectoryManagement: AdminDirectoryManagementRouteDependencies;
   assistant: AssistantRouteDependencies;
   auditLogs: AuditLogsRouteDependencies;
   authAdmin: AuthAdminRouteDependencies;
@@ -153,6 +160,10 @@ export function registerApplicationRoutes(app: Express, dependencies: Applicatio
   const applicationRouter = server.router(applicationContract, {
     adminAccessControl: createAdminAccessControlHandlers(dependencies.adminAccessControl, authentication),
     adminDashboard: createAdminDashboardHandlers(dependencies.adminDashboard, authentication),
+    adminDirectoryManagement: createAdminDirectoryManagementHandlers(
+      dependencies.adminDirectoryManagement,
+      authentication
+    ),
     auditLogs: createAuditLogsHandlers(dependencies.auditLogs, authentication),
     authAdmin: createAuthAdminHandlers(dependencies.authAdmin, authentication),
     authPublic: createAuthPublicHandlers(dependencies.authPublic),

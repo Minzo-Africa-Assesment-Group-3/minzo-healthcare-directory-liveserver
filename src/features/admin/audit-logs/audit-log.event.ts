@@ -16,7 +16,11 @@ export type AuditLogEvent = {
     | "admin.invitation.accepted"
     | "admin.role.created"
     | "admin.role.permissions_synced"
-    | "admin.user.roles_synced";
+    | "admin.user.roles_synced"
+    | "directory.county.created"
+    | "directory.county.updated"
+    | "directory.city.created"
+    | "directory.city.updated";
   entity: {
     id: string;
     type:
@@ -26,7 +30,9 @@ export type AuditLogEvent = {
       | "CUSTOMER_REVIEW"
       | "ADMIN_INVITATION"
       | "ADMIN_ROLE"
-      | "ADMIN_USER";
+      | "ADMIN_USER"
+      | "COUNTY"
+      | "CITY";
   };
   metadata?: Prisma.InputJsonValue;
 };
