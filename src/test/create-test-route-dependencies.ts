@@ -42,6 +42,7 @@ export function createTestRouteDependencies() {
     ttlSeconds: 300
   });
   return {
+    adminAccessControl: { database: {} as DatabaseClient },
     adminDashboard: { database: {} as DatabaseClient },
     assistant: {
       assistantClient: {

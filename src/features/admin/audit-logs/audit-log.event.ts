@@ -13,10 +13,20 @@ export type AuditLogEvent = {
     | "business.media_batch.reviewed"
     | "customer_review.moderated"
     | "admin.invited"
-    | "admin.invitation.accepted";
+    | "admin.invitation.accepted"
+    | "admin.role.created"
+    | "admin.role.permissions_synced"
+    | "admin.user.roles_synced";
   entity: {
     id: string;
-    type: "BUSINESS" | "BUSINESS_CLAIM" | "BUSINESS_MEDIA_BATCH" | "CUSTOMER_REVIEW" | "ADMIN_INVITATION" | "ADMIN_USER";
+    type:
+      | "BUSINESS"
+      | "BUSINESS_CLAIM"
+      | "BUSINESS_MEDIA_BATCH"
+      | "CUSTOMER_REVIEW"
+      | "ADMIN_INVITATION"
+      | "ADMIN_ROLE"
+      | "ADMIN_USER";
   };
   metadata?: Prisma.InputJsonValue;
 };

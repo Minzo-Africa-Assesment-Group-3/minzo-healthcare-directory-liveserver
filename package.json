@@ -22,6 +22,8 @@
     "db:seed:deploy": "node dist/scripts/seed-database.js",
     "admin:seed": "tsx src/scripts/seed-super-admin.ts",
     "admin:seed:deploy": "node dist/scripts/seed-super-admin.js",
+    "admin:permissions:seed": "tsx src/scripts/seed-admin-permissions.ts",
+    "admin:permissions:seed:deploy": "node dist/scripts/seed-admin-permissions.js",
     "db:studio": "prisma studio"
   },
   "keywords": [],

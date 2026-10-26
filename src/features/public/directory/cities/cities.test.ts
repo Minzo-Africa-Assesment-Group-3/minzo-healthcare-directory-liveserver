@@ -12,22 +12,12 @@ const countyId = "6f5c79f2-787c-44f0-a47f-92de621dd97a";
 const cityId = "9b2c7aaa-fb70-438c-a863-a31634985683";
 
 describe("city search contract", () => {
-  it("applies the default autocomplete result limit", () => {
-    expect(
-      searchCitiesContract.query.parse({
-        countyId,
-        search: "mon"
-      })
-    ).toEqual({
-      countyId,
-      search: "mon",
-      limit: 10
-    });
+  it("allows an unfiltered list without a result limit", () => {
+    expect(searchCitiesContract.query.parse({})).toEqual({});
   });
 
-  it("requires a county and at least two search characters", () => {
-    expect(() => searchCitiesContract.query.parse({ search: "mon" })).toThrow();
-    expect(() => searchCitiesContract.query.parse({ countyId, search: "m" })).toThrow();
+  it("requires at least two characters only when search text is supplied", () => {
+    expect(() => searchCitiesContract.query.parse({ search: "m" })).toThrow();
   });
 });
 
@@ -82,19 +72,32 @@ describe("public city search endpoint", () => {
     });
   });
 
-  it("returns Problem Details when countyId is missing", async () => {
+  it("lists active cities when no county or search filter is supplied", async () => {
+    let findManyQuery: unknown;
+    const database = {
+      city: {
+        async findMany(args: unknown) {
+          findManyQuery = args;
+          return [];
+        }
+      }
+    } as unknown as DatabaseClient;
+    const routes = createTestRouteDependencies();
+    routes.cities.database = database;
     const app = createApp({
       ...createTestHttpDependencies(),
       logger: createLogger({ environment: "test", level: "silent" }),
-      routes: createTestRouteDependencies()
+      routes
     });
 
-    const response = await request(app).get("/api/v1/cities?search=mon");
+    const response = await request(app).get("/api/v1/cities");
 
-    expect(response.status).toBe(400);
-    expect(response.body).toMatchObject({
-      code: "request_validation_failed",
-      status: 400
+    expect(response.status).toBe(200);
+    expect(findManyQuery).toMatchObject({
+      where: {
+        county: { isActive: true },
+        isActive: true
+      }
     });
   });
 });

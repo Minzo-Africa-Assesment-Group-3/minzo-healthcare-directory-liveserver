@@ -99,6 +99,7 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
     corsMiddleware: createCorsMiddleware(env.CORS_ALLOWED_ORIGINS),
     database,
     routes: {
+      adminAccessControl: { database },
       adminDashboard: { database },
       assistant: { assistantClient },
       auditLogs: { database },

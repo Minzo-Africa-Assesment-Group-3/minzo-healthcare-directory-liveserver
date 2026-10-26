@@ -18,6 +18,11 @@ import {
   type AdminDashboardRouteDependencies
 } from "./features/admin/dashboard/routes.js";
 import {
+  adminAccessControlContract,
+  createAdminAccessControlHandlers,
+  type AdminAccessControlRouteDependencies
+} from "./features/admin/access-control/routes.js";
+import {
   auditLogsContract,
   createAuditLogsHandlers,
   type AuditLogsRouteDependencies
@@ -93,6 +98,7 @@ const contract = initContract();
 const server = initServer();
 
 export const applicationContract = contract.router({
+  adminAccessControl: adminAccessControlContract,
   adminDashboard: adminDashboardContract,
   auditLogs: auditLogsContract,
   authAdmin: authAdminContract,
@@ -113,6 +119,7 @@ export const applicationContract = contract.router({
 });
 
 export interface ApplicationRouteDependencies {
+  adminAccessControl: AdminAccessControlRouteDependencies;
   adminDashboard: AdminDashboardRouteDependencies;
   assistant: AssistantRouteDependencies;
   auditLogs: AuditLogsRouteDependencies;
@@ -144,6 +151,7 @@ function getValidationIssues(error: RequestValidationError) {
 export function registerApplicationRoutes(app: Express, dependencies: ApplicationRouteDependencies): void {
   const authentication = createAuthenticationMiddlewares(dependencies.authentication);
   const applicationRouter = server.router(applicationContract, {
+    adminAccessControl: createAdminAccessControlHandlers(dependencies.adminAccessControl, authentication),
     adminDashboard: createAdminDashboardHandlers(dependencies.adminDashboard, authentication),
     auditLogs: createAuditLogsHandlers(dependencies.auditLogs, authentication),
     authAdmin: createAuthAdminHandlers(dependencies.authAdmin, authentication),

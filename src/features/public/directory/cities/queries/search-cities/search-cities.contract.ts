@@ -16,14 +16,14 @@ export const searchCitiesContract = contract.query({
   method: "GET",
   path: "/api/v1/cities",
   query: z.object({
-    countyId: z.string().uuid(),
-    search: z.string().trim().min(2).max(100),
-    limit: z.coerce.number().int().min(1).max(20).default(10)
+    countyId: z.string().uuid().optional(),
+    search: z.string().trim().min(2).max(100).optional(),
+    limit: z.coerce.number().int().min(1).max(100).optional()
   }),
   strictStatusCodes: true,
-  summary: "Search the city catalogue",
+  summary: "List or search the city catalogue",
   description:
-    "Returns a small, alphabetically ordered list of active cities or towns belonging to the selected Liberian county.",
+    "Returns a small, alphabetically ordered list of active cities or towns, optionally filtered by county and search text.",
   responses: {
     200: z.object({
       data: z.array(citySuggestionSchema)

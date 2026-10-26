@@ -15,13 +15,13 @@ export const searchServicesContract = contract.query({
   method: "GET",
   path: "/api/v1/services",
   query: z.object({
-    search: z.string().trim().min(2).max(150),
-    limit: z.coerce.number().int().min(1).max(20).default(10)
+    search: z.string().trim().min(2).max(150).optional(),
+    limit: z.coerce.number().int().min(1).max(100).optional()
   }),
   strictStatusCodes: true,
-  summary: "Search the service catalogue",
+  summary: "List or search the service catalogue",
   description:
-    "Returns a small, alphabetically ordered list of existing services for registration and service-management autocomplete fields.",
+    "Returns a small, alphabetically ordered list of existing services, optionally filtered for registration and service-management autocomplete fields.",
   responses: {
     200: z.object({
       data: z.array(serviceSuggestionSchema)

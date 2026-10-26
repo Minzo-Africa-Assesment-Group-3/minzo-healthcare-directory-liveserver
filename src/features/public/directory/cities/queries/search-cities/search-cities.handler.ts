@@ -9,16 +9,20 @@ export function createSearchCitiesHandler(dependencies: {
   return async ({ query }) => {
     const cities = await dependencies.database.city.findMany({
       where: {
-        countyId: query.countyId,
         isActive: true,
         county: { isActive: true },
-        name: {
-          contains: query.search,
-          mode: "insensitive"
-        }
+        ...(query.countyId === undefined ? {} : { countyId: query.countyId }),
+        ...(query.search === undefined
+          ? {}
+          : {
+              name: {
+                contains: query.search,
+                mode: "insensitive"
+              }
+            })
       },
       orderBy: [{ name: "asc" }, { id: "asc" }],
-      take: query.limit,
+      ...(query.limit === undefined ? {} : { take: query.limit }),
       select: {
         id: true,
         countyId: true,

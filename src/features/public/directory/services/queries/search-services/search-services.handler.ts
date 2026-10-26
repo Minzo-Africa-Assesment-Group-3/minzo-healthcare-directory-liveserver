@@ -9,13 +9,17 @@ export function createSearchServicesHandler(dependencies: {
   return async ({ query }) => {
     const services = await dependencies.database.service.findMany({
       where: {
-        name: {
-          contains: query.search,
-          mode: "insensitive"
-        }
+        ...(query.search === undefined
+          ? {}
+          : {
+              name: {
+                contains: query.search,
+                mode: "insensitive"
+              }
+            })
       },
       orderBy: [{ name: "asc" }, { id: "asc" }],
-      take: query.limit,
+      ...(query.limit === undefined ? {} : { take: query.limit }),
       select: {
         id: true,
         name: true,

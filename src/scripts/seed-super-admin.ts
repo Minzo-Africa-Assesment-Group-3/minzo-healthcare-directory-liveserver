@@ -3,6 +3,7 @@ import "dotenv/config";
 import { z } from "zod";
 
 import { createDatabaseClient } from "../infrastructure/database/index.js";
+import { adminPermissionCatalog } from "../features/admin/access-control/admin-permission-catalog.js";
 import { hashPassword } from "../shared/authentication/password-hasher.js";
 
 const seedEnvironmentSchema = z.object({
@@ -19,6 +20,16 @@ const now = new Date();
 
 try {
   const result = await database.$transaction(async (transaction) => {
+    await Promise.all(
+      adminPermissionCatalog.map((permission) =>
+        transaction.adminPermission.upsert({
+          where: { name: permission.name },
+          update: { description: permission.description },
+          create: permission
+        })
+      )
+    );
+
     const role = await transaction.adminRole.upsert({
       where: { name: "SUPER_ADMIN" },
       update: {
