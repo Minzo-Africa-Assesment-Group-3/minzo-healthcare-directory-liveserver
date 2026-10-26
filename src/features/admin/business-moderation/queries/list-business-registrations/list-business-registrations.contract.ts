@@ -14,13 +14,13 @@ export const listBusinessRegistrationsContract = contract.query({
   method: "GET",
   path: "/api/v1/admin/businesses",
   query: paginationQuerySchema.extend({
-    status: moderatableBusinessStatusSchema.default("PENDING_APPROVAL"),
+    status: moderatableBusinessStatusSchema.optional(),
     search: z.string().trim().min(1).max(200).optional()
   }),
   strictStatusCodes: true,
   summary: "List business registration applications",
   description:
-    "Returns a paginated Minzo administrator queue of self-registered businesses, preserving filters in pagination links.",
+    "Returns paginated self-registered businesses for Minzo administrators. Omit status to return all registrations.",
   responses: {
     200: paginatedResponseSchema(businessModerationListItemSchema),
     401: problemDetailsSchema,

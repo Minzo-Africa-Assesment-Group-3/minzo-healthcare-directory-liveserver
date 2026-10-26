@@ -22,7 +22,7 @@ export function createListBusinessRegistrationsHandler(dependencies: {
     const search = query.search?.trim();
     const where: Prisma.BusinessWhereInput = {
       source: "SELF_REGISTERED",
-      status: query.status,
+      ...(query.status ? { status: query.status } : {}),
       ...(search
         ? {
             OR: [
