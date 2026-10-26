@@ -27,17 +27,58 @@ export function createListFollowedBusinessesHandler({
         take: query.pageSize,
         select: {
           createdAt: true,
-          business: { select: { id: true, displayName: true, slug: true } }
+          business: {
+            select: {
+              id: true,
+              displayName: true,
+              slug: true,
+              verificationStatus: true,
+              _count: { select: { memberships: true } },
+              locations: {
+                where: { status: "ACTIVE" },
+                orderBy: [{ isPrimary: "desc" }, { name: "asc" }, { id: "asc" }],
+                take: 1,
+                select: {
+                  id: true,
+                  name: true,
+                  facilityType: true,
+                  addressLine: true,
+                  county: true,
+                  cityOrTown: true,
+                  latitude: true,
+                  longitude: true,
+                  isPrimary: true
+                }
+              }
+            }
+          }
         }
       })
     ]);
     return {
       status: 200,
       body: createPaginatedResponse({
-        data: follows.map(({ business, createdAt }) => ({
-          business,
-          followedAt: createdAt.toISOString()
-        })),
+        data: follows.map(({ business, createdAt }) => {
+          const location = business.locations[0];
+
+          return {
+            business: {
+              id: business.id,
+              displayName: business.displayName,
+              slug: business.slug,
+              verificationStatus: business.verificationStatus,
+              isClaimed: business._count.memberships > 0,
+              location: location
+                ? {
+                    ...location,
+                    latitude: location.latitude === null ? null : Number(location.latitude),
+                    longitude: location.longitude === null ? null : Number(location.longitude)
+                  }
+                : null
+            },
+            followedAt: createdAt.toISOString()
+          };
+        }),
         ...query,
         totalItems,
         requestUrl: req.originalUrl
