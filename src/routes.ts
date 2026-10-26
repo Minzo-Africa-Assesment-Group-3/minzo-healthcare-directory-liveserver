@@ -17,6 +17,16 @@ import {
   createAdminDashboardHandlers,
   type AdminDashboardRouteDependencies
 } from "./features/admin/dashboard/routes.js";
+import {
+  auditLogsContract,
+  createAuditLogsHandlers,
+  type AuditLogsRouteDependencies
+} from "./features/admin/audit-logs/routes.js";
+import {
+  businessModerationContract,
+  createBusinessModerationHandlers,
+  type BusinessModerationRouteDependencies
+} from "./features/admin/business-moderation/routes.js";
 import { systemContract, systemHandlers } from "./features/system/routes.js";
 import { sendProblemDetails } from "./shared/errors/problem-details.js";
 import {
@@ -63,15 +73,32 @@ import {
   currentUserContract,
   type CurrentUserRouteDependencies
 } from "./features/public/account/routes.js";
+import {
+  assistantContract,
+  createAssistantHandlers,
+  type AssistantRouteDependencies
+} from "./features/public/assistant/routes.js";
+import {
+  businessFollowsContract,
+  createBusinessFollowsHandlers,
+  type BusinessFollowsRouteDependencies
+} from "./features/public/business-follows/routes.js";
+import {
+  createServicesHandlers,
+  servicesContract,
+  type ServicesRouteDependencies
+} from "./features/public/directory/services/routes.js";
 
 const contract = initContract();
 const server = initServer();
 
 export const applicationContract = contract.router({
   adminDashboard: adminDashboardContract,
+  auditLogs: auditLogsContract,
   authAdmin: authAdminContract,
   authPublic: authPublicContract,
   system: systemContract,
+  businessModeration: businessModerationContract,
   businessRegistrationDocuments: businessRegistrationDocumentsContract,
   cities: citiesContract,
   counties: countiesContract,
@@ -79,13 +106,20 @@ export const applicationContract = contract.router({
   reviews: reviewsContract,
   businesses: businessesContract,
   businessClaims: businessClaimsContract,
-  currentUser: currentUserContract
+  businessFollows: businessFollowsContract,
+  currentUser: currentUserContract,
+  assistant: assistantContract,
+  services: servicesContract
 });
 
 export interface ApplicationRouteDependencies {
   adminDashboard: AdminDashboardRouteDependencies;
+  assistant: AssistantRouteDependencies;
+  auditLogs: AuditLogsRouteDependencies;
   authAdmin: AuthAdminRouteDependencies;
   authPublic: AuthPublicRouteDependencies;
+  businessFollows: BusinessFollowsRouteDependencies;
+  businessModeration: BusinessModerationRouteDependencies;
   businessRegistrationDocuments: BusinessRegistrationDocumentsRouteDependencies;
   authentication: AuthenticationMiddlewareDependencies;
   cities: CitiesRouteDependencies;
@@ -95,6 +129,7 @@ export interface ApplicationRouteDependencies {
   businesses: BusinessesRouteDependencies;
   businessClaims: BusinessClaimsRouteDependencies;
   currentUser: CurrentUserRouteDependencies;
+  services: ServicesRouteDependencies;
 }
 
 function getValidationIssues(error: RequestValidationError) {
@@ -110,9 +145,11 @@ export function registerApplicationRoutes(app: Express, dependencies: Applicatio
   const authentication = createAuthenticationMiddlewares(dependencies.authentication);
   const applicationRouter = server.router(applicationContract, {
     adminDashboard: createAdminDashboardHandlers(dependencies.adminDashboard, authentication),
+    auditLogs: createAuditLogsHandlers(dependencies.auditLogs, authentication),
     authAdmin: createAuthAdminHandlers(dependencies.authAdmin, authentication),
     authPublic: createAuthPublicHandlers(dependencies.authPublic),
     system: systemHandlers,
+    businessModeration: createBusinessModerationHandlers(dependencies.businessModeration, authentication),
     businessRegistrationDocuments: createBusinessRegistrationDocumentsHandlers(
       dependencies.businessRegistrationDocuments,
       authentication
@@ -123,7 +160,10 @@ export function registerApplicationRoutes(app: Express, dependencies: Applicatio
     reviews: createReviewsHandlers(dependencies.reviews, authentication),
     businesses: createBusinessesHandlers(dependencies.businesses, authentication),
     businessClaims: createBusinessClaimsHandlers(dependencies.businessClaims, authentication),
-    currentUser: createCurrentUserHandlers(dependencies.currentUser, authentication)
+    businessFollows: createBusinessFollowsHandlers(dependencies.businessFollows, authentication),
+    currentUser: createCurrentUserHandlers(dependencies.currentUser, authentication),
+    assistant: createAssistantHandlers(dependencies.assistant, authentication),
+    services: createServicesHandlers(dependencies.services)
   });
 
   createExpressEndpoints(applicationContract, applicationRouter, app, {

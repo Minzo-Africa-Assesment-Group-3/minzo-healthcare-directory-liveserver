@@ -13,7 +13,7 @@ export const verifyAdminLoginOtpContract = contract.mutation({
   description: "Consumes an administrator login challenge and creates an admin session.",
   body: z.object({
     challengeId: z.string().uuid(),
-    otp: z.string().regex(/^\d{6}$/)
+    otp: z.string().regex(/^\d{4}$/)
   }),
   responses: {
     200: z.object({

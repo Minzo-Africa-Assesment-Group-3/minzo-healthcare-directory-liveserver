@@ -1,4 +1,5 @@
 import type { Environment } from "../config/env.js";
+import { createAssistantClient } from "../features/public/assistant/services/assistant-client.js";
 import { createAiReviewModerationClient } from "../features/admin/customer-reviews/services/ai-review-moderation-client.js";
 import { createReviewModerationQueue } from "../features/admin/customer-reviews/services/review-moderation-queue.js";
 import { createReviewModerationWorker } from "../features/admin/customer-reviews/services/review-moderation-worker.js";
@@ -56,6 +57,11 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
     secretKey: env.SUPABASE_SECRET_KEY,
     url: env.SUPABASE_URL
   });
+  const assistantClient = createAssistantClient({
+    baseUrl: env.AI_SERVICE_URL,
+    serviceKey: env.SERVICE_API_KEY,
+    timeoutMs: env.AI_REQUEST_TIMEOUT_MS
+  });
   const aiReviewModeration = env.SERVICE_API_KEY
     ? createAiReviewModerationClient({
         baseUrl: env.AI_SERVICE_URL,
@@ -94,6 +100,8 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
     database,
     routes: {
       adminDashboard: { database },
+      assistant: { assistantClient },
+      auditLogs: { database },
       authentication: {
         adminAccessToken: authAdmin.accessToken,
         database,
@@ -106,6 +114,11 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
       authPublic: {
         ...authPublic,
         rateLimiters: rateLimiters.authPublic
+      },
+      businessFollows: { database },
+      businessModeration: {
+        database,
+        objectStorage
       },
       businessRegistrationDocuments: {
         businessRegistrationsBucket: env.SUPABASE_BUSINESS_REGISTRATIONS_BUCKET,
@@ -134,7 +147,8 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
         database,
         moderationQueue: reviewModerationQueue,
         rateLimiters: rateLimiters.reviews
-      }
+      },
+      services: { database }
     },
     trustProxyHops: env.TRUST_PROXY_HOPS
   };

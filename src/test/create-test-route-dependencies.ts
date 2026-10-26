@@ -43,6 +43,18 @@ export function createTestRouteDependencies() {
   });
   return {
     adminDashboard: { database: {} as DatabaseClient },
+    assistant: {
+      assistantClient: {
+        async sendMessage() {
+          return {
+            answer: "Test assistant response.",
+            conversation_id: "test-conversation",
+            proposed_action: null
+          };
+        }
+      }
+    },
+    auditLogs: { database: {} as DatabaseClient },
     authentication: {
       userAccessToken,
       adminAccessToken,
@@ -103,6 +115,11 @@ export function createTestRouteDependencies() {
       database: {} as DatabaseClient,
       objectStorage
     },
+    businessFollows: { database: {} as DatabaseClient },
+    businessModeration: {
+      database: {} as DatabaseClient,
+      objectStorage
+    },
     cities: { database: {} as DatabaseClient },
     counties: { database: {} as DatabaseClient },
     currentUser: { database: {} as DatabaseClient },
@@ -125,6 +142,7 @@ export function createTestRouteDependencies() {
         write: allowRequest
       }
     },
-    businesses: { database: {} as DatabaseClient, objectStorage }
+    businesses: { database: {} as DatabaseClient, objectStorage },
+    services: { database: {} as DatabaseClient }
   };
 }
