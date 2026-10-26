@@ -45,8 +45,7 @@ export function createVerifyLoginOtpHandler(dependencies: {
             id: true,
             email: true,
             displayName: true,
-            status: true,
-            emailVerifiedAt: true
+            status: true
           }
         }
       }
@@ -59,8 +58,7 @@ export function createVerifyLoginOtpHandler(dependencies: {
       challenge.consumedAt ||
       challenge.expiresAt <= now ||
       challenge.failedAttempts >= dependencies.maxOtpAttempts ||
-      challenge.user.status !== "ACTIVE" ||
-      !challenge.user.emailVerifiedAt
+      (challenge.user.status !== "ACTIVE" && challenge.user.status !== "PENDING_VERIFICATION")
     ) {
       throw invalidOtpError();
     }

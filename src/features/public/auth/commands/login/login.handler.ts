@@ -42,8 +42,7 @@ export function createLoginHandler(dependencies: {
         email: true,
         passwordHash: true,
         displayName: true,
-        status: true,
-        emailVerifiedAt: true
+        status: true
       }
     });
 
@@ -53,16 +52,7 @@ export function createLoginHandler(dependencies: {
       throw invalidCredentialsError();
     }
 
-    if (!user.emailVerifiedAt || user.status === "PENDING_VERIFICATION") {
-      throw new AppError({
-        code: "email_not_verified",
-        message: "Verify your email address before signing in.",
-        statusCode: 403,
-        title: "Email not verified"
-      });
-    }
-
-    if (user.status !== "ACTIVE") {
+    if (user.status !== "ACTIVE" && user.status !== "PENDING_VERIFICATION") {
       throw new AppError({
         code: "account_unavailable",
         message: "This account is not available for sign in.",
