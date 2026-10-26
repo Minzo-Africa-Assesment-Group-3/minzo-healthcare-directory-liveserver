@@ -2,6 +2,8 @@ export { acceptAdminInvitationContract } from "./accept-admin-invitation/accept-
 export { createAcceptAdminInvitationHandler } from "./accept-admin-invitation/accept-admin-invitation.handler.js";
 export { inviteAdminContract } from "./invite-admin/invite-admin.contract.js";
 export { createInviteAdminHandler } from "./invite-admin/invite-admin.handler.js";
+export { revokeAdminInvitationContract } from "./revoke-admin-invitation/revoke-admin-invitation.contract.js";
+export { createRevokeAdminInvitationHandler } from "./revoke-admin-invitation/revoke-admin-invitation.handler.js";
 export { loginAdminContract } from "./login-admin/login-admin.contract.js";
 export { createLoginAdminHandler } from "./login-admin/login-admin.handler.js";
 export { logoutAdminContract } from "./logout-admin/logout-admin.contract.js";

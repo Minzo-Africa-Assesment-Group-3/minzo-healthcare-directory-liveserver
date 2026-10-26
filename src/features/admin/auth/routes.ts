@@ -7,6 +7,8 @@ import type {
   RefreshTokenCookieService
 } from "../../../shared/authentication/index.js";
 import * as commands from "./commands/index.js";
+import { createListAdminInvitationsHandler } from "./queries/list-admin-invitations/list-admin-invitations.handler.js";
+import { listAdminInvitationsContract } from "./queries/list-admin-invitations/list-admin-invitations.contract.js";
 import type { AdminAuthEmailService } from "./services/index.js";
 import type { AuthenticationMiddlewares } from "../../../shared/authentication/authentication.middleware.js";
 
@@ -15,6 +17,8 @@ const contract = initContract();
 export const authAdminContract = contract.router({
   acceptInvitation: commands.acceptAdminInvitationContract,
   invite: commands.inviteAdminContract,
+  listInvitations: listAdminInvitationsContract,
+  revokeInvitation: commands.revokeAdminInvitationContract,
   login: commands.loginAdminContract,
   verifyLoginOtp: commands.verifyAdminLoginOtpContract,
   refreshSession: commands.refreshAdminSessionContract,
@@ -42,6 +46,14 @@ export function createAuthAdminHandlers(
     invite: {
       middleware: [authenticateAdmin],
       handler: commands.createInviteAdminHandler(dependencies)
+    },
+    listInvitations: {
+      middleware: [authenticateAdmin],
+      handler: createListAdminInvitationsHandler(dependencies)
+    },
+    revokeInvitation: {
+      middleware: [authenticateAdmin],
+      handler: commands.createRevokeAdminInvitationHandler(dependencies)
     },
     login: commands.createLoginAdminHandler(dependencies),
     verifyLoginOtp: commands.createVerifyAdminLoginOtpHandler(dependencies),

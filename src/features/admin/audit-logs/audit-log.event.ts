@@ -14,6 +14,7 @@ export type AuditLogEvent = {
     | "customer_review.moderated"
     | "admin.invited"
     | "admin.invitation.accepted"
+    | "admin.invitation.revoked"
     | "admin.role.created"
     | "admin.role.permissions_synced"
     | "admin.user.roles_synced"

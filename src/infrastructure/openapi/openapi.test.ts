@@ -36,6 +36,7 @@ describe("API foundation", () => {
       "/api/v1/admin/dashboard/overview",
       "/api/v1/admin/invitations",
       "/api/v1/admin/invitations/accept",
+      "/api/v1/admin/invitations/{invitationId}/revoke",
       "/api/v1/admin/permissions",
       "/api/v1/admin/roles",
       "/api/v1/admin/roles/{roleId}/permissions",
