@@ -39,7 +39,6 @@ export function createReviewBusinessRegistrationHandler(dependencies: {
             select: {
               id: true,
               status: true,
-              registrationDocumentKey: true,
               memberships: {
                 where: {
                   user: {
@@ -48,11 +47,6 @@ export function createReviewBusinessRegistrationHandler(dependencies: {
                   }
                 },
                 select: { userId: true },
-                take: 1
-              },
-              registrationDocuments: {
-                where: { status: "ATTACHED" },
-                select: { id: true },
                 take: 1
               }
             }
@@ -69,13 +63,6 @@ export function createReviewBusinessRegistrationHandler(dependencies: {
 
           if (business.status !== "PENDING_APPROVAL") {
             throw reviewConflictError("This business registration has already been reviewed.");
-          }
-
-          if (
-            body.decision === "APPROVED" &&
-            (!business.registrationDocumentKey || business.registrationDocuments.length === 0)
-          ) {
-            throw reviewConflictError("A verified registration document is required before approval.");
           }
 
           if (body.decision === "APPROVED" && business.memberships.length === 0) {
