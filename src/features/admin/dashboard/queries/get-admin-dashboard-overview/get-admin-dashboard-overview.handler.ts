@@ -3,6 +3,7 @@ import type { AppRouteQueryImplementation } from "@ts-rest/express";
 import type { DatabaseClient } from "../../../../../infrastructure/database/index.js";
 import { requireAuthenticatedPrincipal } from "../../../../../shared/authentication/route-authentication.js";
 import { requireAdminDashboardViewer } from "../../admin-dashboard.authorization.js";
+import { getRecentDashboardActivities } from "../../dashboard-activity.js";
 import type { getAdminDashboardOverviewContract } from "./get-admin-dashboard-overview.contract.js";
 
 export function createGetAdminDashboardOverviewHandler(dependencies: {
@@ -15,6 +16,9 @@ export function createGetAdminDashboardOverviewHandler(dependencies: {
       adminUserId,
       database: dependencies.database
     });
+
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     const [
       businessesTotal,
@@ -31,7 +35,11 @@ export function createGetAdminDashboardOverviewHandler(dependencies: {
       reviewsRejected,
       usersTotal,
       usersPendingEmailVerification,
-      usersActive
+      usersActive,
+      businessesRegisteredThisWeek,
+      claimsSubmittedThisWeek,
+      reviewsSubmittedThisWeek,
+      usersRegisteredThisWeek
     ] = await dependencies.database.$transaction([
       dependencies.database.business.count(),
       dependencies.database.business.count({ where: { status: "APPROVED" } }),
@@ -73,8 +81,33 @@ export function createGetAdminDashboardOverviewHandler(dependencies: {
           deletedAt: null,
           status: "ACTIVE"
         }
+      }),
+      dependencies.database.business.count({
+        where: {
+          source: "SELF_REGISTERED",
+          submittedAt: { gte: oneWeekAgo }
+        }
+      }),
+      dependencies.database.businessClaim.count({
+        where: { createdAt: { gte: oneWeekAgo } }
+      }),
+      dependencies.database.review.count({
+        where: {
+          status: { not: "DELETED" },
+          submittedAt: { gte: oneWeekAgo }
+        }
+      }),
+      dependencies.database.user.count({
+        where: {
+          deletedAt: null,
+          createdAt: { gte: oneWeekAgo }
+        }
       })
     ]);
+
+    const recentActivities = await getRecentDashboardActivities(
+      dependencies.database
+    );
 
     return {
       status: 200,
@@ -101,7 +134,14 @@ export function createGetAdminDashboardOverviewHandler(dependencies: {
           total: usersTotal,
           pendingEmailVerification: usersPendingEmailVerification,
           active: usersActive
-        }
+        },
+        changes: {
+          businessesRegisteredThisWeek,
+          claimsSubmittedThisWeek,
+          reviewsSubmittedThisWeek,
+          usersRegisteredThisWeek
+        },
+        recentActivities
       }
     };
   };

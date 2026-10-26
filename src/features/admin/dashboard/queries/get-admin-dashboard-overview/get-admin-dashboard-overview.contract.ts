@@ -13,6 +13,23 @@ const countSchema = z.object({
   unclaimed: z.number().int().nonnegative()
 });
 
+const dashboardActivitySchema = z.object({
+  id: z.string(),
+  type: z.enum([
+    "BUSINESS_REGISTRATION_SUBMITTED",
+    "BUSINESS_CLAIM_SUBMITTED",
+    "CUSTOMER_REVIEW_SUBMITTED",
+    "ADMIN_ACTION"
+  ]),
+  action: z.string().nullable(),
+  occurredAt: z.string().datetime(),
+  entity: z.object({
+    id: z.string().uuid(),
+    name: z.string().nullable(),
+    type: z.string()
+  })
+});
+
 export const adminDashboardOverviewSchema = z.object({
   businesses: countSchema,
   claims: z.object({
@@ -30,7 +47,14 @@ export const adminDashboardOverviewSchema = z.object({
     total: z.number().int().nonnegative(),
     pendingEmailVerification: z.number().int().nonnegative(),
     active: z.number().int().nonnegative()
-  })
+  }),
+  changes: z.object({
+    businessesRegisteredThisWeek: z.number().int().nonnegative(),
+    claimsSubmittedThisWeek: z.number().int().nonnegative(),
+    reviewsSubmittedThisWeek: z.number().int().nonnegative(),
+    usersRegisteredThisWeek: z.number().int().nonnegative()
+  }),
+  recentActivities: z.array(dashboardActivitySchema)
 });
 
 export const getAdminDashboardOverviewContract = contract.query({
@@ -38,7 +62,7 @@ export const getAdminDashboardOverviewContract = contract.query({
   path: "/api/v1/admin/dashboard/overview",
   strictStatusCodes: true,
   summary: "Get the admin dashboard overview",
-  description: "Returns the operational counts used by the Minzo administrator dashboard.",
+  description: "Returns dashboard counts, weekly changes, and the most recent operational activity.",
   responses: {
     200: adminDashboardOverviewSchema,
     401: problemDetailsSchema,
