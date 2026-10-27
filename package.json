@@ -32,6 +32,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@hono/node-server": "^2.1.5",
     "@pg-boss/dashboard": "^1.12.1",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",

@@ -6,11 +6,13 @@ import { createHttpLogger } from "./infrastructure/logging/index.js";
 import { openApiRouter } from "./infrastructure/openapi/openapi.routes.js";
 import { registerApplicationRoutes } from "./routes.js";
 import type { ApplicationRouteDependencies } from "./routes.js";
+import type { JobsDashboard } from "./infrastructure/queue/index.js";
 import { errorHandler } from "./shared/middleware/error-handler.middleware.js";
 import { notFoundHandler } from "./shared/middleware/not-found.middleware.js";
 
 interface AppDependencies {
   corsMiddleware: RequestHandler;
+  jobsDashboard?: JobsDashboard | undefined;
   routes: ApplicationRouteDependencies;
   logger: Logger;
   trustProxyHops: number;
@@ -18,6 +20,7 @@ interface AppDependencies {
 
 export function createApp({
   corsMiddleware,
+  jobsDashboard,
   logger,
   routes,
   trustProxyHops
@@ -34,6 +37,10 @@ export function createApp({
   app.use(corsMiddleware);
   app.use(express.json({ limit: "1mb" }));
   app.use(cookieParser());
+
+  if (jobsDashboard) {
+    app.use("/ops", jobsDashboard.middleware);
+  }
 
   registerApplicationRoutes(app, routes);
   app.use(openApiRouter);

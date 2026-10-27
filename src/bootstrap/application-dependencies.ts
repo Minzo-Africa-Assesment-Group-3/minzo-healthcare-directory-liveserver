@@ -9,7 +9,7 @@ import { createReviewRejectionNotificationWorker } from "../features/admin/custo
 import { createDatabaseClient, type DatabaseClient } from "../infrastructure/database/index.js";
 import { createResendEmailSender } from "../infrastructure/email/index.js";
 import { createLogger } from "../infrastructure/logging/index.js";
-import { createJobQueue } from "../infrastructure/queue/index.js";
+import { createJobQueue, createJobsDashboard, type JobsDashboard } from "../infrastructure/queue/index.js";
 import { createSupabaseObjectStorage } from "../infrastructure/storage/index.js";
 import type { ApplicationRouteDependencies } from "../routes.js";
 import { createCorsMiddleware } from "../shared/middleware/cors.middleware.js";
@@ -19,6 +19,7 @@ import { createBackgroundJobs, type BackgroundJobs } from "./background-jobs.js"
 
 export interface ApplicationDependencies {
   backgroundJobs: BackgroundJobs;
+  jobsDashboard: JobsDashboard | undefined;
   corsMiddleware: ReturnType<typeof createCorsMiddleware>;
   database: DatabaseClient;
   routes: ApplicationRouteDependencies;
@@ -83,6 +84,15 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
     jobQueue,
     logger
   });
+  if (env.PGBOSS_DASHBOARD_ENABLED) {
+    process.env.PGBOSS_DASHBOARD_READ_ONLY = env.PGBOSS_DASHBOARD_READ_ONLY;
+  }
+
+  const jobsDashboard = env.PGBOSS_DASHBOARD_ENABLED
+    ? createJobsDashboard({
+        databaseUrl: env.DATABASE_URL
+      })
+    : undefined;
 
   return {
     backgroundJobs: createBackgroundJobs({
@@ -92,6 +102,7 @@ export function createApplicationDependencies(env: Environment): ApplicationDepe
       reviewRejectionNotificationQueue,
       reviewRejectionNotificationWorker
     }),
+    jobsDashboard,
     corsMiddleware: createCorsMiddleware(env.CORS_ALLOWED_ORIGINS),
     database,
     routes: {

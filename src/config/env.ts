@@ -50,6 +50,10 @@ const environmentSchema = z.object({
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().min(1_000).max(3_600_000).default(60_000),
   RATE_LIMIT_MAX_REQUESTS: z.coerce.number().int().min(1).max(100_000).default(120),
   SHUTDOWN_TIMEOUT_MS: z.coerce.number().int().positive().max(300_000).default(10_000),
+  PGBOSS_DASHBOARD_ENABLED: booleanEnvironmentSchema.default("false"),
+  PGBOSS_DASHBOARD_READ_ONLY: z.enum(["0", "1"]).default("1"),
+  PGBOSS_DASHBOARD_AUTH_USERNAME: z.string().trim().min(1).optional(),
+  PGBOSS_DASHBOARD_AUTH_PASSWORD: z.string().trim().min(12).optional(),
   JWT_ACCESS_SECRET: hexadecimalSecretSchema("JWT_ACCESS_SECRET"),
   JWT_ISSUER: z.string().trim().min(1).default("minzo-africa-api"),
   JWT_AUDIENCE: z.string().trim().min(1).default("minzo-africa-web"),
@@ -99,6 +103,26 @@ const environmentSchema = z.object({
     .min(3)
     .max(63)
     .regex(/^[a-z0-9][a-z0-9.-]*[a-z0-9]$/, "SUPABASE_BUSINESS_MEDIA_BUCKET must be a valid bucket name")
+}).superRefine((environment, context) => {
+  if (!environment.PGBOSS_DASHBOARD_ENABLED) {
+    return;
+  }
+
+  if (!environment.PGBOSS_DASHBOARD_AUTH_USERNAME) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "PGBOSS_DASHBOARD_AUTH_USERNAME is required when PGBOSS_DASHBOARD_ENABLED is true",
+      path: ["PGBOSS_DASHBOARD_AUTH_USERNAME"]
+    });
+  }
+
+  if (!environment.PGBOSS_DASHBOARD_AUTH_PASSWORD) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "PGBOSS_DASHBOARD_AUTH_PASSWORD is required when PGBOSS_DASHBOARD_ENABLED is true",
+      path: ["PGBOSS_DASHBOARD_AUTH_PASSWORD"]
+    });
+  }
 });
 
 export type Environment = z.infer<typeof environmentSchema>;

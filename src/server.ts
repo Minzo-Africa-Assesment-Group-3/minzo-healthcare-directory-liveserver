@@ -22,6 +22,7 @@ async function startServer(): Promise<void> {
 
   const app = createApp({
     corsMiddleware: dependencies.corsMiddleware,
+    jobsDashboard: dependencies.jobsDashboard,
     logger,
     routes: dependencies.routes,
     trustProxyHops: dependencies.trustProxyHops
@@ -42,6 +43,7 @@ async function startServer(): Promise<void> {
 
     void dependencies.backgroundJobs
       .stop()
+      .finally(() => dependencies.jobsDashboard?.close())
       .finally(() => dependencies.database.$disconnect())
       .finally(() => {
         process.exitCode = 1;
@@ -78,6 +80,7 @@ async function startServer(): Promise<void> {
       });
 
       await dependencies.backgroundJobs.stop();
+      await dependencies.jobsDashboard?.close();
       await dependencies.database.$disconnect();
       logger.info("Graceful shutdown completed");
     } catch (error) {
