@@ -15,6 +15,7 @@
     "test": "vitest run src",
     "test:watch": "vitest src",
     "jobs:dashboard": "tsx src/scripts/start-pg-boss-dashboard.ts",
+    "jobs:dashboard:deploy": "node dist/scripts/start-pg-boss-dashboard.js",
     "db:generate": "prisma generate",
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
