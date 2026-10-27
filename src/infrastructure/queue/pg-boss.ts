@@ -4,6 +4,7 @@ import type { Logger } from "pino";
 export function createJobQueue(options: { databaseUrl: string; logger: Logger }): PgBoss {
   const jobQueue = new PgBoss({
     connectionString: options.databaseUrl,
+    persistQueueStats: true,
     persistWarnings: true,
     schema: "pgboss"
   });
