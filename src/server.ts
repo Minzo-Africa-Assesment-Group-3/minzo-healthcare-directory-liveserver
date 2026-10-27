@@ -14,6 +14,14 @@ async function startServer(): Promise<void> {
 
   const dependencies = createApplicationDependencies(env);
 
+  logger.info(
+    {
+      enabled: env.PGBOSS_DASHBOARD_ENABLED,
+      path: env.PGBOSS_DASHBOARD_ENABLED ? "/ops/jobs" : undefined
+    },
+    "Background jobs dashboard configuration loaded"
+  );
+
   await dependencies.database.$connect();
   logger.info("Database connection established");
 
